@@ -1,0 +1,501 @@
+# Создание ссылки: POST /rest/v3/short-urls.
+#
+# ВАЖНО про метки (tags) и домены. У Shlink 5.1.8 ошибка: новую метку или домен, впервые
+# пришедшие в запросе создания, он оставляет заблокированными, и следующий запрос с ними
+# зависает (README, «Что выяснилось»). Поэтому каждая метка и каждый домен из этих сценариев
+# должны быть перечислены в seed-tags.txt / seed-domains.txt — стенд заводит их заранее.
+# Добавил новую метку или домен в сценарий — добавь и туда (тест TestSeedCoversScenarios напомнит).
+
+- id: create-minimal
+  about: Только longUrl — всё остальное по умолчанию
+  steps:
+    - name: создать
+      create: {longUrl: "https://shop.example.invalid/${run}/minimal"}
+      save: &code5 {code: 'shortCode =~ ^[0-9a-zA-Z]{5}$'}
+    - name: переход по созданной ссылке
+      path: /${code}
+    - name: создать по внутреннему имени сервиса (http://shlink)
+      host: shlink
+      create: {longUrl: "https://shop.example.invalid/${run}/minimal-internal"}
+      save: {codeInternal: 'shortCode =~ ^[0-9a-zA-Z]{5}$'}
+    - name: создать, обратившись на второй домен (в теле домена нет)
+      host: sl.demo.test
+      create: {longUrl: "https://shop.example.invalid/${run}/minimal-sl-host"}
+      save: {codeSlHost: 'shortCode =~ ^[0-9a-zA-Z]{5}$'}
+
+- id: create-all-fields
+  about: Все поля сразу
+  steps:
+    - name: создать
+      create:
+        longUrl: "https://shop.example.invalid/${run}/all?x=1"
+        findIfExists: false
+        tags: [mail_sms, compat-a]
+        validSince: "2020-01-01T00:00:00+05:00"
+        validUntil: "2099-12-05T10:01:00+05:00"
+        maxVisits: 10
+        customSlug: "all-${run}"
+        domain: l.demo.test
+        title: "Заголовок страницы <b>&</b> \"кавычки\""
+        crawlable: true
+        forwardQuery: false
+        shortCodeLength: 6
+    - name: переход — параметры не дописываются (forwardQuery=false)
+      path: /all-${run}?z=9
+    - name: robots.txt теперь разрешает эту ссылку (crawlable=true)
+      path: /robots.txt
+      only_this_run_lines: '^Allow: /'
+    - name: чтение через API
+      path: /rest/v3/short-urls/all-${run}
+      key: good
+
+- id: create-code-length
+  about: shortCodeLength — длина случайного кода
+  steps:
+    - name: длина 4
+      create: {longUrl: "https://shop.example.invalid/${run}/len", shortCodeLength: 4}
+      save: {code4: 'shortCode =~ ^[0-9a-zA-Z]{4}$'}
+    - name: длина 5
+      create: {longUrl: "https://shop.example.invalid/${run}/len", shortCodeLength: 5}
+      save: {code5: 'shortCode =~ ^[0-9a-zA-Z]{5}$'}
+    - name: длина 6
+      create: {longUrl: "https://shop.example.invalid/${run}/len", shortCodeLength: 6}
+      save: {code6: 'shortCode =~ ^[0-9a-zA-Z]{6}$'}
+    - name: длина 7 — верхней границы нет
+      create: {longUrl: "https://shop.example.invalid/${run}/len", shortCodeLength: 7}
+      save: {code7: 'shortCode =~ ^[0-9a-zA-Z]{7}$'}
+    - name: длина 20
+      create: {longUrl: "https://shop.example.invalid/${run}/len", shortCodeLength: 20}
+      save: {code20: 'shortCode =~ ^[0-9a-zA-Z]{20}$'}
+    - name: поля нет — длина по умолчанию (5)
+      create: {longUrl: "https://shop.example.invalid/${run}/len"}
+      save: {codeDef: 'shortCode =~ ^[0-9a-zA-Z]{5}$'}
+    - name: значение null — длина по умолчанию
+      create: {longUrl: "https://shop.example.invalid/${run}/len", shortCodeLength: null}
+      save: {codeNull: 'shortCode =~ ^[0-9a-zA-Z]{5}$'}
+    - name: число строкой ("6")
+      create: {longUrl: "https://shop.example.invalid/${run}/len", shortCodeLength: "6"}
+      save: {codeStr: 'shortCode =~ ^[0-9a-zA-Z]{6}$'}
+    - name: переход по коду длины 4
+      path: /${code4}
+    - name: переход по коду длины 6
+      path: /${code6}
+
+- id: create-code-length-invalid
+  about: shortCodeLength меньше 4 и не число — ошибка, а не длина по умолчанию
+  steps:
+    - {name: ноль, create: {longUrl: "https://shop.example.invalid/${run}/len-bad", shortCodeLength: 0}}
+    - {name: три, create: {longUrl: "https://shop.example.invalid/${run}/len-bad", shortCodeLength: 3}}
+    - {name: один, create: {longUrl: "https://shop.example.invalid/${run}/len-bad", shortCodeLength: 1}}
+    - {name: отрицательное, create: {longUrl: "https://shop.example.invalid/${run}/len-bad", shortCodeLength: -1}}
+    - {name: дробное, create: {longUrl: "https://shop.example.invalid/${run}/len-bad", shortCodeLength: 5.5}}
+    - {name: не число, create: {longUrl: "https://shop.example.invalid/${run}/len-bad", shortCodeLength: "abc"}}
+
+- id: create-find-if-exists-same
+  about: findIfExists — повтор того же запроса возвращает ту же ссылку
+  steps:
+    - name: первый запрос — ссылка создаётся
+      create: &fie
+        longUrl: "https://shop.example.invalid/${run}/fie-same"
+        findIfExists: true
+        tags: [compat-a, compat-b]
+        validUntil: "2099-12-05T10:01:00+05:00"
+      save: *code5
+    - name: тот же запрос — та же ссылка
+      create: *fie
+    - name: и в третий раз
+      create: *fie
+    - name: метки в другом порядке — та же ссылка
+      create:
+        longUrl: "https://shop.example.invalid/${run}/fie-same"
+        findIfExists: true
+        tags: [compat-b, compat-a]
+        validUntil: "2099-12-05T10:01:00+05:00"
+    - name: тот же срок, записанный иначе (UTC, с долями секунды) — та же ссылка
+      create:
+        longUrl: "https://shop.example.invalid/${run}/fie-same"
+        findIfExists: true
+        tags: [compat-a, compat-b]
+        validUntil: "2099-12-05T05:01:00.123456789Z"
+    - name: метки в другом написании (регистр, пробелы по краям) — та же ссылка
+      create:
+        longUrl: "https://shop.example.invalid/${run}/fie-same"
+        findIfExists: true
+        tags: ["Compat-A", " compat-b "]
+        validUntil: "2099-12-05T10:01:00+05:00"
+
+- id: create-find-if-exists-loose
+  about: findIfExists сравнивает только то, что прислано — не присланные поля подходят любые
+  steps:
+    - name: первая ссылка — с метками и сроком
+      create:
+        longUrl: "https://shop.example.invalid/${run}/fie-loose"
+        findIfExists: true
+        tags: [compat-a, compat-b]
+        validUntil: "2099-12-05T10:01:00+05:00"
+      save: *code5
+    - name: без меток и срока — находится та же ссылка
+      create: {longUrl: "https://shop.example.invalid/${run}/fie-loose", findIfExists: true}
+    - name: пустой список меток — та же
+      create: {longUrl: "https://shop.example.invalid/${run}/fie-loose", findIfExists: true, tags: []}
+    - name: только срок — та же
+      create: {longUrl: "https://shop.example.invalid/${run}/fie-loose", findIfExists: true, validUntil: "2099-12-05T10:01:00+05:00"}
+    - name: только метки — та же
+      create: {longUrl: "https://shop.example.invalid/${run}/fie-loose", findIfExists: true, tags: [compat-a, compat-b]}
+    - name: другие title, crawlable, forwardQuery, shortCodeLength — не сравниваются, та же
+      create:
+        longUrl: "https://shop.example.invalid/${run}/fie-loose"
+        findIfExists: true
+        title: "Другой заголовок"
+        crawlable: true
+        forwardQuery: false
+        shortCodeLength: 6
+    - name: основной домен указан явно — та же
+      create: {longUrl: "https://shop.example.invalid/${run}/fie-loose", findIfExists: true, domain: l.demo.test}
+
+- id: create-find-if-exists-different
+  about: findIfExists — при других метках, сроке, maxVisits или домене создаётся новая ссылка
+  steps:
+    - name: первая ссылка
+      create:
+        longUrl: "https://shop.example.invalid/${run}/fie-diff"
+        findIfExists: true
+        tags: [compat-a, compat-b]
+        validUntil: "2099-12-05T10:01:00+05:00"
+      save: *code5
+    - name: меток меньше — новая ссылка
+      create:
+        longUrl: "https://shop.example.invalid/${run}/fie-diff"
+        findIfExists: true
+        tags: [compat-a]
+        validUntil: "2099-12-05T10:01:00+05:00"
+      save: {codeFewer: 'shortCode =~ ^[0-9a-zA-Z]{5}$'}
+    - name: меток больше — новая ссылка
+      create:
+        longUrl: "https://shop.example.invalid/${run}/fie-diff"
+        findIfExists: true
+        tags: [compat-a, compat-b, mail_sms]
+        validUntil: "2099-12-05T10:01:00+05:00"
+      save: {codeMore: 'shortCode =~ ^[0-9a-zA-Z]{5}$'}
+    - name: другой срок — новая ссылка
+      create:
+        longUrl: "https://shop.example.invalid/${run}/fie-diff"
+        findIfExists: true
+        tags: [compat-a, compat-b]
+        validUntil: "2099-12-06T10:01:00+05:00"
+      save: {codeDate: 'shortCode =~ ^[0-9a-zA-Z]{5}$'}
+    - name: прислан validSince — новая ссылка
+      create: {longUrl: "https://shop.example.invalid/${run}/fie-diff", findIfExists: true, validSince: "2020-01-01T00:00:00+05:00"}
+      save: {codeSince: 'shortCode =~ ^[0-9a-zA-Z]{5}$'}
+    - name: тот же validSince ещё раз — та же, что шагом выше
+      create: {longUrl: "https://shop.example.invalid/${run}/fie-diff", findIfExists: true, validSince: "2020-01-01T00:00:00+05:00"}
+    - name: прислан maxVisits — новая ссылка
+      create: {longUrl: "https://shop.example.invalid/${run}/fie-diff", findIfExists: true, maxVisits: 3}
+      save: {codeVisits: 'shortCode =~ ^[0-9a-zA-Z]{5}$'}
+    - name: тот же maxVisits ещё раз — та же, что шагом выше
+      create: {longUrl: "https://shop.example.invalid/${run}/fie-diff", findIfExists: true, maxVisits: 3}
+    - name: второй домен — новая ссылка
+      create: {longUrl: "https://shop.example.invalid/${run}/fie-diff", findIfExists: true, domain: sl.demo.test}
+      save: {codeSl: 'shortCode =~ ^[0-9a-zA-Z]{5}$'}
+    - name: второй домен ещё раз — та же, что шагом выше
+      create: {longUrl: "https://shop.example.invalid/${run}/fie-diff", findIfExists: true, domain: sl.demo.test}
+    - name: другой длинный адрес — новая ссылка
+      create: {longUrl: "https://shop.example.invalid/${run}/fie-diff?x=1", findIfExists: true}
+      save: {codeUrl: 'shortCode =~ ^[0-9a-zA-Z]{5}$'}
+    - name: только адрес — возвращается самая первая ссылка
+      create: {longUrl: "https://shop.example.invalid/${run}/fie-diff", findIfExists: true}
+
+- id: create-find-if-exists-off
+  about: findIfExists=false или поля нет — каждый раз новая ссылка
+  steps:
+    - name: первая
+      create: {longUrl: "https://shop.example.invalid/${run}/fie-off"}
+      save: {code1: 'shortCode =~ ^[0-9a-zA-Z]{5}$'}
+    - name: вторая (поля нет)
+      create: {longUrl: "https://shop.example.invalid/${run}/fie-off"}
+      save: {code2: 'shortCode =~ ^[0-9a-zA-Z]{5}$'}
+    - name: третья (findIfExists=false)
+      create: {longUrl: "https://shop.example.invalid/${run}/fie-off", findIfExists: false}
+      save: {code3: 'shortCode =~ ^[0-9a-zA-Z]{5}$'}
+    - name: с findIfExists=true находится самая первая
+      create: {longUrl: "https://shop.example.invalid/${run}/fie-off", findIfExists: true}
+
+- id: create-find-if-exists-any-domain
+  about: findIfExists без domain ищет по всем доменам — может вернуть ссылку второго домена
+  steps:
+    - name: ссылка на втором домене
+      create: {longUrl: "https://shop.example.invalid/${run}/fie-anydom", findIfExists: true, domain: sl.demo.test}
+      save: {codeSl: 'shortCode =~ ^[0-9a-zA-Z]{5}$'}
+    - name: тот же адрес без domain — возвращается ссылка второго домена
+      create: {longUrl: "https://shop.example.invalid/${run}/fie-anydom", findIfExists: true}
+    - name: тот же адрес, основной домен указан явно — тоже она
+      create: {longUrl: "https://shop.example.invalid/${run}/fie-anydom", findIfExists: true, domain: l.demo.test}
+
+- id: create-find-if-exists-custom-slug
+  about: findIfExists вместе с customSlug
+  steps:
+    - name: создать со своим кодом
+      create: {longUrl: "https://shop.example.invalid/${run}/fie-slug", findIfExists: true, customSlug: "fie-${run}"}
+    - name: тот же запрос — та же ссылка, а не ошибка «код занят»
+      create: {longUrl: "https://shop.example.invalid/${run}/fie-slug", findIfExists: true, customSlug: "fie-${run}"}
+    - name: тот же адрес без своего кода — та же ссылка
+      create: {longUrl: "https://shop.example.invalid/${run}/fie-slug", findIfExists: true}
+
+- id: create-custom-slug
+  about: customSlug — свой код вместо случайного
+  steps:
+    - name: создать
+      create: {longUrl: "https://shop.example.invalid/${run}/slug", customSlug: "Slug-${run}"}
+    - {name: переход, path: "/Slug-${run}"}
+    - {name: в другом регистре — не найдена, path: "/slug-${run}"}
+    - name: пробелы заменяются дефисами
+      create: {longUrl: "https://shop.example.invalid/${run}/slug-space", customSlug: "my slug ${run}"}
+    - {name: переход по коду с дефисами, path: "/my-slug-${run}"}
+    - name: косая черта заменяется дефисом
+      create: {longUrl: "https://shop.example.invalid/${run}/slug-slash", customSlug: "a/b/${run}"}
+    - name: shortCodeLength при своём коде не действует
+      create: {longUrl: "https://shop.example.invalid/${run}/slug-len", customSlug: "len-${run}", shortCodeLength: 4}
+    - name: кириллица в коде
+      create: {longUrl: "https://shop.example.invalid/${run}/slug-cyr", customSlug: "ссылка-${run}"}
+    - {name: переход по коду с кириллицей, path: "/%D1%81%D1%81%D1%8B%D0%BB%D0%BA%D0%B0-${run}"}
+    - name: подчёркивание, точка и тильда в коде
+      create: {longUrl: "https://shop.example.invalid/${run}/slug-punct", customSlug: "a_b.c~${run}"}
+    - {name: переход по такому коду, path: "/a_b.c~${run}"}
+    - name: значение null — код случайный
+      create: {longUrl: "https://shop.example.invalid/${run}/slug-null", customSlug: null}
+      save: *code5
+
+- id: create-valid-until-formats
+  about: validUntil в разных записях — в ответе всегда один вид
+  steps:
+    - {name: со смещением, create: {longUrl: "https://shop.example.invalid/${run}/date", validUntil: "2099-12-05T10:01:00+05:00"}, save: *code5}
+    - {name: с долями секунды и смещением (так пишет Go), create: {longUrl: "https://shop.example.invalid/${run}/date", validUntil: "2099-12-05T10:01:00.123456789+05:00"}, save: *code5}
+    - {name: с микросекундами, create: {longUrl: "https://shop.example.invalid/${run}/date", validUntil: "2099-12-05T10:01:00.123456+05:00"}, save: *code5}
+    - {name: с миллисекундами, create: {longUrl: "https://shop.example.invalid/${run}/date", validUntil: "2099-12-05T10:01:00.123+05:00"}, save: *code5}
+    - {name: UTC с буквой Z, create: {longUrl: "https://shop.example.invalid/${run}/date", validUntil: "2099-12-05T05:01:00Z"}, save: *code5}
+    - {name: UTC с долями секунды (так пишет Go), create: {longUrl: "https://shop.example.invalid/${run}/date", validUntil: "2099-12-05T05:01:00.123456789Z"}, save: *code5}
+    - {name: отрицательное смещение, create: {longUrl: "https://shop.example.invalid/${run}/date", validUntil: "2099-12-04T21:01:00-08:00"}, save: *code5}
+    - {name: без часового пояса — считается UTC, create: {longUrl: "https://shop.example.invalid/${run}/date", validUntil: "2099-12-05T10:01:00"}, save: *code5}
+    - {name: через пробел без пояса, create: {longUrl: "https://shop.example.invalid/${run}/date", validUntil: "2099-12-05 10:01:00"}, save: *code5}
+    - {name: только дата, create: {longUrl: "https://shop.example.invalid/${run}/date", validUntil: "2099-12-05"}, save: *code5}
+    - {name: значение null — срока нет, create: {longUrl: "https://shop.example.invalid/${run}/date", validUntil: null}, save: *code5}
+
+- id: create-valid-since-formats
+  about: validSince — те же записи дат
+  steps:
+    - {name: со смещением, create: {longUrl: "https://shop.example.invalid/${run}/since", validSince: "2020-01-01T00:00:00+05:00"}, save: *code5}
+    - {name: с долями секунды, create: {longUrl: "https://shop.example.invalid/${run}/since", validSince: "2020-01-01T00:00:00.999999999+05:00"}, save: *code5}
+    - {name: UTC с буквой Z, create: {longUrl: "https://shop.example.invalid/${run}/since", validSince: "2019-12-31T19:00:00Z"}, save: *code5}
+    - {name: оба срока, create: {longUrl: "https://shop.example.invalid/${run}/since", validSince: "2020-01-01T00:00:00Z", validUntil: "2099-01-01T00:00:00Z"}, save: *code5}
+
+- id: create-max-visits
+  about: maxVisits — допустимые и недопустимые значения
+  steps:
+    - {name: один, create: {longUrl: "https://shop.example.invalid/${run}/mv", maxVisits: 1}, save: *code5}
+    - {name: число строкой, create: {longUrl: "https://shop.example.invalid/${run}/mv", maxVisits: "3"}, save: *code5}
+    - {name: значение null, create: {longUrl: "https://shop.example.invalid/${run}/mv", maxVisits: null}, save: *code5}
+    - {name: ноль — принимается, create: {longUrl: "https://shop.example.invalid/${run}/mv", maxVisits: 0}, save: *code5}
+    - {name: отрицательное — принимается, create: {longUrl: "https://shop.example.invalid/${run}/mv", maxVisits: -1}, save: *code5}
+    - {name: дробное, create: {longUrl: "https://shop.example.invalid/${run}/mv", maxVisits: 1.5}}
+    - {name: не число, create: {longUrl: "https://shop.example.invalid/${run}/mv", maxVisits: "много"}}
+
+- id: create-tags
+  about: Метки приводятся к одному виду — строчные буквы, дефисы вместо пробелов
+  steps:
+    # повторов метки в одном запросе здесь нет намеренно: на них Shlink отдаёт tags не списком,
+    # а объектом с номерами — это его ошибка, повторять её незачем (README, «Что выяснилось»)
+    - name: разный регистр, пробелы, html
+      create:
+        longUrl: "https://shop.example.invalid/${run}/tags"
+        tags: ["Compat Big Tag", "  compat-trim  ", "COMPAT-DUP", "<b>compat-bold</b>", "Compat Метка"]
+      save: *code5
+    - name: чтение — метки в том же виде
+      path: /rest/v3/short-urls/${code}
+      key: good
+    - {name: пустой список, create: {longUrl: "https://shop.example.invalid/${run}/tags", tags: []}, save: *code5}
+    - {name: null — ошибка (в отличие от пустого списка), create: {longUrl: "https://shop.example.invalid/${run}/tags", tags: null}}
+    - {name: строка вместо списка, create: {longUrl: "https://shop.example.invalid/${run}/tags", tags: "mail_sms"}}
+    - {name: метки в обратном порядке алфавита — порядок в ответе, create: {longUrl: "https://shop.example.invalid/${run}/tags", tags: [mail_sms, compat-b, compat-a]}, save: *code5}
+
+- id: create-title
+  about: Заголовок (title)
+  steps:
+    - {name: обычный, create: {longUrl: "https://shop.example.invalid/${run}/title", title: "Заказ № 123 готов"}, save: *code5}
+    - {name: пустая строка, create: {longUrl: "https://shop.example.invalid/${run}/title", title: ""}, save: *code5}
+    - {name: значение null, create: {longUrl: "https://shop.example.invalid/${run}/title", title: null}, save: *code5}
+    - {name: длиннее 512 знаков — обрезается, create: {longUrl: "https://shop.example.invalid/${run}/title", title: "${pad:600}"}, save: *code5}
+
+- id: create-flags
+  about: Логические поля crawlable, forwardQuery, findIfExists в разных записях
+  steps:
+    - {name: forwardQuery=false, create: {longUrl: "https://shop.example.invalid/${run}/flags", forwardQuery: false}, save: *code5}
+    - {name: forwardQuery строкой "false", create: {longUrl: "https://shop.example.invalid/${run}/flags", forwardQuery: "false"}, save: *code5}
+    - {name: forwardQuery числом 0, create: {longUrl: "https://shop.example.invalid/${run}/flags", forwardQuery: 0}, save: *code5}
+    - {name: forwardQuery строкой "нет", create: {longUrl: "https://shop.example.invalid/${run}/flags", forwardQuery: "нет"}}
+    - {name: forwardQuery=null — ошибка, create: {longUrl: "https://shop.example.invalid/${run}/flags", forwardQuery: null}}
+    - {name: crawlable=null — ошибка, create: {longUrl: "https://shop.example.invalid/${run}/flags", crawlable: null}}
+    - {name: findIfExists=null — ошибка, create: {longUrl: "https://shop.example.invalid/${run}/flags", findIfExists: null}}
+    - name: findIfExists строкой "true" — работает как true
+      create: {longUrl: "https://shop.example.invalid/${run}/flags-fie", findIfExists: "true"}
+      save: {codeFie: 'shortCode =~ ^[0-9a-zA-Z]{5}$'}
+    - name: и ещё раз — та же ссылка
+      create: {longUrl: "https://shop.example.invalid/${run}/flags-fie", findIfExists: "true"}
+
+- id: create-domain
+  about: Поле domain — основной домен, второй, посторонний и неверный
+  steps:
+    - name: основной домен явно — в ответе domain=null
+      create: {longUrl: "https://shop.example.invalid/${run}/domain", domain: l.demo.test}
+      save: *code5
+    - name: второй домен
+      create: {longUrl: "https://shop.example.invalid/${run}/domain", domain: sl.demo.test}
+      save: *code5
+    - name: чтение ссылки второго домена
+      path: /rest/v3/short-urls/${code}?domain=sl.demo.test
+      key: good
+    - name: посторонний домен — тоже принимается
+      create: {longUrl: "https://shop.example.invalid/${run}/domain", domain: go.example.invalid}
+      save: *code5
+    - {name: значение null — основной домен, create: {longUrl: "https://shop.example.invalid/${run}/domain", domain: null}, save: *code5}
+    - {name: не домен (пробелы), create: {longUrl: "https://shop.example.invalid/${run}/domain", domain: "не домен"}}
+    - {name: не домен (адрес со схемой), create: {longUrl: "https://shop.example.invalid/${run}/domain", domain: "https://sl.demo.test"}}
+    - {name: пустая строка, create: {longUrl: "https://shop.example.invalid/${run}/domain", domain: ""}}
+
+- id: create-long-url-invalid
+  about: Пустой, отсутствующий и неверный longUrl
+  steps:
+    - {name: пустая строка, create: {longUrl: ""}}
+    - {name: поля нет, create: {tags: [mail_sms]}}
+    - {name: значение null, create: {longUrl: null}}
+    - {name: без схемы, create: {longUrl: "shop.example.invalid/${run}/noscheme"}}
+    - {name: просто текст, create: {longUrl: "просто текст ${run}"}}
+    - {name: список, create: {longUrl: ["https://shop.example.invalid/${run}/list"]}}
+
+- id: create-long-url-loose
+  about: Что Shlink считает допустимым адресом — проверка очень мягкая
+  steps:
+    - {name: схема приложения, create: {longUrl: "tg://resolve?domain=sample_${run}"}, save: *code5}
+    - {name: почта, create: {longUrl: "mailto:shop-${run}@example.invalid"}, save: *code5}
+    - {name: любой текст с двоеточием, create: {longUrl: "текст: ${run}"}, save: *code5}
+    - {name: пробелы по краям сохраняются, create: {longUrl: "  https://shop.example.invalid/${run}/trim  "}, save: *code5}
+    - {name: адрес длиной 3000 знаков, create: {longUrl: "https://shop.example.invalid/${run}/long?data=${pad:3000}"}, save: *code5}
+
+- id: create-body-invalid
+  about: Тело запроса — не тот JSON, которого ждут
+  steps:
+    - name: битый JSON
+      method: POST
+      path: /rest/v3/short-urls
+      key: good
+      content_type: application/json
+      body: '{"longUrl":"https://shop.example.invalid/${run}/broken"'
+    - name: пустое тело
+      method: POST
+      path: /rest/v3/short-urls
+      key: good
+      content_type: application/json
+      body: ''
+    - name: JSON-список
+      method: POST
+      path: /rest/v3/short-urls
+      key: good
+      content_type: application/json
+      body: '["https://shop.example.invalid/${run}/array"]'
+    - name: пустой объект
+      create: {}
+
+- id: create-unknown-fields
+  about: Неизвестные поля не мешают
+  steps:
+    - name: создать
+      create:
+        longUrl: "https://shop.example.invalid/${run}/unknown"
+        foo: bar
+        nested: {a: 1, b: [1, 2]}
+        shortUrl: "https://l.demo.test/zzzzz"
+        shortCode: zzzzz
+        dateCreated: "2020-01-01T00:00:00+00:00"
+      save: *code5
+
+- id: create-content-type
+  about: Заголовок Content-Type запроса — что принимается
+  steps:
+    - name: JSON без Content-Type
+      method: POST
+      path: /rest/v3/short-urls
+      key: good
+      body: '{"longUrl":"https://shop.example.invalid/${run}/ct-none"}'
+      save: *code5
+    - name: JSON с text/plain
+      method: POST
+      path: /rest/v3/short-urls
+      key: good
+      content_type: text/plain
+      body: '{"longUrl":"https://shop.example.invalid/${run}/ct-text"}'
+      save: *code5
+    - name: JSON с указанием кодировки
+      method: POST
+      path: /rest/v3/short-urls
+      key: good
+      content_type: application/json; charset=utf-8
+      body: '{"longUrl":"https://shop.example.invalid/${run}/ct-charset"}'
+      save: *code5
+    - name: форма (application/x-www-form-urlencoded)
+      method: POST
+      path: /rest/v3/short-urls
+      key: good
+      content_type: application/x-www-form-urlencoded
+      body: 'longUrl=https%3A%2F%2Fshop.example.invalid%2F${run}%2Fct-form&tags%5B%5D=mail_sms&findIfExists=true'
+      save: *code5
+    - name: JSON, названный формой — не разбирается
+      method: POST
+      path: /rest/v3/short-urls
+      key: good
+      content_type: application/x-www-form-urlencoded
+      body: '{"longUrl":"https://shop.example.invalid/${run}/ct-form-json"}'
+
+- id: create-auth
+  about: Ключ API при создании
+  steps:
+    - name: без ключа
+      method: POST
+      path: /rest/v3/short-urls
+      json: {longUrl: "https://shop.example.invalid/${run}/auth"}
+    - name: неверный ключ
+      method: POST
+      path: /rest/v3/short-urls
+      key: bad
+      json: {longUrl: "https://shop.example.invalid/${run}/auth"}
+    - name: пустой ключ
+      method: POST
+      path: /rest/v3/short-urls
+      key: empty
+      json: {longUrl: "https://shop.example.invalid/${run}/auth"}
+    - name: без ключа и с неверными данными — сначала проверяется ключ
+      method: POST
+      path: /rest/v3/short-urls
+      json: {longUrl: ""}
+
+- id: create-custom-slug-taken
+  about: Свой код уже занят
+  steps:
+    - name: создать
+      create: {longUrl: "https://shop.example.invalid/${run}/taken", customSlug: "taken-${run}"}
+    - name: тот же запрос ещё раз — код занят
+      create: {longUrl: "https://shop.example.invalid/${run}/taken", customSlug: "taken-${run}"}
+    - name: другой адрес с тем же кодом — код занят
+      create: {longUrl: "https://shop.example.invalid/${run}/taken-other", customSlug: "taken-${run}"}
+    - name: findIfExists и другой адрес — код занят
+      create: {longUrl: "https://shop.example.invalid/${run}/taken-other", customSlug: "taken-${run}", findIfExists: true}
+    - name: findIfExists и тот же адрес — возвращается существующая ссылка
+      create: {longUrl: "https://shop.example.invalid/${run}/taken", customSlug: "taken-${run}", findIfExists: true}
+    - name: код в другом регистре — свободен
+      create: {longUrl: "https://shop.example.invalid/${run}/taken-case", customSlug: "TAKEN-${run}"}
+    - name: тот же код на втором домене — свободен
+      create: {longUrl: "https://shop.example.invalid/${run}/taken-sl", customSlug: "taken-${run}", domain: sl.demo.test}
+    - name: на втором домене ещё раз — код занят
+      create: {longUrl: "https://shop.example.invalid/${run}/taken-sl-2", customSlug: "taken-${run}", domain: sl.demo.test}
+    - name: код с пробелом совпадает с кодом с дефисом — код занят
+      create: {longUrl: "https://shop.example.invalid/${run}/taken-space", customSlug: "taken ${run}"}
+    - name: старая ссылка по-прежнему ведёт на свой адрес
+      path: /taken-${run}

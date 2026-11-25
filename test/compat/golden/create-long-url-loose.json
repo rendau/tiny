@@ -1,0 +1,231 @@
+{
+  "scenario": "create-long-url-loose",
+  "about": "Что Shlink считает допустимым адресом — проверка очень мягкая",
+  "steps": [
+    {
+      "name": "схема приложения",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "longUrl": "tg://resolve?domain=sample_${run}"
+        }
+      },
+      "saved": {
+        "code": "shortCode =~ ^[0-9a-zA-Z]{5}$"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "359",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${code}",
+        "shortCode": "${code}",
+        "longUrl": "tg://resolve?domain=sample_${run}",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "почта",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "longUrl": "mailto:shop-${run}@example.invalid"
+        }
+      },
+      "saved": {
+        "code": "shortCode =~ ^[0-9a-zA-Z]{5}$"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "360",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${code}",
+        "shortCode": "${code}",
+        "longUrl": "mailto:shop-${run}@example.invalid",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "любой текст с двоеточием",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "longUrl": "текст: ${run}"
+        }
+      },
+      "saved": {
+        "code": "shortCode =~ ^[0-9a-zA-Z]{5}$"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "364",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${code}",
+        "shortCode": "${code}",
+        "longUrl": "текст: ${run}",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "пробелы по краям сохраняются",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "longUrl": "  https://shop.example.invalid/${run}/trim  "
+        }
+      },
+      "saved": {
+        "code": "shortCode =~ ^[0-9a-zA-Z]{5}$"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "370",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${code}",
+        "shortCode": "${code}",
+        "longUrl": "  https://shop.example.invalid/${run}/trim  ",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "адрес длиной 3000 знаков",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "longUrl": "https://shop.example.invalid/${run}/long?data=${pad:3000}"
+        }
+      },
+      "saved": {
+        "code": "shortCode =~ ^[0-9a-zA-Z]{5}$"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "3372",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${code}",
+        "shortCode": "${code}",
+        "longUrl": "https://shop.example.invalid/${run}/long?data=${pad:3000}",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    }
+  ]
+}

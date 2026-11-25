@@ -1,0 +1,138 @@
+{
+  "scenario": "redirect-same-code-two-domains",
+  "about": "Один и тот же код на двух доменах — две разные ссылки",
+  "steps": [
+    {
+      "name": "создать на основном домене",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "customSlug": "both-${run}",
+          "longUrl": "https://shop.example.invalid/${run}/both-default"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "386",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/both-${run}",
+        "shortCode": "both-${run}",
+        "longUrl": "https://shop.example.invalid/${run}/both-default",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "создать с тем же кодом на втором домене",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "customSlug": "both-${run}",
+          "domain": "sl.demo.test",
+          "longUrl": "https://shop.example.invalid/${run}/both-sl"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "392",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://sl.demo.test/both-${run}",
+        "shortCode": "both-${run}",
+        "longUrl": "https://shop.example.invalid/${run}/both-sl",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": "sl.demo.test",
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "основной домен",
+      "request": {
+        "method": "GET",
+        "path": "/both-${run}",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/both-default",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "второй домен",
+      "request": {
+        "method": "GET",
+        "path": "/both-${run}",
+        "host": "sl.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/both-sl",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "посторонний домен — ссылка основного",
+      "request": {
+        "method": "GET",
+        "path": "/both-${run}",
+        "host": "other.example.invalid"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/both-default",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    }
+  ]
+}

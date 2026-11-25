@@ -22,6 +22,16 @@ const (
 	IdRequired        = Err("id_required")
 )
 
+// tiny errors
+const (
+	// ShortCodeExists — пара (код, домен) уже занята другой ссылкой
+	ShortCodeExists = Err("short_code_exists")
+
+	UsrUsernameExists = Err("usr_username_exists") // логин занят
+	LoginRateLimited  = Err("login_rate_limited")  // слишком много неудачных входов по логину или адресу
+	UsrSelfChange     = Err("usr_self_change")     // нельзя удалить, отключить или лишить прав админа себя
+)
+
 type ErrFull struct {
 	Err    error
 	Desc   string
@@ -30,6 +40,11 @@ type ErrFull struct {
 
 func (e ErrFull) Error() string {
 	return e.Err.Error() + ", desc: " + e.Desc
+}
+
+// Unwrap — чтобы errors.Is(err, errs.InvalidRequest) видел код внутри ErrFull
+func (e ErrFull) Unwrap() error {
+	return e.Err
 }
 
 // AsErr extracts an Err from the error chain regardless of whether it was

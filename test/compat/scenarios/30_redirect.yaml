@@ -1,0 +1,236 @@
+# Переход по короткой ссылке: GET и HEAD /{код}.
+
+- id: redirect-basic
+  about: Обычный переход — GET и HEAD
+  steps:
+    - name: создать ссылку
+      create: {longUrl: "https://shop.example.invalid/${run}/basic"}
+      save: &code5 {code: 'shortCode =~ ^[0-9a-zA-Z]{5}$'}
+    - name: GET
+      path: /${code}
+    - name: HEAD
+      method: HEAD
+      path: /${code}
+    - name: GET ещё раз (ответ не меняется)
+      path: /${code}
+    - name: GET по внутреннему имени сервиса (http://shlink)
+      path: /${code}
+      host: shlink
+
+- id: redirect-query-forward
+  about: Параметры короткой ссылки дописываются к длинному адресу (в нём своих параметров нет)
+  steps:
+    - name: создать ссылку
+      create: {longUrl: "https://shop.example.invalid/${run}/forward"}
+      save: *code5
+    - {name: два параметра, path: "/${code}?utm=1&x=2"}
+    - {name: HEAD с параметрами, method: HEAD, path: "/${code}?utm=1&x=2"}
+    - {name: один ключ дважды, path: "/${code}?a=1&a=2"}
+    - {name: ключ со скобками, path: "/${code}?a[]=1&a[]=2"}
+    - {name: ключ со скобками в закодированном виде, path: "/${code}?a%5B%5D=1&a%5B%5D=2"}
+    - {name: ключ без значения, path: "/${code}?flag"}
+    - {name: пустое значение, path: "/${code}?e="}
+    - {name: пробел как плюс, path: "/${code}?sp=a+b"}
+    - {name: пробел как %20, path: "/${code}?sp=a%20b"}
+    - {name: закодированный плюс, path: "/${code}?pl=a%2Bb"}
+    - {name: кириллица в значении, path: "/${code}?q=%D1%81%D1%82%D0%B8%D1%80%D0%B0%D0%BB%D1%8C%D0%BD%D0%B0%D1%8F%20%D0%BC%D0%B0%D1%88%D0%B8%D0%BD%D0%B0"}
+    - {name: кириллица в ключе, path: "/${code}?%D0%BA%D0%BB%D1%8E%D1%87=1"}
+    - {name: точка и подчёркивание в ключах, path: "/${code}?x.y=1&x_y=2"}
+    - {name: ключи разного регистра, path: "/${code}?A=1&a=2"}
+    - {name: адрес в значении, path: "/${code}?url=https%3A%2F%2Fx.example.invalid%2F%3Fq%3D1%26w%3D2"}
+    - {name: знак равно в значении, path: "/${code}?a=b=c"}
+    - {name: числовые ключи, path: "/${code}?1=a&2=b"}
+    - {name: вопросительный знак без параметров, path: "/${code}?"}
+    - {name: два амперсанда подряд, path: "/${code}?a=1&&b=2"}
+    - {name: метки рассылки, path: "/${code}?utm_source=sms&utm_medium=mail&utm_campaign=black_friday_2026"}
+
+- id: redirect-query-merge
+  about: В длинном адресе уже есть свои параметры и якорь
+  steps:
+    - name: создать ссылку
+      create: {longUrl: "https://shop.example.invalid/${run}/merge?a=1&b=2&c=3#frag"}
+      save: *code5
+    - {name: без параметров, path: "/${code}"}
+    - {name: новый параметр, path: "/${code}?z=9"}
+    - {name: тот же ключ — заменяет значение, path: "/${code}?a=9"}
+    - {name: тот же ключ дважды, path: "/${code}?a=9&a=10"}
+    - {name: тот же ключ с пустым значением, path: "/${code}?b="}
+    - {name: тот же ключ без значения, path: "/${code}?c"}
+    - {name: новый и старый вперемешку, path: "/${code}?d=4&a=0"}
+    - {name: HEAD, method: HEAD, path: "/${code}?z=9"}
+
+- id: redirect-query-merge-repeated
+  about: В длинном адресе один ключ встречается дважды
+  steps:
+    - name: создать ссылку
+      create: {longUrl: "https://shop.example.invalid/${run}/rep?x=1&x=2&y=1"}
+      save: *code5
+    - {name: без параметров, path: "/${code}"}
+    - {name: тот же ключ один раз, path: "/${code}?x=3"}
+    - {name: другой ключ, path: "/${code}?z=3"}
+
+- id: redirect-forward-off
+  about: forwardQuery=false — параметры короткой ссылки не дописываются
+  steps:
+    - name: создать ссылку
+      create: {longUrl: "https://shop.example.invalid/${run}/nofwd?a=1", forwardQuery: false}
+      save: *code5
+    - {name: без параметров, path: "/${code}"}
+    - {name: с параметрами, path: "/${code}?z=9&a=2"}
+
+- id: redirect-unknown
+  about: Кода нет — страница «ссылка не найдена»
+  steps:
+    - {name: GET, path: "/x${run}"}
+    - {name: HEAD, method: HEAD, path: "/x${run}"}
+    - {name: GET с параметрами, path: "/x${run}?a=1"}
+    - {name: код с дефисом, path: "/nope-${run}"}
+    - {name: на втором домене, path: "/x${run}", host: sl.demo.test}
+
+- id: redirect-expired
+  about: Срок действия ссылки истёк (validUntil в прошлом)
+  steps:
+    - name: создать ссылку
+      create: {longUrl: "https://shop.example.invalid/${run}/expired", validUntil: "2020-01-01T00:00:00+05:00"}
+      save: *code5
+    - {name: GET, path: "/${code}"}
+    - {name: HEAD, method: HEAD, path: "/${code}"}
+    - name: через API ссылка по-прежнему читается
+      path: /rest/v3/short-urls/${code}
+      key: good
+
+- id: redirect-not-started
+  about: Ссылка ещё не начала действовать (validSince в будущем)
+  steps:
+    - name: создать ссылку
+      create: {longUrl: "https://shop.example.invalid/${run}/future", validSince: "2099-01-01T00:00:00+05:00"}
+      save: *code5
+    - {name: GET, path: "/${code}"}
+    - {name: HEAD, method: HEAD, path: "/${code}"}
+    - name: через API ссылка читается
+      path: /rest/v3/short-urls/${code}
+      key: good
+
+- id: redirect-valid-window
+  about: Сейчас внутри срока действия (validSince в прошлом, validUntil в будущем)
+  steps:
+    - name: создать ссылку
+      create:
+        longUrl: "https://shop.example.invalid/${run}/window"
+        validSince: "2020-01-01T00:00:00+05:00"
+        validUntil: "2099-12-05T10:01:00+05:00"
+      save: *code5
+    - {name: GET, path: "/${code}"}
+
+- id: redirect-case
+  about: Регистр кода важен — aBcDe и abcde это разные ссылки
+  steps:
+    - name: создать ссылку aBcDe…
+      create: {longUrl: "https://shop.example.invalid/${run}/case-mixed", customSlug: "aBcDe${run}"}
+    - {name: тот же регистр, path: "/aBcDe${run}"}
+    - {name: всё строчными — такой ссылки нет, path: "/abcde${run}"}
+    - {name: всё прописными в начале — такой ссылки нет, path: "/ABCDE${run}"}
+    - name: создать вторую ссылку — abcde…
+      create: {longUrl: "https://shop.example.invalid/${run}/case-lower", customSlug: "abcde${run}"}
+    - {name: первая ведёт на свой адрес, path: "/aBcDe${run}"}
+    - {name: вторая — на свой, path: "/abcde${run}"}
+
+- id: redirect-domains
+  about: Ссылка основного домена открывается на любом домене, ссылка второго — только на нём
+  steps:
+    - name: создать ссылку основного домена
+      create: {longUrl: "https://shop.example.invalid/${run}/dom-default"}
+      save: *code5
+    - {name: основной домен, path: "/${code}"}
+    - {name: второй домен, path: "/${code}", host: sl.demo.test}
+    - {name: посторонний домен, path: "/${code}", host: other.example.invalid}
+    - name: создать ссылку второго домена
+      create: {longUrl: "https://shop.example.invalid/${run}/dom-sl", domain: sl.demo.test}
+      save: {codeSl: 'shortCode =~ ^[0-9a-zA-Z]{5}$'}
+    - {name: ссылка второго домена на нём самом, path: "/${codeSl}", host: sl.demo.test}
+    - {name: ссылка второго домена на основном — не найдена, path: "/${codeSl}"}
+    - {name: ссылка второго домена на постороннем — не найдена, path: "/${codeSl}", host: other.example.invalid}
+
+- id: redirect-same-code-two-domains
+  about: Один и тот же код на двух доменах — две разные ссылки
+  steps:
+    - name: создать на основном домене
+      create: {longUrl: "https://shop.example.invalid/${run}/both-default", customSlug: "both-${run}"}
+    - name: создать с тем же кодом на втором домене
+      create: {longUrl: "https://shop.example.invalid/${run}/both-sl", customSlug: "both-${run}", domain: sl.demo.test}
+    - {name: основной домен, path: "/both-${run}"}
+    - {name: второй домен, path: "/both-${run}", host: sl.demo.test}
+    - {name: посторонний домен — ссылка основного, path: "/both-${run}", host: other.example.invalid}
+
+- id: redirect-path-variants
+  about: Косая черта в конце и лишние части пути
+  steps:
+    - name: создать ссылку
+      create: {longUrl: "https://shop.example.invalid/${run}/path"}
+      save: *code5
+    - {name: косая черта в конце, path: "/${code}/"}
+    - {name: лишняя часть пути, path: "/${code}/extra"}
+    - {name: две лишние части, path: "/${code}/extra/more"}
+    - {name: расширение после кода, path: "/${code}.html"}
+    - {name: HEAD с косой чертой, method: HEAD, path: "/${code}/"}
+
+- id: redirect-methods
+  about: Другие методы на адресе короткой ссылки
+  steps:
+    - name: создать ссылку
+      create: {longUrl: "https://shop.example.invalid/${run}/methods"}
+      save: *code5
+    - {name: POST, method: POST, path: "/${code}"}
+    - {name: PUT, method: PUT, path: "/${code}"}
+    - {name: DELETE, method: DELETE, path: "/${code}"}
+    - {name: OPTIONS, method: OPTIONS, path: "/${code}"}
+
+- id: redirect-max-visits
+  about: maxVisits при выключенном учёте посещений не срабатывает
+  steps:
+    - name: создать ссылку с maxVisits=1
+      create: {longUrl: "https://shop.example.invalid/${run}/visits", maxVisits: 1}
+      save: *code5
+    - {name: первый переход, path: "/${code}"}
+    - {name: второй переход, path: "/${code}"}
+    - {name: третий переход, path: "/${code}"}
+
+- id: redirect-long-url
+  about: Очень длинный адрес (длиннее 2048 знаков)
+  steps:
+    - name: создать ссылку
+      create: {longUrl: "https://shop.example.invalid/${run}/long?data=${pad:3000}"}
+      save: *code5
+    - {name: GET, path: "/${code}"}
+    - {name: GET с параметром, path: "/${code}?z=1"}
+
+- id: redirect-cyrillic-spaces
+  about: Длинный адрес с пробелами и кириллицей, как его шлют рассылки
+  steps:
+    - name: создать ссылку
+      create: {longUrl: "https://shop.example.invalid/${run}/поиск товара?q=стиральная машина&utm_source=смс рассылка#якорь тут"}
+      save: *code5
+    - {name: GET, path: "/${code}"}
+    - {name: HEAD, method: HEAD, path: "/${code}"}
+    - {name: GET с параметрами, path: "/${code}?q=%D0%BD%D0%BE%D0%B2%D1%8B%D0%B9&b=1+2%203"}
+    - name: через API адрес отдаётся как был прислан
+      path: /rest/v3/short-urls/${code}
+      key: good
+
+- id: redirect-encoded-url
+  about: Длинный адрес, уже закодированный отправителем (проценты, плюсы)
+  steps:
+    - name: создать ссылку
+      create: {longUrl: "https://shop.example.invalid/${run}/%D0%BF%D0%BE%D0%B8%D1%81%D0%BA?q=%D0%B0+%D0%B1%20%D0%B2&e=a%26b&p=1%2B1"}
+      save: *code5
+    - {name: GET, path: "/${code}"}
+    - {name: GET с параметром, path: "/${code}?z=1"}
+
+- id: redirect-other-schemes
+  about: Длинный адрес не http — ссылка в приложение
+  steps:
+    - name: создать ссылку
+      create: {longUrl: "tg://resolve?domain=sample_${run}"}
+      save: *code5
+    - {name: GET, path: "/${code}"}
+    - {name: GET с параметром, path: "/${code}?start=1"}

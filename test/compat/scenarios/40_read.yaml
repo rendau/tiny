@@ -1,0 +1,88 @@
+# Чтение ссылки: GET /rest/v3/short-urls/{код}.
+
+- id: read-found
+  about: Ссылка есть
+  steps:
+    - name: создать
+      create:
+        longUrl: "https://shop.example.invalid/${run}/read?x=1&y=2"
+        tags: [mail_sms]
+        validUntil: "2099-12-05T10:01:00+05:00"
+      save: &code5 {code: 'shortCode =~ ^[0-9a-zA-Z]{5}$'}
+    - name: GET
+      path: /rest/v3/short-urls/${code}
+      key: good
+    - name: GET по внутреннему имени сервиса (http://shlink)
+      path: /rest/v3/short-urls/${code}
+      host: shlink
+      key: good
+    - name: GET, обратившись на второй домен
+      path: /rest/v3/short-urls/${code}
+      host: sl.demo.test
+      key: good
+    - name: HEAD
+      method: HEAD
+      path: /rest/v3/short-urls/${code}
+      key: good
+    - name: косая черта в конце
+      path: /rest/v3/short-urls/${code}/
+      key: good
+      mask: {detail: 'cannot =~ ^Cannot [A-Z]+ https?://[^ ]+!$'}
+
+- id: read-not-found
+  about: Ссылки нет
+  steps:
+    - name: GET
+      path: /rest/v3/short-urls/x${run}
+      key: good
+    - name: код из другого регистра не подходит
+      create: {longUrl: "https://shop.example.invalid/${run}/read-case", customSlug: "ReadCase${run}"}
+    - name: тот же код строчными
+      path: /rest/v3/short-urls/readcase${run}
+      key: good
+
+- id: read-domain
+  about: Параметр domain при чтении
+  steps:
+    - name: создать ссылку второго домена
+      create: {longUrl: "https://shop.example.invalid/${run}/read-sl", domain: sl.demo.test}
+      save: {codeSl: 'shortCode =~ ^[0-9a-zA-Z]{5}$'}
+    - name: без domain — не найдена
+      path: /rest/v3/short-urls/${codeSl}
+      key: good
+    - name: с domain второго домена — найдена
+      path: /rest/v3/short-urls/${codeSl}?domain=sl.demo.test
+      key: good
+    - name: с основным доменом — не найдена
+      path: /rest/v3/short-urls/${codeSl}?domain=l.demo.test
+      key: good
+    - name: обращение на второй домен без domain — не найдена (Host не влияет)
+      path: /rest/v3/short-urls/${codeSl}
+      host: sl.demo.test
+      key: good
+    - name: создать ссылку основного домена
+      create: {longUrl: "https://shop.example.invalid/${run}/read-default"}
+      save: *code5
+    - name: основной домен указан явно — найдена
+      path: /rest/v3/short-urls/${code}?domain=l.demo.test
+      key: good
+    - name: ссылка основного домена с domain второго
+      path: /rest/v3/short-urls/${code}?domain=sl.demo.test
+      key: good
+    - name: с неизвестным доменом
+      path: /rest/v3/short-urls/${code}?domain=nobody.example.invalid
+      key: good
+
+- id: read-auth
+  about: Ключ API при чтении
+  steps:
+    - name: создать
+      create: {longUrl: "https://shop.example.invalid/${run}/read-auth"}
+      save: *code5
+    - name: без ключа
+      path: /rest/v3/short-urls/${code}
+    - name: неверный ключ
+      path: /rest/v3/short-urls/${code}
+      key: bad
+    - name: без ключа и ссылки нет — сначала проверяется ключ
+      path: /rest/v3/short-urls/x${run}

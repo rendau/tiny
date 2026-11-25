@@ -1,0 +1,97 @@
+{
+  "scenario": "redirect-max-visits",
+  "about": "maxVisits при выключенном учёте посещений не срабатывает",
+  "steps": [
+    {
+      "name": "создать ссылку с maxVisits=1",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "longUrl": "https://shop.example.invalid/${run}/visits",
+          "maxVisits": 1
+        }
+      },
+      "saved": {
+        "code": "shortCode =~ ^[0-9a-zA-Z]{5}$"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "365",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${code}",
+        "shortCode": "${code}",
+        "longUrl": "https://shop.example.invalid/${run}/visits",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": 1
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "первый переход",
+      "request": {
+        "method": "GET",
+        "path": "/${code}",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/visits",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "второй переход",
+      "request": {
+        "method": "GET",
+        "path": "/${code}",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/visits",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "третий переход",
+      "request": {
+        "method": "GET",
+        "path": "/${code}",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/visits",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "scenario": "redirect-unknown",
+  "about": "Кода нет — страница «ссылка не найдена»",
+  "steps": [
+    {
+      "name": "GET",
+      "request": {
+        "method": "GET",
+        "path": "/x${run}",
+        "host": "l.demo.test"
+      },
+      "status": 404,
+      "headers": {
+        "Content-Length": "1488",
+        "Content-Type": "text/html; charset=utf-8",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "text",
+      "body_file": "bodies/a974331f672f.html"
+    },
+    {
+      "name": "HEAD",
+      "request": {
+        "method": "HEAD",
+        "path": "/x${run}",
+        "host": "l.demo.test"
+      },
+      "status": 404,
+      "headers": {
+        "Content-Length": "0",
+        "Content-Type": "text/html; charset=utf-8",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "GET с параметрами",
+      "request": {
+        "method": "GET",
+        "path": "/x${run}?a=1",
+        "host": "l.demo.test"
+      },
+      "status": 404,
+      "headers": {
+        "Content-Length": "1488",
+        "Content-Type": "text/html; charset=utf-8",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "text",
+      "body_file": "bodies/a974331f672f.html"
+    },
+    {
+      "name": "код с дефисом",
+      "request": {
+        "method": "GET",
+        "path": "/nope-${run}",
+        "host": "l.demo.test"
+      },
+      "status": 404,
+      "headers": {
+        "Content-Length": "1488",
+        "Content-Type": "text/html; charset=utf-8",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "text",
+      "body_file": "bodies/a974331f672f.html"
+    },
+    {
+      "name": "на втором домене",
+      "request": {
+        "method": "GET",
+        "path": "/x${run}",
+        "host": "sl.demo.test"
+      },
+      "status": 404,
+      "headers": {
+        "Content-Length": "1488",
+        "Content-Type": "text/html; charset=utf-8",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "text",
+      "body_file": "bodies/a974331f672f.html"
+    }
+  ]
+}

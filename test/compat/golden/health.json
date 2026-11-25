@@ -1,0 +1,111 @@
+{
+  "scenario": "health",
+  "about": "Проба живости — её дёргает kubernetes",
+  "steps": [
+    {
+      "name": "GET",
+      "request": {
+        "method": "GET",
+        "path": "/rest/health",
+        "host": "l.demo.test"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "120",
+        "Content-Type": "application/health+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "status": "pass",
+        "version": "<version>",
+        "links": {
+          "about": "https://shlink.io",
+          "project": "https://github.com/shlinkio/shlink"
+        }
+      }
+    },
+    {
+      "name": "HEAD",
+      "request": {
+        "method": "HEAD",
+        "path": "/rest/health",
+        "host": "l.demo.test"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "0",
+        "Content-Type": "application/health+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "на втором домене",
+      "request": {
+        "method": "GET",
+        "path": "/rest/health",
+        "host": "sl.demo.test"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "120",
+        "Content-Type": "application/health+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "status": "pass",
+        "version": "<version>",
+        "links": {
+          "about": "https://shlink.io",
+          "project": "https://github.com/shlinkio/shlink"
+        }
+      }
+    },
+    {
+      "name": "по внутреннему имени сервиса (http://shlink)",
+      "request": {
+        "method": "GET",
+        "path": "/rest/health",
+        "host": "shlink"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "120",
+        "Content-Type": "application/health+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "status": "pass",
+        "version": "<version>",
+        "links": {
+          "about": "https://shlink.io",
+          "project": "https://github.com/shlinkio/shlink"
+        }
+      }
+    },
+    {
+      "name": "POST — метод не поддерживается",
+      "request": {
+        "method": "POST",
+        "path": "/rest/health",
+        "host": "l.demo.test"
+      },
+      "status": 404,
+      "headers": {
+        "Content-Length": "131",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "title": "Not Found",
+        "type": "https://shlink.io/api/error/not-found",
+        "status": 404,
+        "detail": "<cannot>"
+      }
+    }
+  ]
+}

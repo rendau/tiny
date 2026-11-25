@@ -1,0 +1,62 @@
+{
+  "scenario": "create-unknown-fields",
+  "about": "Неизвестные поля не мешают",
+  "steps": [
+    {
+      "name": "создать",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "dateCreated": "2020-01-01T00:00:00+00:00",
+          "foo": "bar",
+          "longUrl": "https://shop.example.invalid/${run}/unknown",
+          "nested": {
+            "a": 1,
+            "b": [
+              1,
+              2
+            ]
+          },
+          "shortCode": "zzzzz",
+          "shortUrl": "https://l.demo.test/zzzzz"
+        }
+      },
+      "saved": {
+        "code": "shortCode =~ ^[0-9a-zA-Z]{5}$"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "369",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${code}",
+        "shortCode": "${code}",
+        "longUrl": "https://shop.example.invalid/${run}/unknown",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    }
+  ]
+}

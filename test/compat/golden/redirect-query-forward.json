@@ -1,0 +1,351 @@
+{
+  "scenario": "redirect-query-forward",
+  "about": "Параметры короткой ссылки дописываются к длинному адресу (в нём своих параметров нет)",
+  "steps": [
+    {
+      "name": "создать ссылку",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "longUrl": "https://shop.example.invalid/${run}/forward"
+        }
+      },
+      "saved": {
+        "code": "shortCode =~ ^[0-9a-zA-Z]{5}$"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "369",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${code}",
+        "shortCode": "${code}",
+        "longUrl": "https://shop.example.invalid/${run}/forward",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "два параметра",
+      "request": {
+        "method": "GET",
+        "path": "/${code}?utm=1&x=2",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/forward?utm=1&x=2",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "HEAD с параметрами",
+      "request": {
+        "method": "HEAD",
+        "path": "/${code}?utm=1&x=2",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/forward?utm=1&x=2",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "один ключ дважды",
+      "request": {
+        "method": "GET",
+        "path": "/${code}?a=1&a=2",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/forward?a=1&a=2",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "ключ со скобками",
+      "request": {
+        "method": "GET",
+        "path": "/${code}?a[]=1&a[]=2",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/forward?a%5B%5D=1&a%5B%5D=2",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "ключ со скобками в закодированном виде",
+      "request": {
+        "method": "GET",
+        "path": "/${code}?a%5B%5D=1&a%5B%5D=2",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/forward?a%5B%5D=1&a%5B%5D=2",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "ключ без значения",
+      "request": {
+        "method": "GET",
+        "path": "/${code}?flag",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/forward?flag",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "пустое значение",
+      "request": {
+        "method": "GET",
+        "path": "/${code}?e=",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/forward?e=",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "пробел как плюс",
+      "request": {
+        "method": "GET",
+        "path": "/${code}?sp=a+b",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/forward?sp=a%20b",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "пробел как %20",
+      "request": {
+        "method": "GET",
+        "path": "/${code}?sp=a%20b",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/forward?sp=a%20b",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "закодированный плюс",
+      "request": {
+        "method": "GET",
+        "path": "/${code}?pl=a%2Bb",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/forward?pl=a%2Bb",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "кириллица в значении",
+      "request": {
+        "method": "GET",
+        "path": "/${code}?q=%D1%81%D1%82%D0%B8%D1%80%D0%B0%D0%BB%D1%8C%D0%BD%D0%B0%D1%8F%20%D0%BC%D0%B0%D1%88%D0%B8%D0%BD%D0%B0",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/forward?q=%D1%81%D1%82%D0%B8%D1%80%D0%B0%D0%BB%D1%8C%D0%BD%D0%B0%D1%8F%20%D0%BC%D0%B0%D1%88%D0%B8%D0%BD%D0%B0",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "кириллица в ключе",
+      "request": {
+        "method": "GET",
+        "path": "/${code}?%D0%BA%D0%BB%D1%8E%D1%87=1",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/forward?%D0%BA%D0%BB%D1%8E%D1%87=1",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "точка и подчёркивание в ключах",
+      "request": {
+        "method": "GET",
+        "path": "/${code}?x.y=1&x_y=2",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/forward?x.y=1&x_y=2",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "ключи разного регистра",
+      "request": {
+        "method": "GET",
+        "path": "/${code}?A=1&a=2",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/forward?A=1&a=2",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "адрес в значении",
+      "request": {
+        "method": "GET",
+        "path": "/${code}?url=https%3A%2F%2Fx.example.invalid%2F%3Fq%3D1%26w%3D2",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/forward?url=https%3A%2F%2Fx.example.invalid%2F%3Fq%3D1%26w%3D2",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "знак равно в значении",
+      "request": {
+        "method": "GET",
+        "path": "/${code}?a=b=c",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/forward?a=b%3Dc",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "числовые ключи",
+      "request": {
+        "method": "GET",
+        "path": "/${code}?1=a&2=b",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/forward?1=a&2=b",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "вопросительный знак без параметров",
+      "request": {
+        "method": "GET",
+        "path": "/${code}?",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/forward",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "два амперсанда подряд",
+      "request": {
+        "method": "GET",
+        "path": "/${code}?a=1&&b=2",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/forward?a=1&&b=2",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "метки рассылки",
+      "request": {
+        "method": "GET",
+        "path": "/${code}?utm_source=sms&utm_medium=mail&utm_campaign=black_friday_2026",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/forward?utm_source=sms&utm_medium=mail&utm_campaign=black_friday_2026",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    }
+  ]
+}

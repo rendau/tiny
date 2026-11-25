@@ -1,0 +1,587 @@
+{
+  "scenario": "create-find-if-exists-different",
+  "about": "findIfExists — при других метках, сроке, maxVisits или домене создаётся новая ссылка",
+  "steps": [
+    {
+      "name": "первая ссылка",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "findIfExists": true,
+          "longUrl": "https://shop.example.invalid/${run}/fie-diff",
+          "tags": [
+            "compat-a",
+            "compat-b"
+          ],
+          "validUntil": "2099-12-05T10:01:00+05:00"
+        }
+      },
+      "saved": {
+        "code": "shortCode =~ ^[0-9a-zA-Z]{5}$"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "414",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${code}",
+        "shortCode": "${code}",
+        "longUrl": "https://shop.example.invalid/${run}/fie-diff",
+        "dateCreated": "<now+00:00>",
+        "tags": [
+          "compat-a",
+          "compat-b"
+        ],
+        "meta": {
+          "validSince": null,
+          "validUntil": "2099-12-05T05:01:00+00:00",
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "меток меньше — новая ссылка",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "findIfExists": true,
+          "longUrl": "https://shop.example.invalid/${run}/fie-diff",
+          "tags": [
+            "compat-a"
+          ],
+          "validUntil": "2099-12-05T10:01:00+05:00"
+        }
+      },
+      "saved": {
+        "codeFewer": "shortCode =~ ^[0-9a-zA-Z]{5}$"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "403",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${codeFewer}",
+        "shortCode": "${codeFewer}",
+        "longUrl": "https://shop.example.invalid/${run}/fie-diff",
+        "dateCreated": "<now+00:00>",
+        "tags": [
+          "compat-a"
+        ],
+        "meta": {
+          "validSince": null,
+          "validUntil": "2099-12-05T05:01:00+00:00",
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "меток больше — новая ссылка",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "findIfExists": true,
+          "longUrl": "https://shop.example.invalid/${run}/fie-diff",
+          "tags": [
+            "compat-a",
+            "compat-b",
+            "mail_sms"
+          ],
+          "validUntil": "2099-12-05T10:01:00+05:00"
+        }
+      },
+      "saved": {
+        "codeMore": "shortCode =~ ^[0-9a-zA-Z]{5}$"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "425",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${codeMore}",
+        "shortCode": "${codeMore}",
+        "longUrl": "https://shop.example.invalid/${run}/fie-diff",
+        "dateCreated": "<now+00:00>",
+        "tags": [
+          "compat-a",
+          "compat-b",
+          "mail_sms"
+        ],
+        "meta": {
+          "validSince": null,
+          "validUntil": "2099-12-05T05:01:00+00:00",
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "другой срок — новая ссылка",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "findIfExists": true,
+          "longUrl": "https://shop.example.invalid/${run}/fie-diff",
+          "tags": [
+            "compat-a",
+            "compat-b"
+          ],
+          "validUntil": "2099-12-06T10:01:00+05:00"
+        }
+      },
+      "saved": {
+        "codeDate": "shortCode =~ ^[0-9a-zA-Z]{5}$"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "414",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${codeDate}",
+        "shortCode": "${codeDate}",
+        "longUrl": "https://shop.example.invalid/${run}/fie-diff",
+        "dateCreated": "<now+00:00>",
+        "tags": [
+          "compat-a",
+          "compat-b"
+        ],
+        "meta": {
+          "validSince": null,
+          "validUntil": "2099-12-06T05:01:00+00:00",
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "прислан validSince — новая ссылка",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "findIfExists": true,
+          "longUrl": "https://shop.example.invalid/${run}/fie-diff",
+          "validSince": "2020-01-01T00:00:00+05:00"
+        }
+      },
+      "saved": {
+        "codeSince": "shortCode =~ ^[0-9a-zA-Z]{5}$"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "393",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${codeSince}",
+        "shortCode": "${codeSince}",
+        "longUrl": "https://shop.example.invalid/${run}/fie-diff",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": "2019-12-31T19:00:00+00:00",
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "тот же validSince ещё раз — та же, что шагом выше",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "findIfExists": true,
+          "longUrl": "https://shop.example.invalid/${run}/fie-diff",
+          "validSince": "2020-01-01T00:00:00+05:00"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "393",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${codeSince}",
+        "shortCode": "${codeSince}",
+        "longUrl": "https://shop.example.invalid/${run}/fie-diff",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": "2019-12-31T19:00:00+00:00",
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "прислан maxVisits — новая ссылка",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "findIfExists": true,
+          "longUrl": "https://shop.example.invalid/${run}/fie-diff",
+          "maxVisits": 3
+        }
+      },
+      "saved": {
+        "codeVisits": "shortCode =~ ^[0-9a-zA-Z]{5}$"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "367",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${codeVisits}",
+        "shortCode": "${codeVisits}",
+        "longUrl": "https://shop.example.invalid/${run}/fie-diff",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": 3
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "тот же maxVisits ещё раз — та же, что шагом выше",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "findIfExists": true,
+          "longUrl": "https://shop.example.invalid/${run}/fie-diff",
+          "maxVisits": 3
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "367",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${codeVisits}",
+        "shortCode": "${codeVisits}",
+        "longUrl": "https://shop.example.invalid/${run}/fie-diff",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": 3
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "второй домен — новая ссылка",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "domain": "sl.demo.test",
+          "findIfExists": true,
+          "longUrl": "https://shop.example.invalid/${run}/fie-diff"
+        }
+      },
+      "saved": {
+        "codeSl": "shortCode =~ ^[0-9a-zA-Z]{5}$"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "381",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://sl.demo.test/${codeSl}",
+        "shortCode": "${codeSl}",
+        "longUrl": "https://shop.example.invalid/${run}/fie-diff",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": "sl.demo.test",
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "второй домен ещё раз — та же, что шагом выше",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "domain": "sl.demo.test",
+          "findIfExists": true,
+          "longUrl": "https://shop.example.invalid/${run}/fie-diff"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "381",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://sl.demo.test/${codeSl}",
+        "shortCode": "${codeSl}",
+        "longUrl": "https://shop.example.invalid/${run}/fie-diff",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": "sl.demo.test",
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "другой длинный адрес — новая ссылка",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "findIfExists": true,
+          "longUrl": "https://shop.example.invalid/${run}/fie-diff?x=1"
+        }
+      },
+      "saved": {
+        "codeUrl": "shortCode =~ ^[0-9a-zA-Z]{5}$"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "374",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${codeUrl}",
+        "shortCode": "${codeUrl}",
+        "longUrl": "https://shop.example.invalid/${run}/fie-diff?x=1",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "только адрес — возвращается самая первая ссылка",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "findIfExists": true,
+          "longUrl": "https://shop.example.invalid/${run}/fie-diff"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "414",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${code}",
+        "shortCode": "${code}",
+        "longUrl": "https://shop.example.invalid/${run}/fie-diff",
+        "dateCreated": "<now+00:00>",
+        "tags": [
+          "compat-a",
+          "compat-b"
+        ],
+        "meta": {
+          "validSince": null,
+          "validUntil": "2099-12-05T05:01:00+00:00",
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    }
+  ]
+}

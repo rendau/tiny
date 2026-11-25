@@ -1,0 +1,169 @@
+{
+  "scenario": "redirect-case",
+  "about": "Регистр кода важен — aBcDe и abcde это разные ссылки",
+  "steps": [
+    {
+      "name": "создать ссылку aBcDe…",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "customSlug": "aBcDe${run}",
+          "longUrl": "https://shop.example.invalid/${run}/case-mixed"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "384",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/aBcDe${run}",
+        "shortCode": "aBcDe${run}",
+        "longUrl": "https://shop.example.invalid/${run}/case-mixed",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "тот же регистр",
+      "request": {
+        "method": "GET",
+        "path": "/aBcDe${run}",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/case-mixed",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "всё строчными — такой ссылки нет",
+      "request": {
+        "method": "GET",
+        "path": "/abcde${run}",
+        "host": "l.demo.test"
+      },
+      "status": 404,
+      "headers": {
+        "Content-Length": "1488",
+        "Content-Type": "text/html; charset=utf-8",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "text",
+      "body_file": "bodies/a974331f672f.html"
+    },
+    {
+      "name": "всё прописными в начале — такой ссылки нет",
+      "request": {
+        "method": "GET",
+        "path": "/ABCDE${run}",
+        "host": "l.demo.test"
+      },
+      "status": 404,
+      "headers": {
+        "Content-Length": "1488",
+        "Content-Type": "text/html; charset=utf-8",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "text",
+      "body_file": "bodies/a974331f672f.html"
+    },
+    {
+      "name": "создать вторую ссылку — abcde…",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "customSlug": "abcde${run}",
+          "longUrl": "https://shop.example.invalid/${run}/case-lower"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "384",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/abcde${run}",
+        "shortCode": "abcde${run}",
+        "longUrl": "https://shop.example.invalid/${run}/case-lower",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "первая ведёт на свой адрес",
+      "request": {
+        "method": "GET",
+        "path": "/aBcDe${run}",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/case-mixed",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "вторая — на свой",
+      "request": {
+        "method": "GET",
+        "path": "/abcde${run}",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/case-lower",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    }
+  ]
+}

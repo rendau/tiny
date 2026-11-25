@@ -1,0 +1,32 @@
+{
+  "scenario": "favicon",
+  "about": "Значок сайта — сама картинка не сравнивается, только код ответа и тип",
+  "steps": [
+    {
+      "name": "GET",
+      "request": {
+        "method": "GET",
+        "path": "/favicon.ico",
+        "host": "l.demo.test"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Type": "image/vnd.microsoft.icon"
+      },
+      "body_kind": "ignored"
+    },
+    {
+      "name": "HEAD",
+      "request": {
+        "method": "HEAD",
+        "path": "/favicon.ico",
+        "host": "l.demo.test"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Type": "image/vnd.microsoft.icon"
+      },
+      "body_kind": "empty"
+    }
+  ]
+}

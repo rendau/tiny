@@ -21,3 +21,9 @@ cover.html
 
 # локальный тулчейн proto (make proto-tools)
 /bin/
+
+# сборка интерфейса админки (make build-admin)
+/admin-ui/
+
+# внутренние сведения о боевом контуре — только локально
+CLAUDE.local.md

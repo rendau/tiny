@@ -1,0 +1,69 @@
+{
+  "scenario": "robots-default",
+  "about": "robots.txt, когда ссылок с crawlable=true нет",
+  "steps": [
+    {
+      "name": "GET",
+      "request": {
+        "method": "GET",
+        "path": "/robots.txt",
+        "host": "l.demo.test"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Type": "text/plain",
+        "Transfer-Encoding": "chunked",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "text",
+      "body_text": "# For more information about the robots.txt standard, see:\n# https://www.robotstxt.org/orig.html\n\nUser-agent: *\nDisallow: /"
+    },
+    {
+      "name": "HEAD",
+      "request": {
+        "method": "HEAD",
+        "path": "/robots.txt",
+        "host": "l.demo.test"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "0",
+        "Content-Type": "text/plain",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "на втором домене",
+      "request": {
+        "method": "GET",
+        "path": "/robots.txt",
+        "host": "sl.demo.test"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Type": "text/plain",
+        "Transfer-Encoding": "chunked",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "text",
+      "body_text": "# For more information about the robots.txt standard, see:\n# https://www.robotstxt.org/orig.html\n\nUser-agent: *\nDisallow: /"
+    },
+    {
+      "name": "POST — метод не поддерживается",
+      "request": {
+        "method": "POST",
+        "path": "/robots.txt",
+        "host": "l.demo.test"
+      },
+      "status": 404,
+      "headers": {
+        "Content-Length": "1428",
+        "Content-Type": "text/html; charset=utf-8",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "text",
+      "body_file": "bodies/cb22168235ad.html"
+    }
+  ]
+}

@@ -1,0 +1,215 @@
+{
+  "scenario": "read-found",
+  "about": "Ссылка есть",
+  "steps": [
+    {
+      "name": "создать",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "longUrl": "https://shop.example.invalid/${run}/read?x=1&y=2",
+          "tags": [
+            "mail_sms"
+          ],
+          "validUntil": "2099-12-05T10:01:00+05:00"
+        }
+      },
+      "saved": {
+        "code": "shortCode =~ ^[0-9a-zA-Z]{5}$"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "412",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${code}",
+        "shortCode": "${code}",
+        "longUrl": "https://shop.example.invalid/${run}/read?x=1&y=2",
+        "dateCreated": "<now+00:00>",
+        "tags": [
+          "mail_sms"
+        ],
+        "meta": {
+          "validSince": null,
+          "validUntil": "2099-12-05T05:01:00+00:00",
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "GET",
+      "request": {
+        "method": "GET",
+        "path": "/rest/v3/short-urls/${code}",
+        "host": "l.demo.test",
+        "key": "good"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "412",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${code}",
+        "shortCode": "${code}",
+        "longUrl": "https://shop.example.invalid/${run}/read?x=1&y=2",
+        "dateCreated": "<now+00:00>",
+        "tags": [
+          "mail_sms"
+        ],
+        "meta": {
+          "validSince": null,
+          "validUntil": "2099-12-05T05:01:00+00:00",
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "GET по внутреннему имени сервиса (http://shlink)",
+      "request": {
+        "method": "GET",
+        "path": "/rest/v3/short-urls/${code}",
+        "host": "shlink",
+        "key": "good"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "412",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${code}",
+        "shortCode": "${code}",
+        "longUrl": "https://shop.example.invalid/${run}/read?x=1&y=2",
+        "dateCreated": "<now+00:00>",
+        "tags": [
+          "mail_sms"
+        ],
+        "meta": {
+          "validSince": null,
+          "validUntil": "2099-12-05T05:01:00+00:00",
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "GET, обратившись на второй домен",
+      "request": {
+        "method": "GET",
+        "path": "/rest/v3/short-urls/${code}",
+        "host": "sl.demo.test",
+        "key": "good"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "412",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${code}",
+        "shortCode": "${code}",
+        "longUrl": "https://shop.example.invalid/${run}/read?x=1&y=2",
+        "dateCreated": "<now+00:00>",
+        "tags": [
+          "mail_sms"
+        ],
+        "meta": {
+          "validSince": null,
+          "validUntil": "2099-12-05T05:01:00+00:00",
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "HEAD",
+      "request": {
+        "method": "HEAD",
+        "path": "/rest/v3/short-urls/${code}",
+        "host": "l.demo.test",
+        "key": "good"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "0",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "косая черта в конце",
+      "request": {
+        "method": "GET",
+        "path": "/rest/v3/short-urls/${code}/",
+        "host": "l.demo.test",
+        "key": "good"
+      },
+      "status": 404,
+      "headers": {
+        "Content-Length": "144",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "title": "Not Found",
+        "type": "https://shlink.io/api/error/not-found",
+        "status": 404,
+        "detail": "<cannot>"
+      }
+    }
+  ]
+}

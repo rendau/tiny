@@ -1,0 +1,387 @@
+{
+  "scenario": "create-custom-slug",
+  "about": "customSlug — свой код вместо случайного",
+  "steps": [
+    {
+      "name": "создать",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "customSlug": "Slug-${run}",
+          "longUrl": "https://shop.example.invalid/${run}/slug"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "378",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/Slug-${run}",
+        "shortCode": "Slug-${run}",
+        "longUrl": "https://shop.example.invalid/${run}/slug",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "переход",
+      "request": {
+        "method": "GET",
+        "path": "/Slug-${run}",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/slug",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "в другом регистре — не найдена",
+      "request": {
+        "method": "GET",
+        "path": "/slug-${run}",
+        "host": "l.demo.test"
+      },
+      "status": 404,
+      "headers": {
+        "Content-Length": "1488",
+        "Content-Type": "text/html; charset=utf-8",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "text",
+      "body_file": "bodies/a974331f672f.html"
+    },
+    {
+      "name": "пробелы заменяются дефисами",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "customSlug": "my slug ${run}",
+          "longUrl": "https://shop.example.invalid/${run}/slug-space"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "390",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/my-slug-${run}",
+        "shortCode": "my-slug-${run}",
+        "longUrl": "https://shop.example.invalid/${run}/slug-space",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "переход по коду с дефисами",
+      "request": {
+        "method": "GET",
+        "path": "/my-slug-${run}",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/slug-space",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "косая черта заменяется дефисом",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "customSlug": "a/b/${run}",
+          "longUrl": "https://shop.example.invalid/${run}/slug-slash"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "382",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/a-b-${run}",
+        "shortCode": "a-b-${run}",
+        "longUrl": "https://shop.example.invalid/${run}/slug-slash",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "shortCodeLength при своём коде не действует",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "customSlug": "len-${run}",
+          "longUrl": "https://shop.example.invalid/${run}/slug-len",
+          "shortCodeLength": 4
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "380",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/len-${run}",
+        "shortCode": "len-${run}",
+        "longUrl": "https://shop.example.invalid/${run}/slug-len",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "кириллица в коде",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "customSlug": "ссылка-${run}",
+          "longUrl": "https://shop.example.invalid/${run}/slug-cyr"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "446",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/ссылка-${run}",
+        "shortCode": "ссылка-${run}",
+        "longUrl": "https://shop.example.invalid/${run}/slug-cyr",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "переход по коду с кириллицей",
+      "request": {
+        "method": "GET",
+        "path": "/%D1%81%D1%81%D1%8B%D0%BB%D0%BA%D0%B0-${run}",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/slug-cyr",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "подчёркивание, точка и тильда в коде",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "customSlug": "a_b.c~${run}",
+          "longUrl": "https://shop.example.invalid/${run}/slug-punct"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "386",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/a_b.c~${run}",
+        "shortCode": "a_b.c~${run}",
+        "longUrl": "https://shop.example.invalid/${run}/slug-punct",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "переход по такому коду",
+      "request": {
+        "method": "GET",
+        "path": "/a_b.c~${run}",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/slug-punct",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    },
+    {
+      "name": "значение null — код случайный",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "customSlug": null,
+          "longUrl": "https://shop.example.invalid/${run}/slug-null"
+        }
+      },
+      "saved": {
+        "code": "shortCode =~ ^[0-9a-zA-Z]{5}$"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "371",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${code}",
+        "shortCode": "${code}",
+        "longUrl": "https://shop.example.invalid/${run}/slug-null",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    }
+  ]
+}

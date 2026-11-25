@@ -1,0 +1,77 @@
+{
+  "scenario": "rest-methods",
+  "about": "Методы, которых у адреса создания ссылок нет",
+  "steps": [
+    {
+      "name": "PUT",
+      "request": {
+        "method": "PUT",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "longUrl": "https://shop.example.invalid/${run}/put"
+        }
+      },
+      "status": 404,
+      "headers": {
+        "Content-Length": "137",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "title": "Not Found",
+        "type": "https://shlink.io/api/error/not-found",
+        "status": 404,
+        "detail": "<cannot>"
+      }
+    },
+    {
+      "name": "DELETE без кода",
+      "request": {
+        "method": "DELETE",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good"
+      },
+      "status": 404,
+      "headers": {
+        "Content-Length": "140",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "title": "Not Found",
+        "type": "https://shlink.io/api/error/not-found",
+        "status": 404,
+        "detail": "<cannot>"
+      }
+    },
+    {
+      "name": "OPTIONS (предварительный запрос браузера)",
+      "request": {
+        "method": "OPTIONS",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "headers": {
+          "Access-Control-Request-Headers": "content-type, x-api-key",
+          "Access-Control-Request-Method": "POST",
+          "Origin": "https://admin.example.invalid"
+        }
+      },
+      "status": 204,
+      "headers": {
+        "Access-Control-Allow-Headers": "content-type, x-api-key",
+        "Access-Control-Allow-Methods": "GET,POST",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Max-Age": "3600",
+        "Allow": "GET,POST",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    }
+  ]
+}

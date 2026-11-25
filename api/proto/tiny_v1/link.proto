@@ -1,0 +1,154 @@
+syntax = "proto3";
+
+package tiny_v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "common/common.proto";
+
+option go_package = "/tiny_v1";
+
+// LinkService — управление короткими ссылками из админки (нужен вход).
+// Публичная часть (переход по ссылке и /rest/v3/*, совместимые с Shlink) — не здесь, а на PUBLIC_PORT.
+service LinkService {
+  rpc List(LinkListReq) returns (LinkListRep) {
+    option (google.api.http) = {
+      get: "/link"
+    };
+  }
+
+  rpc Get(LinkGetReq) returns (LinkMain) {
+    option (google.api.http) = {
+      get: "/link/{id}"
+    };
+  }
+
+  rpc Create(LinkCreateReq) returns (LinkCreateRep) {
+    option (google.api.http) = {
+      post: "/link"
+      body: "*"
+    };
+  }
+
+  // Update — полная замена изменяемых полей; код и домен ссылки не меняются
+  rpc Update(LinkUpdateReq) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/link/{id}"
+      body: "*"
+    };
+  }
+
+  rpc Delete(LinkGetReq) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/link/{id}"
+    };
+  }
+}
+
+// TagService — метки, которые встречаются у ссылок (для фильтра и подсказок в админке)
+service TagService {
+  rpc List(TagListReq) returns (TagListRep) {
+    option (google.api.http) = {
+      get: "/tag"
+    };
+  }
+}
+
+message LinkMain {
+  int64 id = 1;
+  google.protobuf.Timestamp created_at = 2;
+  google.protobuf.Timestamp modified_at = 3;
+  // пусто — ссылка основного домена
+  string domain = 4;
+  string short_code = 5;
+  // полный короткий адрес, например https://l.demo.test/aBc12 (собирает сервер)
+  string short_url = 6;
+  string long_url = 7;
+  string title = 8;
+  repeated string tags = 9;
+  // с какого и до какого времени ссылка работает; не задано — без ограничения
+  google.protobuf.Timestamp valid_since = 10;
+  google.protobuf.Timestamp valid_until = 11;
+  optional int32 max_visits = 12;
+  bool crawlable = 13;
+  // дописывать ли параметры запроса короткой ссылки к длинному адресу
+  bool forward_query = 14;
+}
+
+// List
+
+message LinkListReq {
+  common.ListParamsSt list_params = 1;
+  // подстрока в длинном адресе или названии
+  optional string search = 2;
+  // точный код
+  optional string short_code = 3;
+  // ссылки с этой меткой
+  optional string tag = 4;
+  // true — только истёкшие (valid_until в прошлом), false — только действующие
+  optional bool expired = 5;
+  optional string domain = 6;
+}
+
+message LinkListRep {
+  common.PaginationInfoSt pagination_info = 1;
+  repeated LinkMain results = 2;
+}
+
+// Get (и Delete)
+
+message LinkGetReq {
+  int64 id = 1;
+}
+
+// Create
+
+message LinkCreateReq {
+  string long_url = 1;
+  // свой код; пусто — сгенерировать
+  optional string short_code = 2;
+  // длина генерируемого кода (не меньше 4); не задано — DEFAULT_SHORT_CODES_LENGTH
+  optional int32 short_code_length = 3;
+  optional string domain = 4;
+  optional string title = 5;
+  repeated string tags = 6;
+  google.protobuf.Timestamp valid_since = 7;
+  google.protobuf.Timestamp valid_until = 8;
+  optional int32 max_visits = 9;
+  optional bool crawlable = 10;
+  // не задано — true
+  optional bool forward_query = 11;
+}
+
+message LinkCreateRep {
+  int64 id = 1;
+  string short_code = 2;
+  string short_url = 3;
+}
+
+// Update
+
+message LinkUpdateReq {
+  int64 id = 1;
+  string long_url = 2;
+  string title = 3;
+  repeated string tags = 4;
+  // не задано — ограничение снимается
+  google.protobuf.Timestamp valid_since = 5;
+  google.protobuf.Timestamp valid_until = 6;
+  optional int32 max_visits = 7;
+  bool crawlable = 8;
+  bool forward_query = 9;
+}
+
+// Tag
+
+message TagListReq {
+  // подстрока в названии метки
+  optional string search = 1;
+}
+
+message TagListRep {
+  repeated string results = 1;
+}

@@ -1,0 +1,113 @@
+# Служебные адреса: проба живости, robots.txt, значок, корень, чужие пути и методы.
+# Идёт первым: robots.txt здесь проверяется, пока в этом прогоне нет ссылок с crawlable=true.
+#
+# У ответа «нет такого адреса API» поле detail выглядит как "Cannot POST http://l.demo.test/health!":
+# в нём схема и хост запроса, которые зависят от того, что стоит перед сервисом. Поэтому оно
+# сверяется только по виду (правило mask), а не буква в букву.
+
+- id: health
+  about: Проба живости — её дёргает kubernetes
+  steps:
+    - name: GET
+      path: /rest/health
+      mask: &version {version: 'version =~ ^\d+\.\d+\.\d+$'}
+    - name: HEAD
+      method: HEAD
+      path: /rest/health
+    - name: на втором домене
+      path: /rest/health
+      host: sl.demo.test
+      mask: *version
+    - name: по внутреннему имени сервиса (http://shlink)
+      path: /rest/health
+      host: shlink
+      mask: *version
+    - name: POST — метод не поддерживается
+      method: POST
+      path: /rest/health
+      mask: &cannot {detail: 'cannot =~ ^Cannot [A-Z]+ https?://[^ ]+!$'}
+
+- id: robots-default
+  about: robots.txt, когда ссылок с crawlable=true нет
+  steps:
+    - name: GET
+      path: /robots.txt
+      only_this_run_lines: '^Allow: /'
+    - name: HEAD
+      method: HEAD
+      path: /robots.txt
+    - name: на втором домене
+      path: /robots.txt
+      host: sl.demo.test
+      only_this_run_lines: '^Allow: /'
+    - name: POST — метод не поддерживается
+      method: POST
+      path: /robots.txt
+
+- id: favicon
+  about: Значок сайта — сама картинка не сравнивается, только код ответа и тип
+  steps:
+    - name: GET
+      path: /favicon.ico
+      skip_body: true
+      only_headers: [Content-Type]
+    - name: HEAD
+      method: HEAD
+      path: /favicon.ico
+      only_headers: [Content-Type]
+
+- id: root
+  about: Корень сайта — страницы там нет
+  steps:
+    - name: GET
+      path: /
+    - name: HEAD
+      method: HEAD
+      path: /
+    - name: на втором домене
+      path: /
+      host: sl.demo.test
+    - name: POST
+      method: POST
+      path: /
+
+- id: unknown-paths
+  about: Адреса, которых нет (в основном сюда стучатся боты)
+  steps:
+    - name: путь из нескольких частей
+      path: /some/deep/path
+    - name: файл, который ищут боты
+      path: /.env
+    - name: php-страница
+      path: /index.php
+    - name: /rest без продолжения
+      path: /rest
+    - name: неизвестный адрес API с ключом
+      path: /rest/v3/unknown-${run}
+      key: good
+      mask: *cannot
+    - name: неизвестный адрес API без ключа
+      path: /rest/v3/unknown-${run}
+      mask: *cannot
+
+- id: rest-methods
+  about: Методы, которых у адреса создания ссылок нет
+  steps:
+    - name: PUT
+      method: PUT
+      path: /rest/v3/short-urls
+      key: good
+      json: {longUrl: "https://shop.example.invalid/${run}/put"}
+      mask: *cannot
+    - name: DELETE без кода
+      method: DELETE
+      path: /rest/v3/short-urls
+      key: good
+      mask: *cannot
+    - name: OPTIONS (предварительный запрос браузера)
+      method: OPTIONS
+      path: /rest/v3/short-urls
+      headers:
+        Origin: https://admin.example.invalid
+        Access-Control-Request-Method: POST
+        Access-Control-Request-Headers: content-type, x-api-key

@@ -1,0 +1,184 @@
+{
+  "scenario": "create-long-url-invalid",
+  "about": "Пустой, отсутствующий и неверный longUrl",
+  "steps": [
+    {
+      "name": "пустая строка",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "longUrl": ""
+        }
+      },
+      "status": 400,
+      "headers": {
+        "Content-Length": "155",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "invalidElements": [
+          "longUrl"
+        ],
+        "title": "Invalid data",
+        "type": "https://shlink.io/api/error/invalid-data",
+        "status": 400,
+        "detail": "Provided data is not valid"
+      }
+    },
+    {
+      "name": "поля нет",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "tags": [
+            "mail_sms"
+          ]
+        }
+      },
+      "status": 400,
+      "headers": {
+        "Content-Length": "155",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "invalidElements": [
+          "longUrl"
+        ],
+        "title": "Invalid data",
+        "type": "https://shlink.io/api/error/invalid-data",
+        "status": 400,
+        "detail": "Provided data is not valid"
+      }
+    },
+    {
+      "name": "значение null",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "longUrl": null
+        }
+      },
+      "status": 400,
+      "headers": {
+        "Content-Length": "155",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "invalidElements": [
+          "longUrl"
+        ],
+        "title": "Invalid data",
+        "type": "https://shlink.io/api/error/invalid-data",
+        "status": 400,
+        "detail": "Provided data is not valid"
+      }
+    },
+    {
+      "name": "без схемы",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "longUrl": "shop.example.invalid/${run}/noscheme"
+        }
+      },
+      "status": 400,
+      "headers": {
+        "Content-Length": "155",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "invalidElements": [
+          "longUrl"
+        ],
+        "title": "Invalid data",
+        "type": "https://shlink.io/api/error/invalid-data",
+        "status": 400,
+        "detail": "Provided data is not valid"
+      }
+    },
+    {
+      "name": "просто текст",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "longUrl": "просто текст ${run}"
+        }
+      },
+      "status": 400,
+      "headers": {
+        "Content-Length": "155",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "invalidElements": [
+          "longUrl"
+        ],
+        "title": "Invalid data",
+        "type": "https://shlink.io/api/error/invalid-data",
+        "status": 400,
+        "detail": "Provided data is not valid"
+      }
+    },
+    {
+      "name": "список",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "longUrl": [
+            "https://shop.example.invalid/${run}/list"
+          ]
+        }
+      },
+      "status": 400,
+      "headers": {
+        "Content-Length": "155",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "invalidElements": [
+          "longUrl"
+        ],
+        "title": "Invalid data",
+        "type": "https://shlink.io/api/error/invalid-data",
+        "status": 400,
+        "detail": "Provided data is not valid"
+      }
+    }
+  ]
+}

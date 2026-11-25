@@ -1,0 +1,3871 @@
+{
+ "shlink": "shlinkio/shlink:5.1.8-roadrunner",
+ "host": "localhost:18083",
+ "defaultDomain": "l.demo.test",
+ "timezone": "Asia/Almaty",
+ "cases": [
+  {
+   "name": "health",
+   "method": "GET",
+   "path": "/rest/health",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "120",
+    "Content-Type": "application/health+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"status\":\"pass\",\"version\":\"5.1.8\",\"links\":{\"about\":\"https://shlink.io\",\"project\":\"https://github.com/shlinkio/shlink\"}}"
+  },
+  {
+   "name": "health-head",
+   "method": "HEAD",
+   "path": "/rest/health",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Content-Type": "application/health+json"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "health-v3",
+   "method": "GET",
+   "path": "/rest/v3/health",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "120",
+    "Content-Type": "application/health+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"status\":\"pass\",\"version\":\"5.1.8\",\"links\":{\"about\":\"https://shlink.io\",\"project\":\"https://github.com/shlinkio/shlink\"}}"
+  },
+  {
+   "name": "health-post",
+   "method": "POST",
+   "path": "/rest/health",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 404,
+   "responseHeaders": {
+    "Content-Length": "135",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"title\":\"Not Found\",\"type\":\"https://shlink.io/api/error/not-found\",\"status\":404,\"detail\":\"Cannot POST http://localhost:18083/health!\"}"
+  },
+  {
+   "name": "root",
+   "method": "GET",
+   "path": "/",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 404,
+   "responseHeaders": {
+    "Content-Length": "1428",
+    "Content-Type": "text/html; charset=utf-8"
+   },
+   "requestId": true,
+   "responseBody": "<!DOCTYPE html>\n<html lang=\"en\">\n    <head>\n        <title>Not Found | Shlink</title>\n        <meta charset=\"utf-8\">\n        <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n        <link rel=\"shortcut icon\" href=\"/favicon.ico\">\n        <style>\n            *, :before, :after {box-sizing: border-box;}\n            html, body {\n                margin: 0; padding: 0; height: 100%; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #212529; text-align: center;\n                font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n            }\n            p {margin-bottom: 20px;}\n            hr {margin-top: 1rem; margin-bottom: 1rem; border: 0; border-top: 1px solid rgba(0, 0, 0, .1);}\n            .app {min-height: 100%; display: flex; align-items: center; justify-content: center; flex-flow: column;}\n            .container {width: 100%; max-width: 1140px; padding: 0 20px;}\n        </style>\n    </head>\n    <body>\n        <div class=\"app\">\n            <main class=\"container\">\n                <h1>404</h1>\n                <hr>\n                <h3>Page not found.</h3>\n                <p>The page you requested could not be found.</p>\n            </main>\n        </div>\n    </body>\n</html>\n"
+  },
+  {
+   "name": "root-head",
+   "method": "HEAD",
+   "path": "/",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 404,
+   "responseHeaders": {
+    "Content-Length": "1428",
+    "Content-Type": "text/html; charset=utf-8"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "root-post",
+   "method": "POST",
+   "path": "/",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 404,
+   "responseHeaders": {
+    "Content-Length": "1428",
+    "Content-Type": "text/html; charset=utf-8"
+   },
+   "requestId": true,
+   "responseBody": "<!DOCTYPE html>\n<html lang=\"en\">\n    <head>\n        <title>Not Found | Shlink</title>\n        <meta charset=\"utf-8\">\n        <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n        <link rel=\"shortcut icon\" href=\"/favicon.ico\">\n        <style>\n            *, :before, :after {box-sizing: border-box;}\n            html, body {\n                margin: 0; padding: 0; height: 100%; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #212529; text-align: center;\n                font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n            }\n            p {margin-bottom: 20px;}\n            hr {margin-top: 1rem; margin-bottom: 1rem; border: 0; border-top: 1px solid rgba(0, 0, 0, .1);}\n            .app {min-height: 100%; display: flex; align-items: center; justify-content: center; flex-flow: column;}\n            .container {width: 100%; max-width: 1140px; padding: 0 20px;}\n        </style>\n    </head>\n    <body>\n        <div class=\"app\">\n            <main class=\"container\">\n                <h1>404</h1>\n                <hr>\n                <h3>Page not found.</h3>\n                <p>The page you requested could not be found.</p>\n            </main>\n        </div>\n    </body>\n</html>\n"
+  },
+  {
+   "name": "two-seg",
+   "method": "GET",
+   "path": "/a/b",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 404,
+   "responseHeaders": {
+    "Content-Length": "1428",
+    "Content-Type": "text/html; charset=utf-8"
+   },
+   "requestId": true,
+   "responseBody": "<!DOCTYPE html>\n<html lang=\"en\">\n    <head>\n        <title>Not Found | Shlink</title>\n        <meta charset=\"utf-8\">\n        <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n        <link rel=\"shortcut icon\" href=\"/favicon.ico\">\n        <style>\n            *, :before, :after {box-sizing: border-box;}\n            html, body {\n                margin: 0; padding: 0; height: 100%; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #212529; text-align: center;\n                font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n            }\n            p {margin-bottom: 20px;}\n            hr {margin-top: 1rem; margin-bottom: 1rem; border: 0; border-top: 1px solid rgba(0, 0, 0, .1);}\n            .app {min-height: 100%; display: flex; align-items: center; justify-content: center; flex-flow: column;}\n            .container {width: 100%; max-width: 1140px; padding: 0 20px;}\n        </style>\n    </head>\n    <body>\n        <div class=\"app\">\n            <main class=\"container\">\n                <h1>404</h1>\n                <hr>\n                <h3>Page not found.</h3>\n                <p>The page you requested could not be found.</p>\n            </main>\n        </div>\n    </body>\n</html>\n"
+  },
+  {
+   "name": "code-404",
+   "method": "GET",
+   "path": "/noper86024",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 404,
+   "responseHeaders": {
+    "Content-Length": "1488",
+    "Content-Type": "text/html; charset=utf-8"
+   },
+   "requestId": true,
+   "responseBody": "<!DOCTYPE html>\n<html lang=\"en\">\n    <head>\n        <title>Invalid Short URL | Shlink</title>\n        <meta charset=\"utf-8\">\n        <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n        <link rel=\"shortcut icon\" href=\"/favicon.ico\">\n        <style>\n            *, :before, :after {box-sizing: border-box;}\n            html, body {\n                margin: 0; padding: 0; height: 100%; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #212529; text-align: center;\n                font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n            }\n            p {margin-bottom: 20px;}\n            hr {margin-top: 1rem; margin-bottom: 1rem; border: 0; border-top: 1px solid rgba(0, 0, 0, .1);}\n            .app {min-height: 100%; display: flex; align-items: center; justify-content: center; flex-flow: column;}\n            .container {width: 100%; max-width: 1140px; padding: 0 20px;}\n        </style>\n    </head>\n    <body>\n        <div class=\"app\">\n            <main class=\"container\">\n                <h1>Oops!</h1>\n                <hr>\n                <p>This short URL doesn't seem to be valid.</p>\n                <p>Make sure you included all the characters, with no extra punctuation.</p>\n            </main>\n        </div>\n    </body>\n</html>\n"
+  },
+  {
+   "name": "code-404-head",
+   "method": "HEAD",
+   "path": "/noper86024",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 404,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Content-Type": "text/html; charset=utf-8"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "code-post",
+   "method": "POST",
+   "path": "/noper86024",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 404,
+   "responseHeaders": {
+    "Content-Length": "1428",
+    "Content-Type": "text/html; charset=utf-8"
+   },
+   "requestId": true,
+   "responseBody": "<!DOCTYPE html>\n<html lang=\"en\">\n    <head>\n        <title>Not Found | Shlink</title>\n        <meta charset=\"utf-8\">\n        <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n        <link rel=\"shortcut icon\" href=\"/favicon.ico\">\n        <style>\n            *, :before, :after {box-sizing: border-box;}\n            html, body {\n                margin: 0; padding: 0; height: 100%; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #212529; text-align: center;\n                font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n            }\n            p {margin-bottom: 20px;}\n            hr {margin-top: 1rem; margin-bottom: 1rem; border: 0; border-top: 1px solid rgba(0, 0, 0, .1);}\n            .app {min-height: 100%; display: flex; align-items: center; justify-content: center; flex-flow: column;}\n            .container {width: 100%; max-width: 1140px; padding: 0 20px;}\n        </style>\n    </head>\n    <body>\n        <div class=\"app\">\n            <main class=\"container\">\n                <h1>404</h1>\n                <hr>\n                <h3>Page not found.</h3>\n                <p>The page you requested could not be found.</p>\n            </main>\n        </div>\n    </body>\n</html>\n"
+  },
+  {
+   "name": "code-trailing",
+   "method": "GET",
+   "path": "/noper86024/",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 404,
+   "responseHeaders": {
+    "Content-Length": "1428",
+    "Content-Type": "text/html; charset=utf-8"
+   },
+   "requestId": true,
+   "responseBody": "<!DOCTYPE html>\n<html lang=\"en\">\n    <head>\n        <title>Not Found | Shlink</title>\n        <meta charset=\"utf-8\">\n        <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n        <link rel=\"shortcut icon\" href=\"/favicon.ico\">\n        <style>\n            *, :before, :after {box-sizing: border-box;}\n            html, body {\n                margin: 0; padding: 0; height: 100%; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #212529; text-align: center;\n                font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n            }\n            p {margin-bottom: 20px;}\n            hr {margin-top: 1rem; margin-bottom: 1rem; border: 0; border-top: 1px solid rgba(0, 0, 0, .1);}\n            .app {min-height: 100%; display: flex; align-items: center; justify-content: center; flex-flow: column;}\n            .container {width: 100%; max-width: 1140px; padding: 0 20px;}\n        </style>\n    </head>\n    <body>\n        <div class=\"app\">\n            <main class=\"container\">\n                <h1>404</h1>\n                <hr>\n                <h3>Page not found.</h3>\n                <p>The page you requested could not be found.</p>\n            </main>\n        </div>\n    </body>\n</html>\n"
+  },
+  {
+   "name": "nokey",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024\"}",
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 401,
+   "responseHeaders": {
+    "Content-Length": "243",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"expectedHeaders\":[\"X-Api-Key\"],\"title\":\"Invalid authorization\",\"type\":\"https://shlink.io/api/error/missing-authentication\",\"status\":401,\"detail\":\"Expected one of the following authentication headers, [\\\"X-Api-Key\\\"], but none were provided\"}"
+  },
+  {
+   "name": "emptykey",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024\"}",
+   "apiKey": "",
+   "generatedCode": false,
+   "status": 401,
+   "responseHeaders": {
+    "Content-Length": "243",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"expectedHeaders\":[\"X-Api-Key\"],\"title\":\"Invalid authorization\",\"type\":\"https://shlink.io/api/error/missing-authentication\",\"status\":401,\"detail\":\"Expected one of the following authentication headers, [\\\"X-Api-Key\\\"], but none were provided\"}"
+  },
+  {
+   "name": "badkey",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024\"}",
+   "apiKey": "wrong",
+   "generatedCode": false,
+   "status": 401,
+   "responseHeaders": {
+    "Content-Length": "151",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"title\":\"Invalid API key\",\"type\":\"https://shlink.io/api/error/invalid-api-key\",\"status\":401,\"detail\":\"Provided API key does not exist or is invalid.\"}"
+  },
+  {
+   "name": "get-nokey",
+   "method": "GET",
+   "path": "/rest/v3/short-urls/x",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 401,
+   "responseHeaders": {
+    "Content-Length": "243",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"expectedHeaders\":[\"X-Api-Key\"],\"title\":\"Invalid authorization\",\"type\":\"https://shlink.io/api/error/missing-authentication\",\"status\":401,\"detail\":\"Expected one of the following authentication headers, [\\\"X-Api-Key\\\"], but none were provided\"}"
+  },
+  {
+   "name": "rest-unknown",
+   "method": "GET",
+   "path": "/rest/v3/zzz?a=1",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 404,
+   "responseHeaders": {
+    "Content-Length": "138",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"title\":\"Not Found\",\"type\":\"https://shlink.io/api/error/not-found\",\"status\":404,\"detail\":\"Cannot GET http://localhost:18083/v3/zzz?a=1!\"}"
+  },
+  {
+   "name": "rest-nov",
+   "method": "POST",
+   "path": "/rest/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 404,
+   "responseHeaders": {
+    "Content-Length": "139",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"title\":\"Not Found\",\"type\":\"https://shlink.io/api/error/not-found\",\"status\":404,\"detail\":\"Cannot POST http://localhost:18083/short-urls!\"}"
+  },
+  {
+   "name": "rest-v4",
+   "method": "POST",
+   "path": "/rest/v4/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 404,
+   "responseHeaders": {
+    "Content-Length": "142",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"title\":\"Not Found\",\"type\":\"https://shlink.io/api/error/not-found\",\"status\":404,\"detail\":\"Cannot POST http://localhost:18083/v4/short-urls!\"}"
+  },
+  {
+   "name": "rest-put",
+   "method": "PUT",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 404,
+   "responseHeaders": {
+    "Content-Length": "141",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"title\":\"Not Found\",\"type\":\"https://shlink.io/api/error/not-found\",\"status\":404,\"detail\":\"Cannot PUT http://localhost:18083/v3/short-urls!\"}"
+  },
+  {
+   "name": "rest-trailing",
+   "method": "POST",
+   "path": "/rest/v3/short-urls/",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 404,
+   "responseHeaders": {
+    "Content-Length": "143",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"title\":\"Not Found\",\"type\":\"https://shlink.io/api/error/not-found\",\"status\":404,\"detail\":\"Cannot POST http://localhost:18083/v3/short-urls/!\"}"
+  },
+  {
+   "name": "options",
+   "method": "OPTIONS",
+   "path": "/rest/v3/short-urls",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 204,
+   "responseHeaders": {
+    "Allow": "GET,POST"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "options-cors",
+   "method": "OPTIONS",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Origin": "https://x.example",
+    "Access-Control-Request-Method": "POST",
+    "Access-Control-Request-Headers": "x-api-key,content-type"
+   },
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 204,
+   "responseHeaders": {
+    "Access-Control-Allow-Headers": "x-api-key,content-type",
+    "Access-Control-Allow-Methods": "GET,POST",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Max-Age": "3600",
+    "Allow": "GET,POST"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "options-one",
+   "method": "OPTIONS",
+   "path": "/rest/v3/short-urls/abc",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 204,
+   "responseHeaders": {
+    "Allow": "GET,DELETE,PATCH"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "minimal",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/min\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "356",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/LQbec\",\"shortCode\":\"LQbec\",\"longUrl\":\"https://cmp.example/r86024/min\",\"dateCreated\":\"2026-11-25T10:53:45+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "v1",
+   "method": "POST",
+   "path": "/rest/v1/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/v1\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "355",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/jvv9O\",\"shortCode\":\"jvv9O\",\"longUrl\":\"https://cmp.example/r86024/v1\",\"dateCreated\":\"2026-11-25T10:53:45+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "cors-post",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Origin": "https://x.example",
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/cors\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Access-Control-Allow-Origin": "*",
+    "Content-Length": "357",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/uRd8G\",\"shortCode\":\"uRd8G\",\"longUrl\":\"https://cmp.example/r86024/cors\",\"dateCreated\":\"2026-11-25T10:53:45+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "full",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/full?x=1&y=<2>'\\\"\", \"findIfExists\": true, \"tags\": [\"mail_sms\", \"Foo Bar\"], \"validUntil\": \"2026-12-05T10:01:00+05:00\", \"validSince\": \"2026-11-01T00:00:00Z\", \"maxVisits\": 10, \"shortCodeLength\": 6, \"title\": \"  Заголовок 😀 <b>  \", \"crawlable\": false, \"forwardQuery\": false}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "540",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/ktlLK4\",\"shortCode\":\"ktlLK4\",\"longUrl\":\"https://cmp.example/r86024/full?x=1\\u0026y=\\u003C2\\u003E\\u0027\\u0022\",\"dateCreated\":\"2026-11-25T10:53:45+05:00\",\"tags\":[\"mail_sms\",\"foo-bar\"],\"meta\":{\"validSince\":\"2026-11-01T05:00:00+05:00\",\"validUntil\":\"2026-12-05T10:01:00+05:00\",\"maxVisits\":10},\"domain\":null,\"title\":\"\\u0417\\u0430\\u0433\\u043e\\u043b\\u043e\\u0432\\u043e\\u043a \\ud83d\\ude00 \\u003Cb\\u003E\",\"crawlable\":false,\"forwardQuery\":false,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "full-again",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/full?x=1&y=<2>'\\\"\", \"findIfExists\": true, \"tags\": [\"foo bar\", \"mail_sms\"], \"validUntil\": \"2026-12-05T05:01:00Z\", \"validSince\": \"2026-11-01T05:00:00+05:00\", \"maxVisits\": 10, \"shortCodeLength\": 6}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "540",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/ktlLK4\",\"shortCode\":\"ktlLK4\",\"longUrl\":\"https://cmp.example/r86024/full?x=1\\u0026y=\\u003C2\\u003E\\u0027\\u0022\",\"dateCreated\":\"2026-11-25T10:53:45+05:00\",\"tags\":[\"foo-bar\",\"mail_sms\"],\"meta\":{\"validSince\":\"2026-11-01T05:00:00+05:00\",\"validUntil\":\"2026-12-05T10:01:00+05:00\",\"maxVisits\":10},\"domain\":null,\"title\":\"\\u0417\\u0430\\u0433\\u043e\\u043b\\u043e\\u0432\\u043e\\u043a \\ud83d\\ude00 \\u003Cb\\u003E\",\"crawlable\":false,\"forwardQuery\":false,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "delivery",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/dlv\", \"findIfExists\": true, \"tags\": [\"mail_sms\"], \"validUntil\": \"2026-12-05T10:01:00.123456789+05:00\", \"shortCodeLength\": 6}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "391",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/UybkL9\",\"shortCode\":\"UybkL9\",\"longUrl\":\"https://cmp.example/r86024/dlv\",\"dateCreated\":\"2026-11-25T10:53:45+05:00\",\"tags\":[\"mail_sms\"],\"meta\":{\"validSince\":null,\"validUntil\":\"2026-12-05T10:01:00+05:00\",\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "delivery-again",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/dlv\", \"findIfExists\": true, \"tags\": [\"mail_sms\"], \"validUntil\": \"2026-12-05T10:01:00.123456789+05:00\", \"shortCodeLength\": 6}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "391",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/UybkL9\",\"shortCode\":\"UybkL9\",\"longUrl\":\"https://cmp.example/r86024/dlv\",\"dateCreated\":\"2026-11-25T10:53:45+05:00\",\"tags\":[\"mail_sms\"],\"meta\":{\"validSince\":null,\"validUntil\":\"2026-12-05T10:01:00+05:00\",\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "custom",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/c\", \"customSlug\": \"r86024Slug\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "364",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024Slug\",\"shortCode\":\"r86024Slug\",\"longUrl\":\"https://cmp.example/r86024/c\",\"dateCreated\":\"2026-11-25T10:53:45+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "custom-dup",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/c2\", \"customSlug\": \"r86024Slug\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 400,
+   "responseHeaders": {
+    "Content-Length": "182",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"customSlug\":\"r86024Slug\",\"title\":\"Invalid custom slug\",\"type\":\"https://shlink.io/api/error/non-unique-slug\",\"status\":400,\"detail\":\"Provided slug \\\"r86024Slug\\\" is already in use.\"}"
+  },
+  {
+   "name": "custom-fie-same",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/c\", \"customSlug\": \"r86024Slug\", \"findIfExists\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "364",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024Slug\",\"shortCode\":\"r86024Slug\",\"longUrl\":\"https://cmp.example/r86024/c\",\"dateCreated\":\"2026-11-25T10:53:45+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "custom-case",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/c3\", \"customSlug\": \"r86024slug\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "365",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024slug\",\"shortCode\":\"r86024slug\",\"longUrl\":\"https://cmp.example/r86024/c3\",\"dateCreated\":\"2026-11-25T10:53:45+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "custom-space",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/c4\", \"customSlug\": \"  r86024 a/b \"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "365",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024-a-b\",\"shortCode\":\"r86024-a-b\",\"longUrl\":\"https://cmp.example/r86024/c4\",\"dateCreated\":\"2026-11-25T10:53:45+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "custom-cyr",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/c5\", \"customSlug\": \"r86024привет\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "429",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024\\u043f\\u0440\\u0438\\u0432\\u0435\\u0442\",\"shortCode\":\"r86024\\u043f\\u0440\\u0438\\u0432\\u0435\\u0442\",\"longUrl\":\"https://cmp.example/r86024/c5\",\"dateCreated\":\"2026-11-25T10:53:45+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "custom-cyr-dup",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/c6\", \"customSlug\": \"r86024привет\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 400,
+   "responseHeaders": {
+    "Content-Length": "198",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"customSlug\":\"r86024привет\",\"title\":\"Invalid custom slug\",\"type\":\"https://shlink.io/api/error/non-unique-slug\",\"status\":400,\"detail\":\"Provided slug \\\"r86024привет\\\" is already in use.\"}"
+  },
+  {
+   "name": "custom-len",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/c7\", \"customSlug\": \"r86024sl\", \"shortCodeLength\": 8}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "361",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024sl\",\"shortCode\":\"r86024sl\",\"longUrl\":\"https://cmp.example/r86024/c7\",\"dateCreated\":\"2026-11-25T10:53:45+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "custom-num",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/c8\", \"customSlug\": 986024}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "357",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/986024\",\"shortCode\":\"986024\",\"longUrl\":\"https://cmp.example/r86024/c8\",\"dateCreated\":\"2026-11-25T10:53:45+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "domain-other",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/do\", \"domain\": \"sl.demo.test\", \"customSlug\": \"r86024dom\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "374",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://sl.demo.test/r86024dom\",\"shortCode\":\"r86024dom\",\"longUrl\":\"https://cmp.example/r86024/do\",\"dateCreated\":\"2026-11-25T10:53:45+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":\"sl.demo.test\",\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "domain-other-dup",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/do-x\", \"domain\": \"sl.demo.test\", \"customSlug\": \"r86024dom\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 400,
+   "responseHeaders": {
+    "Content-Length": "232",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"customSlug\":\"r86024dom\",\"domain\":\"sl.demo.test\",\"title\":\"Invalid custom slug\",\"type\":\"https://shlink.io/api/error/non-unique-slug\",\"status\":400,\"detail\":\"Provided slug \\\"r86024dom\\\" is already in use for domain \\\"sl.demo.test\\\".\"}"
+  },
+  {
+   "name": "domain-default-same-slug",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/do2\", \"customSlug\": \"r86024dom\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "364",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024dom\",\"shortCode\":\"r86024dom\",\"longUrl\":\"https://cmp.example/r86024/do2\",\"dateCreated\":\"2026-11-25T10:53:45+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "domain-default-explicit",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/dd\", \"domain\": \"l.demo.test\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "355",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/Y5tnj\",\"shortCode\":\"Y5tnj\",\"longUrl\":\"https://cmp.example/r86024/dd\",\"dateCreated\":\"2026-11-25T10:53:45+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "domain-default-dup",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/do3\", \"domain\": \"l.demo.test\", \"customSlug\": \"r86024dom\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 400,
+   "responseHeaders": {
+    "Content-Length": "180",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"customSlug\":\"r86024dom\",\"title\":\"Invalid custom slug\",\"type\":\"https://shlink.io/api/error/non-unique-slug\",\"status\":400,\"detail\":\"Provided slug \\\"r86024dom\\\" is already in use.\"}"
+  },
+  {
+   "name": "domain-bad",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024\", \"domain\": \"bad domain!\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 400,
+   "responseHeaders": {
+    "Content-Length": "154",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"invalidElements\":[\"domain\"],\"title\":\"Invalid data\",\"type\":\"https://shlink.io/api/error/invalid-data\",\"status\":400,\"detail\":\"Provided data is not valid\"}"
+  },
+  {
+   "name": "domain-empty",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024\", \"domain\": \"\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 400,
+   "responseHeaders": {
+    "Content-Length": "154",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"invalidElements\":[\"domain\"],\"title\":\"Invalid data\",\"type\":\"https://shlink.io/api/error/invalid-data\",\"status\":400,\"detail\":\"Provided data is not valid\"}"
+  },
+  {
+   "name": "len4",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/l4\", \"shortCodeLength\": 4}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "353",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/gdbF\",\"shortCode\":\"gdbF\",\"longUrl\":\"https://cmp.example/r86024/l4\",\"dateCreated\":\"2026-11-25T10:53:45+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "len3",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024\", \"shortCodeLength\": 3}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 400,
+   "responseHeaders": {
+    "Content-Length": "163",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"invalidElements\":[\"shortCodeLength\"],\"title\":\"Invalid data\",\"type\":\"https://shlink.io/api/error/invalid-data\",\"status\":400,\"detail\":\"Provided data is not valid\"}"
+  },
+  {
+   "name": "len-str",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/ls\", \"shortCodeLength\": \"7\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "359",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/Nye8chK\",\"shortCode\":\"Nye8chK\",\"longUrl\":\"https://cmp.example/r86024/ls\",\"dateCreated\":\"2026-11-25T10:53:45+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "len-float",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024\", \"shortCodeLength\": 5.5}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 400,
+   "responseHeaders": {
+    "Content-Length": "163",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"invalidElements\":[\"shortCodeLength\"],\"title\":\"Invalid data\",\"type\":\"https://shlink.io/api/error/invalid-data\",\"status\":400,\"detail\":\"Provided data is not valid\"}"
+  },
+  {
+   "name": "maxvisits-str",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/mv\", \"maxVisits\": \"5\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "352",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/nBd0L\",\"shortCode\":\"nBd0L\",\"longUrl\":\"https://cmp.example/r86024/mv\",\"dateCreated\":\"2026-11-25T10:53:46+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":5},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "maxvisits-float",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024\", \"maxVisits\": 1.5}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 400,
+   "responseHeaders": {
+    "Content-Length": "157",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"invalidElements\":[\"maxVisits\"],\"title\":\"Invalid data\",\"type\":\"https://shlink.io/api/error/invalid-data\",\"status\":400,\"detail\":\"Provided data is not valid\"}"
+  },
+  {
+   "name": "nolong",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"tags\": [\"a\"]}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 400,
+   "responseHeaders": {
+    "Content-Length": "155",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"invalidElements\":[\"longUrl\"],\"title\":\"Invalid data\",\"type\":\"https://shlink.io/api/error/invalid-data\",\"status\":400,\"detail\":\"Provided data is not valid\"}"
+  },
+  {
+   "name": "emptyurl",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 400,
+   "responseHeaders": {
+    "Content-Length": "155",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"invalidElements\":[\"longUrl\"],\"title\":\"Invalid data\",\"type\":\"https://shlink.io/api/error/invalid-data\",\"status\":400,\"detail\":\"Provided data is not valid\"}"
+  },
+  {
+   "name": "badurl",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"not a url\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 400,
+   "responseHeaders": {
+    "Content-Length": "155",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"invalidElements\":[\"longUrl\"],\"title\":\"Invalid data\",\"type\":\"https://shlink.io/api/error/invalid-data\",\"status\":400,\"detail\":\"Provided data is not valid\"}"
+  },
+  {
+   "name": "long-noscheme",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"www.example.invalid/x\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 400,
+   "responseHeaders": {
+    "Content-Length": "155",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"invalidElements\":[\"longUrl\"],\"title\":\"Invalid data\",\"type\":\"https://shlink.io/api/error/invalid-data\",\"status\":400,\"detail\":\"Provided data is not valid\"}"
+  },
+  {
+   "name": "long-bool",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 400,
+   "responseHeaders": {
+    "Content-Length": "155",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"invalidElements\":[\"longUrl\"],\"title\":\"Invalid data\",\"type\":\"https://shlink.io/api/error/invalid-data\",\"status\":400,\"detail\":\"Provided data is not valid\"}"
+  },
+  {
+   "name": "long-ftp",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"ftp://cmp.example/r86024\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "350",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/6g9n4\",\"shortCode\":\"6g9n4\",\"longUrl\":\"ftp://cmp.example/r86024\",\"dateCreated\":\"2026-11-25T10:53:46+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "long-spaces",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"  https://cmp.example/r86024/sp  \"}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "359",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/eJPc5\",\"shortCode\":\"eJPc5\",\"longUrl\":\"  https://cmp.example/r86024/sp  \",\"dateCreated\":\"2026-11-25T10:53:46+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "badjson",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\":",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 400,
+   "responseHeaders": {
+    "Content-Length": "171",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"title\":\"Malformed request body\",\"type\":\"https://shlink.io/api/error/malformed-request-body\",\"status\":400,\"detail\":\"Provided request does not contain a valid JSON body.\"}"
+  },
+  {
+   "name": "emptybody",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 400,
+   "responseHeaders": {
+    "Content-Length": "155",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"invalidElements\":[\"longUrl\"],\"title\":\"Invalid data\",\"type\":\"https://shlink.io/api/error/invalid-data\",\"status\":400,\"detail\":\"Provided data is not valid\"}"
+  },
+  {
+   "name": "array-body",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "[1,2]",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 400,
+   "responseHeaders": {
+    "Content-Length": "155",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"invalidElements\":[\"longUrl\"],\"title\":\"Invalid data\",\"type\":\"https://shlink.io/api/error/invalid-data\",\"status\":400,\"detail\":\"Provided data is not valid\"}"
+  },
+  {
+   "name": "form-body",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/x-www-form-urlencoded"
+   },
+   "body": "longUrl=https://cmp.example/r86024/form",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "357",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/v5P1v\",\"shortCode\":\"v5P1v\",\"longUrl\":\"https://cmp.example/r86024/form\",\"dateCreated\":\"2026-11-25T10:53:46+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "ct-form-json",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/x-www-form-urlencoded"
+   },
+   "body": "{\"longUrl\":\"https://cmp.example/r86024/ctform\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 400,
+   "responseHeaders": {
+    "Content-Length": "155",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"invalidElements\":[\"longUrl\"],\"title\":\"Invalid data\",\"type\":\"https://shlink.io/api/error/invalid-data\",\"status\":400,\"detail\":\"Provided data is not valid\"}"
+  },
+  {
+   "name": "ct-text-json",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "text/plain"
+   },
+   "body": "{\"longUrl\":\"https://cmp.example/r86024/cttext\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "359",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/Z6q5J\",\"shortCode\":\"Z6q5J\",\"longUrl\":\"https://cmp.example/r86024/cttext\",\"dateCreated\":\"2026-11-25T10:53:46+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "multi-invalid",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"\", \"shortCodeLength\": 2, \"maxVisits\": 1.5, \"tags\": \"x\", \"crawlable\": \"yes\", \"findIfExists\": \"zz\", \"domain\": \"b d\", \"forwardQuery\": 5}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 400,
+   "responseHeaders": {
+    "Content-Length": "243",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"invalidElements\":[\"longUrl\",\"maxVisits\",\"findIfExists\",\"domain\",\"shortCodeLength\",\"tags\",\"crawlable\",\"forwardQuery\"],\"title\":\"Invalid data\",\"type\":\"https://shlink.io/api/error/invalid-data\",\"status\":400,\"detail\":\"Provided data is not valid\"}"
+  },
+  {
+   "name": "nulls-ok",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\":\"https://cmp.example/r86024/nulls\",\"title\":null,\"validUntil\":null,\"validSince\":null,\"maxVisits\":null,\"customSlug\":null,\"domain\":null,\"shortCodeLength\":null}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "358",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/qylDS\",\"shortCode\":\"qylDS\",\"longUrl\":\"https://cmp.example/r86024/nulls\",\"dateCreated\":\"2026-11-25T10:53:46+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "nulls-bad",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\":\"https://cmp.example/r86024/nulls2\",\"tags\":null,\"crawlable\":null,\"forwardQuery\":null,\"findIfExists\":null}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 400,
+   "responseHeaders": {
+    "Content-Length": "194",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"invalidElements\":[\"findIfExists\",\"tags\",\"crawlable\",\"forwardQuery\"],\"title\":\"Invalid data\",\"type\":\"https://shlink.io/api/error/invalid-data\",\"status\":400,\"detail\":\"Provided data is not valid\"}"
+  },
+  {
+   "name": "empties",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/emp\", \"validUntil\": \"\", \"maxVisits\": \"\", \"shortCodeLength\": \"\", \"findIfExists\": \"\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 400,
+   "responseHeaders": {
+    "Content-Length": "190",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"invalidElements\":[\"maxVisits\",\"findIfExists\",\"shortCodeLength\"],\"title\":\"Invalid data\",\"type\":\"https://shlink.io/api/error/invalid-data\",\"status\":400,\"detail\":\"Provided data is not valid\"}"
+  },
+  {
+   "name": "bool-str",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/bs\", \"crawlable\": \"true\", \"forwardQuery\": \"false\", \"findIfExists\": \"1\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "355",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/Jlf7k\",\"shortCode\":\"Jlf7k\",\"longUrl\":\"https://cmp.example/r86024/bs\",\"dateCreated\":\"2026-11-25T10:53:46+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":true,\"forwardQuery\":false,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "bool-num",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/bn\", \"crawlable\": 0, \"forwardQuery\": 0}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "356",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/QF0Vq\",\"shortCode\":\"QF0Vq\",\"longUrl\":\"https://cmp.example/r86024/bn\",\"dateCreated\":\"2026-11-25T10:53:46+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":false,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "tags-str",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024\", \"tags\": \"x\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 400,
+   "responseHeaders": {
+    "Content-Length": "152",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"invalidElements\":[\"tags\"],\"title\":\"Invalid data\",\"type\":\"https://shlink.io/api/error/invalid-data\",\"status\":400,\"detail\":\"Provided data is not valid\"}"
+  },
+  {
+   "name": "date-1c",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/d1\", \"validUntil\": \"2026-12-05T10:01:00\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "378",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/UCMmO\",\"shortCode\":\"UCMmO\",\"longUrl\":\"https://cmp.example/r86024/d1\",\"dateCreated\":\"2026-11-25T10:53:46+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":\"2026-12-05T10:01:00+05:00\",\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "date-dmy",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/d2\", \"validUntil\": \"05.12.2026 10:01:00\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "378",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/Pkcbq\",\"shortCode\":\"Pkcbq\",\"longUrl\":\"https://cmp.example/r86024/d2\",\"dateCreated\":\"2026-11-25T10:53:46+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":\"2026-12-05T10:01:00+05:00\",\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "date-only",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/d3\", \"validUntil\": \"2026-12-05\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "378",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/gYQBA\",\"shortCode\":\"gYQBA\",\"longUrl\":\"https://cmp.example/r86024/d3\",\"dateCreated\":\"2026-11-25T10:53:46+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":\"2026-12-05T00:00:00+05:00\",\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "date-space",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/d4\", \"validUntil\": \"2026-12-05 10:01:00\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "378",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/YtGnA\",\"shortCode\":\"YtGnA\",\"longUrl\":\"https://cmp.example/r86024/d4\",\"dateCreated\":\"2026-11-25T10:53:46+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":\"2026-12-05T10:01:00+05:00\",\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "date-z-ms",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/d5\", \"validUntil\": \"2026-12-05T10:01:00.000Z\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "378",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/QDP1R\",\"shortCode\":\"QDP1R\",\"longUrl\":\"https://cmp.example/r86024/d5\",\"dateCreated\":\"2026-11-25T10:53:46+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":\"2026-12-05T15:01:00+05:00\",\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "date-num",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/d6\", \"validUntil\": 1796000000}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "378",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/LrZ8S\",\"shortCode\":\"LrZ8S\",\"longUrl\":\"https://cmp.example/r86024/d6\",\"dateCreated\":\"2026-11-25T10:53:46+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":\"2026-11-30T05:53:20+05:00\",\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "title-num",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/tn\", \"title\": 123}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "356",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/G1rrm\",\"shortCode\":\"G1rrm\",\"longUrl\":\"https://cmp.example/r86024/tn\",\"dateCreated\":\"2026-11-25T10:53:46+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":\"123\",\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "title-long",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/tl\", \"title\": \"яяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяяя\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "1889",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/80DFz\",\"shortCode\":\"80DFz\",\"longUrl\":\"https://cmp.example/r86024/tl\",\"dateCreated\":\"2026-11-25T10:53:46+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":\"\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\\u044f\",\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "get-ok",
+   "method": "GET",
+   "path": "/rest/v3/short-urls/r86024Slug",
+   "headers": {},
+   "body": null,
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "364",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024Slug\",\"shortCode\":\"r86024Slug\",\"longUrl\":\"https://cmp.example/r86024/c\",\"dateCreated\":\"2026-11-25T10:53:45+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "get-head",
+   "method": "HEAD",
+   "path": "/rest/v3/short-urls/r86024Slug",
+   "headers": {},
+   "body": null,
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "get-404",
+   "method": "GET",
+   "path": "/rest/v3/short-urls/noper86024",
+   "headers": {},
+   "body": null,
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 404,
+   "responseHeaders": {
+    "Content-Length": "181",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortCode\":\"noper86024\",\"title\":\"Short URL not found\",\"type\":\"https://shlink.io/api/error/short-url-not-found\",\"status\":404,\"detail\":\"No URL found with short code \\\"noper86024\\\"\"}"
+  },
+  {
+   "name": "get-case",
+   "method": "GET",
+   "path": "/rest/v3/short-urls/R86024SLUG",
+   "headers": {},
+   "body": null,
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 404,
+   "responseHeaders": {
+    "Content-Length": "181",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortCode\":\"R86024SLUG\",\"title\":\"Short URL not found\",\"type\":\"https://shlink.io/api/error/short-url-not-found\",\"status\":404,\"detail\":\"No URL found with short code \\\"R86024SLUG\\\"\"}"
+  },
+  {
+   "name": "get-domain-ok",
+   "method": "GET",
+   "path": "/rest/v3/short-urls/r86024dom?domain=sl.demo.test",
+   "headers": {},
+   "body": null,
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "374",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://sl.demo.test/r86024dom\",\"shortCode\":\"r86024dom\",\"longUrl\":\"https://cmp.example/r86024/do\",\"dateCreated\":\"2026-11-25T10:53:45+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":\"sl.demo.test\",\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "get-domain-default",
+   "method": "GET",
+   "path": "/rest/v3/short-urls/r86024dom?domain=l.demo.test",
+   "headers": {},
+   "body": null,
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "364",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024dom\",\"shortCode\":\"r86024dom\",\"longUrl\":\"https://cmp.example/r86024/do2\",\"dateCreated\":\"2026-11-25T10:53:45+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "get-nodomain",
+   "method": "GET",
+   "path": "/rest/v3/short-urls/r86024dom",
+   "headers": {},
+   "body": null,
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "364",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024dom\",\"shortCode\":\"r86024dom\",\"longUrl\":\"https://cmp.example/r86024/do2\",\"dateCreated\":\"2026-11-25T10:53:45+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "get-domain-404",
+   "method": "GET",
+   "path": "/rest/v3/short-urls/r86024Slug?domain=sl.demo.test",
+   "headers": {},
+   "body": null,
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 404,
+   "responseHeaders": {
+    "Content-Length": "233",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortCode\":\"r86024Slug\",\"domain\":\"sl.demo.test\",\"title\":\"Short URL not found\",\"type\":\"https://shlink.io/api/error/short-url-not-found\",\"status\":404,\"detail\":\"No URL found with short code \\\"r86024Slug\\\" for domain \\\"sl.demo.test\\\"\"}"
+  },
+  {
+   "name": "get-cyr",
+   "method": "GET",
+   "path": "/rest/v3/short-urls/r86024%D0%BF%D1%80%D0%B8%D0%B2%D0%B5%D1%82",
+   "headers": {},
+   "body": null,
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "429",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024\\u043f\\u0440\\u0438\\u0432\\u0435\\u0442\",\"shortCode\":\"r86024\\u043f\\u0440\\u0438\\u0432\\u0435\\u0442\",\"longUrl\":\"https://cmp.example/r86024/c5\",\"dateCreated\":\"2026-11-25T10:53:45+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "mk-rq1",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/path?a=1&b=2#frag\", \"customSlug\": \"r86024rq1\", \"forwardQuery\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "383",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024rq1\",\"shortCode\":\"r86024rq1\",\"longUrl\":\"https://cmp.example/r86024/path?a=1\\u0026b=2#frag\",\"dateCreated\":\"2026-11-25T10:53:46+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-rq1",
+   "method": "GET",
+   "path": "/r86024rq1",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/r86024/path?a=1&b=2#frag"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-rq1-q",
+   "method": "GET",
+   "path": "/r86024rq1?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/r86024/path?a=5&b=2&add=1%2B1%202&q=NEW&e=&k&0=zero&7=seven&%D0%BF=%D0%B2&sl=a%2Fb%3Ac%40d#frag"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-rq2",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/path\", \"customSlug\": \"r86024rq2\", \"forwardQuery\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "365",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024rq2\",\"shortCode\":\"r86024rq2\",\"longUrl\":\"https://cmp.example/r86024/path\",\"dateCreated\":\"2026-11-25T10:53:46+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-rq2",
+   "method": "GET",
+   "path": "/r86024rq2",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/r86024/path"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-rq2-q",
+   "method": "GET",
+   "path": "/r86024rq2?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/r86024/path?add=1%2B1%202&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%D0%B2&sl=a%2Fb%3Ac%40d"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-rq3",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/path?a=1\", \"customSlug\": \"r86024rq3\", \"forwardQuery\": false}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "370",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024rq3\",\"shortCode\":\"r86024rq3\",\"longUrl\":\"https://cmp.example/r86024/path?a=1\",\"dateCreated\":\"2026-11-25T10:53:46+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":false,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-rq3",
+   "method": "GET",
+   "path": "/r86024rq3",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/r86024/path?a=1"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-rq3-q",
+   "method": "GET",
+   "path": "/r86024rq3?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/r86024/path?a=1"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-n1",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/p?q=a+b&r=%2F&s=x%20y&t=a=b&u&v=&w=%7e%2f&red=https://x.io/y?z=1,2;3\", \"customSlug\": \"r86024n1\", \"forwardQuery\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "455",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024n1\",\"shortCode\":\"r86024n1\",\"longUrl\":\"https://cmp.example/p?q=a+b\\u0026r=%2F\\u0026s=x%20y\\u0026t=a=b\\u0026u\\u0026v=\\u0026w=%7e%2f\\u0026red=https://x.io/y?z=1,2;3\",\"dateCreated\":\"2026-11-25T10:53:46+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-n1",
+   "method": "GET",
+   "path": "/r86024n1",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/p?q=a%20b&r=%2F&s=x%20y&t=a%3Db&u&v=&w=~%2F&red=https%3A%2F%2Fx.io%2Fy%3Fz%3D1%2C2%3B3"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-n1-q",
+   "method": "GET",
+   "path": "/r86024n1?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/p?q=NEW&r=%2F&s=x%20y&t=a%3Db&u&v=&w=~%2F&red=https%3A%2F%2Fx.io%2Fy%3Fz%3D1%2C2%3B3&add=1%2B1%202&a=5&e=&k&0=zero&7=seven&%D0%BF=%D0%B2&sl=a%2Fb%3Ac%40d"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-n2",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/p?q=a+b&r=%2F&s=x%20y&t=a=b&u&v=&w=%7e%2f&red=https://x.io/y?z=1,2;3\", \"customSlug\": \"r86024n2\", \"forwardQuery\": false}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "456",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024n2\",\"shortCode\":\"r86024n2\",\"longUrl\":\"https://cmp.example/p?q=a+b\\u0026r=%2F\\u0026s=x%20y\\u0026t=a=b\\u0026u\\u0026v=\\u0026w=%7e%2f\\u0026red=https://x.io/y?z=1,2;3\",\"dateCreated\":\"2026-11-25T10:53:46+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":false,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-n2",
+   "method": "GET",
+   "path": "/r86024n2",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/p?q=a+b&r=%2F&s=x%20y&t=a=b&u&v=&w=%7e%2f&red=https://x.io/y?z=1,2;3"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-n2-q",
+   "method": "GET",
+   "path": "/r86024n2?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/p?q=a+b&r=%2F&s=x%20y&t=a=b&u&v=&w=%7e%2f&red=https://x.io/y?z=1,2;3"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-n3",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"HTTPS://User:Pa ss@Www.Example.INVALID:443/A b/%7e/%zz/c|d?x=1#Фраг мент\", \"customSlug\": \"r86024n3\", \"forwardQuery\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "444",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024n3\",\"shortCode\":\"r86024n3\",\"longUrl\":\"HTTPS://User:Pa ss@Www.Example.INVALID:443/A b/%7e/%zz/c|d?x=1#\\u0424\\u0440\\u0430\\u0433 \\u043c\\u0435\\u043d\\u0442\",\"dateCreated\":\"2026-11-25T10:53:47+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-n3",
+   "method": "GET",
+   "path": "/r86024n3",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://User:Pa%20ss@www.example.invalid/A%20b/%7e/%25zz/c%7Cd?x=1#%D0%A4%D1%80%D0%B0%D0%B3%20%D0%BC%D0%B5%D0%BD%D1%82"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-n3-q",
+   "method": "GET",
+   "path": "/r86024n3?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://User:Pa%20ss@www.example.invalid/A%20b/%7e/%25zz/c%7Cd?x=1&add=1%2B1%202&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%D0%B2&sl=a%2Fb%3Ac%40d#%D0%A4%D1%80%D0%B0%D0%B3%20%D0%BC%D0%B5%D0%BD%D1%82"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-n4",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"http://www.example.invalid:80\", \"customSlug\": \"r86024n4\", \"forwardQuery\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "361",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024n4\",\"shortCode\":\"r86024n4\",\"longUrl\":\"http://www.example.invalid:80\",\"dateCreated\":\"2026-11-25T10:53:47+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-n4",
+   "method": "GET",
+   "path": "/r86024n4",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "http://www.example.invalid"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-n4-q",
+   "method": "GET",
+   "path": "/r86024n4?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "http://www.example.invalid?add=1%2B1%202&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%D0%B2&sl=a%2Fb%3Ac%40d"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-n5",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"http://www.example.invalid:8080?x=1\", \"customSlug\": \"r86024n5\", \"forwardQuery\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "367",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024n5\",\"shortCode\":\"r86024n5\",\"longUrl\":\"http://www.example.invalid:8080?x=1\",\"dateCreated\":\"2026-11-25T10:53:47+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-n5",
+   "method": "GET",
+   "path": "/r86024n5",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "http://www.example.invalid:8080?x=1"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-n5-q",
+   "method": "GET",
+   "path": "/r86024n5?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "http://www.example.invalid:8080?x=1&add=1%2B1%202&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%D0%B2&sl=a%2Fb%3Ac%40d"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-n6",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://www.example.invalid/p?\", \"customSlug\": \"r86024n6\", \"forwardQuery\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "362",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024n6\",\"shortCode\":\"r86024n6\",\"longUrl\":\"https://www.example.invalid/p?\",\"dateCreated\":\"2026-11-25T10:53:47+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-n6",
+   "method": "GET",
+   "path": "/r86024n6",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://www.example.invalid/p"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-n6-q",
+   "method": "GET",
+   "path": "/r86024n6?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://www.example.invalid/p?add=1%2B1%202&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%D0%B2&sl=a%2Fb%3Ac%40d"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-n7",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://www.example.invalid/p#\", \"customSlug\": \"r86024n7\", \"forwardQuery\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "362",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024n7\",\"shortCode\":\"r86024n7\",\"longUrl\":\"https://www.example.invalid/p#\",\"dateCreated\":\"2026-11-25T10:53:47+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-n7",
+   "method": "GET",
+   "path": "/r86024n7",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://www.example.invalid/p"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-n7-q",
+   "method": "GET",
+   "path": "/r86024n7?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://www.example.invalid/p?add=1%2B1%202&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%D0%B2&sl=a%2Fb%3Ac%40d"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-n8",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://www.example.invalid/p?a=1&a=2&b[]=3&b[]=4&1=one&2=two\", \"customSlug\": \"r86024n8\", \"forwardQuery\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "418",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024n8\",\"shortCode\":\"r86024n8\",\"longUrl\":\"https://www.example.invalid/p?a=1\\u0026a=2\\u0026b[]=3\\u0026b[]=4\\u00261=one\\u00262=two\",\"dateCreated\":\"2026-11-25T10:53:47+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-n8",
+   "method": "GET",
+   "path": "/r86024n8",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://www.example.invalid/p?a=1&a=2&b%5B%5D=3&b%5B%5D=4&1=one&2=two"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-n8-q",
+   "method": "GET",
+   "path": "/r86024n8?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://www.example.invalid/p?a=5&b%5B%5D=3&b%5B%5D=4&1=one&2=two&add=1%2B1%202&q=NEW&e=&k&0=zero&7=seven&%D0%BF=%D0%B2&sl=a%2Fb%3Ac%40d"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-n9",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://www.example.invalid\", \"customSlug\": \"r86024n9\", \"forwardQuery\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "359",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024n9\",\"shortCode\":\"r86024n9\",\"longUrl\":\"https://www.example.invalid\",\"dateCreated\":\"2026-11-25T10:53:47+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-n9",
+   "method": "GET",
+   "path": "/r86024n9",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://www.example.invalid"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-n9-q",
+   "method": "GET",
+   "path": "/r86024n9?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://www.example.invalid?add=1%2B1%202&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%D0%B2&sl=a%2Fb%3Ac%40d"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-n10",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://www.example.invalid/\", \"customSlug\": \"r86024n10\", \"forwardQuery\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "362",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024n10\",\"shortCode\":\"r86024n10\",\"longUrl\":\"https://www.example.invalid/\",\"dateCreated\":\"2026-11-25T10:53:47+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-n10",
+   "method": "GET",
+   "path": "/r86024n10",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://www.example.invalid/"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-n10-q",
+   "method": "GET",
+   "path": "/r86024n10?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://www.example.invalid/?add=1%2B1%202&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%D0%B2&sl=a%2Fb%3Ac%40d"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-n11",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"mailto:someone@www.example.invalid?subject=Hi there\", \"customSlug\": \"r86024n11\", \"forwardQuery\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "385",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024n11\",\"shortCode\":\"r86024n11\",\"longUrl\":\"mailto:someone@www.example.invalid?subject=Hi there\",\"dateCreated\":\"2026-11-25T10:53:47+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-n11",
+   "method": "GET",
+   "path": "/r86024n11",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "mailto:someone@www.example.invalid?subject=Hi%20there"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-n11-q",
+   "method": "GET",
+   "path": "/r86024n11?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "mailto:someone@www.example.invalid?subject=Hi%20there&add=1%2B1%202&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%D0%B2&sl=a%2Fb%3Ac%40d"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-n12",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"tel:+77001234567\", \"customSlug\": \"r86024n12\", \"forwardQuery\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "350",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024n12\",\"shortCode\":\"r86024n12\",\"longUrl\":\"tel:+77001234567\",\"dateCreated\":\"2026-11-25T10:53:47+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-n12",
+   "method": "GET",
+   "path": "/r86024n12",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "tel:+77001234567"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-n12-q",
+   "method": "GET",
+   "path": "/r86024n12?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "tel:+77001234567?add=1%2B1%202&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%D0%B2&sl=a%2Fb%3Ac%40d"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-n13",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://пример.рф/путь\", \"customSlug\": \"r86024n13\", \"forwardQuery\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "416",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024n13\",\"shortCode\":\"r86024n13\",\"longUrl\":\"https://\\u043f\\u0440\\u0438\\u043c\\u0435\\u0440.\\u0440\\u0444/\\u043f\\u0443\\u0442\\u044c\",\"dateCreated\":\"2026-11-25T10:53:47+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-n13",
+   "method": "GET",
+   "path": "/r86024n13",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://пример.рф/%D0%BF%D1%83%D1%82%D1%8C"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-n13-q",
+   "method": "GET",
+   "path": "/r86024n13?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://пример.рф/%D0%BF%D1%83%D1%82%D1%8C?add=1%2B1%202&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%D0%B2&sl=a%2Fb%3Ac%40d"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-n14",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://www.example.invalid/a\\\\b/{x}/[y]/<z>/\\\"q\\\"/^`\", \"customSlug\": \"r86024n14\", \"forwardQuery\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "405",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024n14\",\"shortCode\":\"r86024n14\",\"longUrl\":\"https://www.example.invalid/a\\\\b/{x}/[y]/\\u003Cz\\u003E/\\u0022q\\u0022/^`\",\"dateCreated\":\"2026-11-25T10:53:47+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-n14",
+   "method": "GET",
+   "path": "/r86024n14",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://www.example.invalid/a%5Cb/%7Bx%7D/%5By%5D/%3Cz%3E/%22q%22/%5E%60"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-n14-q",
+   "method": "GET",
+   "path": "/r86024n14?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://www.example.invalid/a%5Cb/%7Bx%7D/%5By%5D/%3Cz%3E/%22q%22/%5E%60?add=1%2B1%202&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%D0%B2&sl=a%2Fb%3Ac%40d"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-n15",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"  https://www.example.invalid/sp  \", \"customSlug\": \"r86024n15\", \"forwardQuery\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "368",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024n15\",\"shortCode\":\"r86024n15\",\"longUrl\":\"  https://www.example.invalid/sp  \",\"dateCreated\":\"2026-11-25T10:53:47+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-n15",
+   "method": "GET",
+   "path": "/r86024n15",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://www.example.invalid/sp%20%20"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-n15-q",
+   "method": "GET",
+   "path": "/r86024n15?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://www.example.invalid/sp%20%20?add=1%2B1%202&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%D0%B2&sl=a%2Fb%3Ac%40d"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-n16",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://www.example.invalid/p?a=1&&b=2&=3&c==4\", \"customSlug\": \"r86024n16\", \"forwardQuery\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "400",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024n16\",\"shortCode\":\"r86024n16\",\"longUrl\":\"https://www.example.invalid/p?a=1\\u0026\\u0026b=2\\u0026=3\\u0026c==4\",\"dateCreated\":\"2026-11-25T10:53:47+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-n16",
+   "method": "GET",
+   "path": "/r86024n16",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://www.example.invalid/p?a=1&&=3&b=2&c=%3D4"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-n16-q",
+   "method": "GET",
+   "path": "/r86024n16?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://www.example.invalid/p?a=5&&=3&b=2&c=%3D4&add=1%2B1%202&q=NEW&e=&k&0=zero&7=seven&%D0%BF=%D0%B2&sl=a%2Fb%3Ac%40d"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-n17",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://www.example.invalid//double//slash/../dot/./x\", \"customSlug\": \"r86024n17\", \"forwardQuery\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "387",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024n17\",\"shortCode\":\"r86024n17\",\"longUrl\":\"https://www.example.invalid//double//slash/../dot/./x\",\"dateCreated\":\"2026-11-25T10:53:47+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-n17",
+   "method": "GET",
+   "path": "/r86024n17",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://www.example.invalid//double//slash/../dot/./x"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-n17-q",
+   "method": "GET",
+   "path": "/r86024n17?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://www.example.invalid//double//slash/../dot/./x?add=1%2B1%202&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%D0%B2&sl=a%2Fb%3Ac%40d"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-n18",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://www.example.invalid/p?utm_source=sms&phone=%2B7700\", \"customSlug\": \"r86024n18\", \"forwardQuery\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "397",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024n18\",\"shortCode\":\"r86024n18\",\"longUrl\":\"https://www.example.invalid/p?utm_source=sms\\u0026phone=%2B7700\",\"dateCreated\":\"2026-11-25T10:53:47+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-n18",
+   "method": "GET",
+   "path": "/r86024n18",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://www.example.invalid/p?utm_source=sms&phone=%2B7700"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-n18-q",
+   "method": "GET",
+   "path": "/r86024n18?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://www.example.invalid/p?utm_source=sms&phone=%2B7700&add=1%2B1%202&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%D0%B2&sl=a%2Fb%3Ac%40d"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-n19",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"a:b\", \"customSlug\": \"r86024n19\", \"forwardQuery\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "337",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024n19\",\"shortCode\":\"r86024n19\",\"longUrl\":\"a:b\",\"dateCreated\":\"2026-11-25T10:53:47+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-n19",
+   "method": "GET",
+   "path": "/r86024n19",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "a:b"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-n19-q",
+   "method": "GET",
+   "path": "/r86024n19?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "a:b?add=1%2B1%202&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%D0%B2&sl=a%2Fb%3Ac%40d"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-n20",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://www.example.invalid/%D0%BF%d1%80?q=%D0%BF%d1%80\", \"customSlug\": \"r86024n20\", \"forwardQuery\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "389",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024n20\",\"shortCode\":\"r86024n20\",\"longUrl\":\"https://www.example.invalid/%D0%BF%d1%80?q=%D0%BF%d1%80\",\"dateCreated\":\"2026-11-25T10:53:47+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-n20",
+   "method": "GET",
+   "path": "/r86024n20",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://www.example.invalid/%D0%BF%d1%80?q=%D0%BF%D1%80"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-n20-q",
+   "method": "GET",
+   "path": "/r86024n20?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://www.example.invalid/%D0%BF%d1%80?q=NEW&add=1%2B1%202&a=5&e=&k&0=zero&7=seven&%D0%BF=%D0%B2&sl=a%2Fb%3Ac%40d"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-n21",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://www.example.invalid/кириллица/путь?q=привет мир\", \"customSlug\": \"r86024n21\", \"forwardQuery\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "499",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024n21\",\"shortCode\":\"r86024n21\",\"longUrl\":\"https://www.example.invalid/\\u043a\\u0438\\u0440\\u0438\\u043b\\u043b\\u0438\\u0446\\u0430/\\u043f\\u0443\\u0442\\u044c?q=\\u043f\\u0440\\u0438\\u0432\\u0435\\u0442 \\u043c\\u0438\\u0440\",\"dateCreated\":\"2026-11-25T10:53:48+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-n21",
+   "method": "GET",
+   "path": "/r86024n21",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://www.example.invalid/%D0%BA%D0%B8%D1%80%D0%B8%D0%BB%D0%BB%D0%B8%D1%86%D0%B0/%D0%BF%D1%83%D1%82%D1%8C?q=%D0%BF%D1%80%D0%B8%D0%B2%D0%B5%D1%82%20%D0%BC%D0%B8%D1%80"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-n21-q",
+   "method": "GET",
+   "path": "/r86024n21?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://www.example.invalid/%D0%BA%D0%B8%D1%80%D0%B8%D0%BB%D0%BB%D0%B8%D1%86%D0%B0/%D0%BF%D1%83%D1%82%D1%8C?q=NEW&add=1%2B1%202&a=5&e=&k&0=zero&7=seven&%D0%BF=%D0%B2&sl=a%2Fb%3Ac%40d"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-n22",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"myapp://open/1\", \"customSlug\": \"r86024n22\", \"forwardQuery\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "348",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024n22\",\"shortCode\":\"r86024n22\",\"longUrl\":\"myapp://open/1\",\"dateCreated\":\"2026-11-25T10:53:48+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-n22",
+   "method": "GET",
+   "path": "/r86024n22",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "myapp://open/1"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-n22-q",
+   "method": "GET",
+   "path": "/r86024n22?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "myapp://open/1?add=1%2B1%202&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%D0%B2&sl=a%2Fb%3Ac%40d"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-n23",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://[::1]:8443/x?y=1\", \"customSlug\": \"r86024n23\", \"forwardQuery\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "358",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024n23\",\"shortCode\":\"r86024n23\",\"longUrl\":\"https://[::1]:8443/x?y=1\",\"dateCreated\":\"2026-11-25T10:53:48+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-n23",
+   "method": "GET",
+   "path": "/r86024n23",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://[::1]:8443/x?y=1"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-n23-q",
+   "method": "GET",
+   "path": "/r86024n23?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://[::1]:8443/x?y=1&add=1%2B1%202&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%D0%B2&sl=a%2Fb%3Ac%40d"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-n24",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://www.example.invalid:8443/x?y=%D0%BF&z=%2F#a%20b\", \"customSlug\": \"r86024n24\", \"forwardQuery\": false}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "395",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024n24\",\"shortCode\":\"r86024n24\",\"longUrl\":\"https://www.example.invalid:8443/x?y=%D0%BF\\u0026z=%2F#a%20b\",\"dateCreated\":\"2026-11-25T10:53:48+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":false,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-n24",
+   "method": "GET",
+   "path": "/r86024n24",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://www.example.invalid:8443/x?y=%D0%BF&z=%2F#a%20b"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-n24-q",
+   "method": "GET",
+   "path": "/r86024n24?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://www.example.invalid:8443/x?y=%D0%BF&z=%2F#a%20b"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-n25",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"localhost:8080/x\", \"customSlug\": \"r86024n25\", \"forwardQuery\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "350",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024n25\",\"shortCode\":\"r86024n25\",\"longUrl\":\"localhost:8080/x\",\"dateCreated\":\"2026-11-25T10:53:48+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-n25",
+   "method": "GET",
+   "path": "/r86024n25",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "//localhost:8080/x"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-n25-q",
+   "method": "GET",
+   "path": "/r86024n25?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "//localhost:8080/x?add=1%2B1%202&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%D0%B2&sl=a%2Fb%3Ac%40d"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "mk-n26",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"HTTP://WWW.EXAMPLE.INVALID/Path?Q=1\", \"customSlug\": \"r86024n26\", \"forwardQuery\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "369",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024n26\",\"shortCode\":\"r86024n26\",\"longUrl\":\"HTTP://WWW.EXAMPLE.INVALID/Path?Q=1\",\"dateCreated\":\"2026-11-25T10:53:48+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-n26",
+   "method": "GET",
+   "path": "/r86024n26",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "http://www.example.invalid/Path?Q=1"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-n26-q",
+   "method": "GET",
+   "path": "/r86024n26?add=1%2B1+2&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%d0%b2&sl=a/b:c@d",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "http://www.example.invalid/Path?Q=1&add=1%2B1%202&q=NEW&a=5&e=&k&0=zero&7=seven&%D0%BF=%D0%B2&sl=a%2Fb%3Ac%40d"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-head",
+   "method": "HEAD",
+   "path": "/r86024rq1",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/r86024/path?a=1&b=2#frag"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-q[x=]",
+   "method": "GET",
+   "path": "/r86024rq2?x=",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/r86024/path?x="
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-q[=1]",
+   "method": "GET",
+   "path": "/r86024rq2?=1",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/r86024/path?=1"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-q[&&]",
+   "method": "GET",
+   "path": "/r86024rq2?&&",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/r86024/path?&&"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-q[a=1&a=2]",
+   "method": "GET",
+   "path": "/r86024rq2?a=1&a=2",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/r86024/path?a=1&a=2"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-q[a%5B%5D=1&a%5Bk%5D=2]",
+   "method": "GET",
+   "path": "/r86024rq2?a%5B%5D=1&a%5Bk%5D=2",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/r86024/path?a%5B%5D=1&a%5Bk%5D=2"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-q[a=%zz&b=%]",
+   "method": "GET",
+   "path": "/r86024rq2?a=%zz&b=%",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/r86024/path?a=%25zz&b=%25"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-q[a=%00%0a]",
+   "method": "GET",
+   "path": "/r86024rq2?a=%00%0a",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/r86024/path?a=%00%0A"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-q[a=1;b=2]",
+   "method": "GET",
+   "path": "/r86024rq2?a=1;b=2",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/r86024/path?a=1%3Bb%3D2"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-q[]",
+   "method": "GET",
+   "path": "/r86024rq2?",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/r86024/path"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-host-default",
+   "method": "GET",
+   "path": "/r86024rq1",
+   "headers": {
+    "Host": "l.demo.test"
+   },
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/r86024/path?a=1&b=2#frag"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-host-other",
+   "method": "GET",
+   "path": "/r86024rq1",
+   "headers": {
+    "Host": "sl.demo.test"
+   },
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/r86024/path?a=1&b=2#frag"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-dom-on-sl",
+   "method": "GET",
+   "path": "/r86024dom",
+   "headers": {
+    "Host": "sl.demo.test"
+   },
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/r86024/do"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-dom-on-SL",
+   "method": "GET",
+   "path": "/r86024dom",
+   "headers": {
+    "Host": "SL.DEMO.TeST"
+   },
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/r86024/do"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-dom-on-sl-port",
+   "method": "GET",
+   "path": "/r86024dom",
+   "headers": {
+    "Host": "sl.demo.test:443"
+   },
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/r86024/do2"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-dom-on-l",
+   "method": "GET",
+   "path": "/r86024dom",
+   "headers": {
+    "Host": "l.demo.test"
+   },
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/r86024/do2"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-dom-unknown",
+   "method": "GET",
+   "path": "/r86024dom",
+   "headers": {
+    "Host": "unknown.example"
+   },
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/r86024/do2"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-case",
+   "method": "GET",
+   "path": "/R86024RQ1",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 404,
+   "responseHeaders": {
+    "Content-Length": "1488",
+    "Content-Type": "text/html; charset=utf-8"
+   },
+   "requestId": true,
+   "responseBody": "<!DOCTYPE html>\n<html lang=\"en\">\n    <head>\n        <title>Invalid Short URL | Shlink</title>\n        <meta charset=\"utf-8\">\n        <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n        <link rel=\"shortcut icon\" href=\"/favicon.ico\">\n        <style>\n            *, :before, :after {box-sizing: border-box;}\n            html, body {\n                margin: 0; padding: 0; height: 100%; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #212529; text-align: center;\n                font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n            }\n            p {margin-bottom: 20px;}\n            hr {margin-top: 1rem; margin-bottom: 1rem; border: 0; border-top: 1px solid rgba(0, 0, 0, .1);}\n            .app {min-height: 100%; display: flex; align-items: center; justify-content: center; flex-flow: column;}\n            .container {width: 100%; max-width: 1140px; padding: 0 20px;}\n        </style>\n    </head>\n    <body>\n        <div class=\"app\">\n            <main class=\"container\">\n                <h1>Oops!</h1>\n                <hr>\n                <p>This short URL doesn't seem to be valid.</p>\n                <p>Make sure you included all the characters, with no extra punctuation.</p>\n            </main>\n        </div>\n    </body>\n</html>\n"
+  },
+  {
+   "name": "go-double-slash",
+   "method": "GET",
+   "path": "//r86024rq1",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/r86024/path?a=1&b=2#frag"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-encoded-slash",
+   "method": "GET",
+   "path": "/r86024rq1%2F",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 404,
+   "responseHeaders": {
+    "Content-Length": "1428",
+    "Content-Type": "text/html; charset=utf-8"
+   },
+   "requestId": true,
+   "responseBody": "<!DOCTYPE html>\n<html lang=\"en\">\n    <head>\n        <title>Not Found | Shlink</title>\n        <meta charset=\"utf-8\">\n        <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n        <link rel=\"shortcut icon\" href=\"/favicon.ico\">\n        <style>\n            *, :before, :after {box-sizing: border-box;}\n            html, body {\n                margin: 0; padding: 0; height: 100%; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #212529; text-align: center;\n                font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n            }\n            p {margin-bottom: 20px;}\n            hr {margin-top: 1rem; margin-bottom: 1rem; border: 0; border-top: 1px solid rgba(0, 0, 0, .1);}\n            .app {min-height: 100%; display: flex; align-items: center; justify-content: center; flex-flow: column;}\n            .container {width: 100%; max-width: 1140px; padding: 0 20px;}\n        </style>\n    </head>\n    <body>\n        <div class=\"app\">\n            <main class=\"container\">\n                <h1>404</h1>\n                <hr>\n                <h3>Page not found.</h3>\n                <p>The page you requested could not be found.</p>\n            </main>\n        </div>\n    </body>\n</html>\n"
+  },
+  {
+   "name": "go-cyr",
+   "method": "GET",
+   "path": "/r86024%D0%BF%D1%80%D0%B8%D0%B2%D0%B5%D1%82",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/r86024/c5"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-post",
+   "method": "POST",
+   "path": "/r86024rq1",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 404,
+   "responseHeaders": {
+    "Content-Length": "1428",
+    "Content-Type": "text/html; charset=utf-8"
+   },
+   "requestId": true,
+   "responseBody": "<!DOCTYPE html>\n<html lang=\"en\">\n    <head>\n        <title>Not Found | Shlink</title>\n        <meta charset=\"utf-8\">\n        <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n        <link rel=\"shortcut icon\" href=\"/favicon.ico\">\n        <style>\n            *, :before, :after {box-sizing: border-box;}\n            html, body {\n                margin: 0; padding: 0; height: 100%; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #212529; text-align: center;\n                font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n            }\n            p {margin-bottom: 20px;}\n            hr {margin-top: 1rem; margin-bottom: 1rem; border: 0; border-top: 1px solid rgba(0, 0, 0, .1);}\n            .app {min-height: 100%; display: flex; align-items: center; justify-content: center; flex-flow: column;}\n            .container {width: 100%; max-width: 1140px; padding: 0 20px;}\n        </style>\n    </head>\n    <body>\n        <div class=\"app\">\n            <main class=\"container\">\n                <h1>404</h1>\n                <hr>\n                <h3>Page not found.</h3>\n                <p>The page you requested could not be found.</p>\n            </main>\n        </div>\n    </body>\n</html>\n"
+  },
+  {
+   "name": "go-options",
+   "method": "OPTIONS",
+   "path": "/r86024rq1",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 404,
+   "responseHeaders": {
+    "Content-Length": "1428",
+    "Content-Type": "text/html; charset=utf-8"
+   },
+   "requestId": true,
+   "responseBody": "<!DOCTYPE html>\n<html lang=\"en\">\n    <head>\n        <title>Not Found | Shlink</title>\n        <meta charset=\"utf-8\">\n        <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n        <link rel=\"shortcut icon\" href=\"/favicon.ico\">\n        <style>\n            *, :before, :after {box-sizing: border-box;}\n            html, body {\n                margin: 0; padding: 0; height: 100%; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #212529; text-align: center;\n                font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n            }\n            p {margin-bottom: 20px;}\n            hr {margin-top: 1rem; margin-bottom: 1rem; border: 0; border-top: 1px solid rgba(0, 0, 0, .1);}\n            .app {min-height: 100%; display: flex; align-items: center; justify-content: center; flex-flow: column;}\n            .container {width: 100%; max-width: 1140px; padding: 0 20px;}\n        </style>\n    </head>\n    <body>\n        <div class=\"app\">\n            <main class=\"container\">\n                <h1>404</h1>\n                <hr>\n                <h3>Page not found.</h3>\n                <p>The page you requested could not be found.</p>\n            </main>\n        </div>\n    </body>\n</html>\n"
+  },
+  {
+   "name": "mk-exp",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/exp\", \"customSlug\": \"r86024exp\", \"validUntil\": \"2026-11-01T00:00:00+05:00\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "387",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024exp\",\"shortCode\":\"r86024exp\",\"longUrl\":\"https://cmp.example/r86024/exp\",\"dateCreated\":\"2026-11-25T10:53:48+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":\"2026-11-01T00:00:00+05:00\",\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-exp",
+   "method": "GET",
+   "path": "/r86024exp",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 404,
+   "responseHeaders": {
+    "Content-Length": "1488",
+    "Content-Type": "text/html; charset=utf-8"
+   },
+   "requestId": true,
+   "responseBody": "<!DOCTYPE html>\n<html lang=\"en\">\n    <head>\n        <title>Invalid Short URL | Shlink</title>\n        <meta charset=\"utf-8\">\n        <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n        <link rel=\"shortcut icon\" href=\"/favicon.ico\">\n        <style>\n            *, :before, :after {box-sizing: border-box;}\n            html, body {\n                margin: 0; padding: 0; height: 100%; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #212529; text-align: center;\n                font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n            }\n            p {margin-bottom: 20px;}\n            hr {margin-top: 1rem; margin-bottom: 1rem; border: 0; border-top: 1px solid rgba(0, 0, 0, .1);}\n            .app {min-height: 100%; display: flex; align-items: center; justify-content: center; flex-flow: column;}\n            .container {width: 100%; max-width: 1140px; padding: 0 20px;}\n        </style>\n    </head>\n    <body>\n        <div class=\"app\">\n            <main class=\"container\">\n                <h1>Oops!</h1>\n                <hr>\n                <p>This short URL doesn't seem to be valid.</p>\n                <p>Make sure you included all the characters, with no extra punctuation.</p>\n            </main>\n        </div>\n    </body>\n</html>\n"
+  },
+  {
+   "name": "get-exp",
+   "method": "GET",
+   "path": "/rest/v3/short-urls/r86024exp",
+   "headers": {},
+   "body": null,
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "387",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024exp\",\"shortCode\":\"r86024exp\",\"longUrl\":\"https://cmp.example/r86024/exp\",\"dateCreated\":\"2026-11-25T10:53:48+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":\"2026-11-01T00:00:00+05:00\",\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "mk-fut",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/fut\", \"customSlug\": \"r86024fut\", \"validSince\": \"2027-11-01T00:00:00+05:00\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "387",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024fut\",\"shortCode\":\"r86024fut\",\"longUrl\":\"https://cmp.example/r86024/fut\",\"dateCreated\":\"2026-11-25T10:53:48+05:00\",\"tags\":[],\"meta\":{\"validSince\":\"2027-11-01T00:00:00+05:00\",\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-fut",
+   "method": "GET",
+   "path": "/r86024fut",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 404,
+   "responseHeaders": {
+    "Content-Length": "1488",
+    "Content-Type": "text/html; charset=utf-8"
+   },
+   "requestId": true,
+   "responseBody": "<!DOCTYPE html>\n<html lang=\"en\">\n    <head>\n        <title>Invalid Short URL | Shlink</title>\n        <meta charset=\"utf-8\">\n        <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n        <link rel=\"shortcut icon\" href=\"/favicon.ico\">\n        <style>\n            *, :before, :after {box-sizing: border-box;}\n            html, body {\n                margin: 0; padding: 0; height: 100%; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #212529; text-align: center;\n                font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n            }\n            p {margin-bottom: 20px;}\n            hr {margin-top: 1rem; margin-bottom: 1rem; border: 0; border-top: 1px solid rgba(0, 0, 0, .1);}\n            .app {min-height: 100%; display: flex; align-items: center; justify-content: center; flex-flow: column;}\n            .container {width: 100%; max-width: 1140px; padding: 0 20px;}\n        </style>\n    </head>\n    <body>\n        <div class=\"app\">\n            <main class=\"container\">\n                <h1>Oops!</h1>\n                <hr>\n                <p>This short URL doesn't seem to be valid.</p>\n                <p>Make sure you included all the characters, with no extra punctuation.</p>\n            </main>\n        </div>\n    </body>\n</html>\n"
+  },
+  {
+   "name": "mk-mv0",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/mv0\", \"customSlug\": \"r86024mv0\", \"maxVisits\": 0}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "361",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024mv0\",\"shortCode\":\"r86024mv0\",\"longUrl\":\"https://cmp.example/r86024/mv0\",\"dateCreated\":\"2026-11-25T10:53:48+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":0},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-mv0",
+   "method": "GET",
+   "path": "/r86024mv0",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 404,
+   "responseHeaders": {
+    "Content-Length": "1488",
+    "Content-Type": "text/html; charset=utf-8"
+   },
+   "requestId": true,
+   "responseBody": "<!DOCTYPE html>\n<html lang=\"en\">\n    <head>\n        <title>Invalid Short URL | Shlink</title>\n        <meta charset=\"utf-8\">\n        <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n        <link rel=\"shortcut icon\" href=\"/favicon.ico\">\n        <style>\n            *, :before, :after {box-sizing: border-box;}\n            html, body {\n                margin: 0; padding: 0; height: 100%; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #212529; text-align: center;\n                font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n            }\n            p {margin-bottom: 20px;}\n            hr {margin-top: 1rem; margin-bottom: 1rem; border: 0; border-top: 1px solid rgba(0, 0, 0, .1);}\n            .app {min-height: 100%; display: flex; align-items: center; justify-content: center; flex-flow: column;}\n            .container {width: 100%; max-width: 1140px; padding: 0 20px;}\n        </style>\n    </head>\n    <body>\n        <div class=\"app\">\n            <main class=\"container\">\n                <h1>Oops!</h1>\n                <hr>\n                <p>This short URL doesn't seem to be valid.</p>\n                <p>Make sure you included all the characters, with no extra punctuation.</p>\n            </main>\n        </div>\n    </body>\n</html>\n"
+  },
+  {
+   "name": "mk-mv1",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/mv1\", \"customSlug\": \"r86024mv1\", \"maxVisits\": 1}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "361",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024mv1\",\"shortCode\":\"r86024mv1\",\"longUrl\":\"https://cmp.example/r86024/mv1\",\"dateCreated\":\"2026-11-25T10:53:48+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":1},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "go-mv1",
+   "method": "GET",
+   "path": "/r86024mv1",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/r86024/mv1"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "go-mv1-again",
+   "method": "GET",
+   "path": "/r86024mv1",
+   "headers": {},
+   "body": null,
+   "apiKey": null,
+   "generatedCode": false,
+   "status": 302,
+   "responseHeaders": {
+    "Content-Length": "0",
+    "Location": "https://cmp.example/r86024/mv1"
+   },
+   "requestId": true,
+   "responseBody": ""
+  },
+  {
+   "name": "fie-base",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/fie\", \"customSlug\": \"r86024fie\", \"tags\": [\"b\", \"a\"], \"validUntil\": \"2027-01-01T00:00:00+05:00\", \"maxVisits\": 5, \"title\": \"T1\", \"forwardQuery\": false}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "392",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024fie\",\"shortCode\":\"r86024fie\",\"longUrl\":\"https://cmp.example/r86024/fie\",\"dateCreated\":\"2026-11-25T10:53:48+05:00\",\"tags\":[\"b\",\"a\"],\"meta\":{\"validSince\":null,\"validUntil\":\"2027-01-01T00:00:00+05:00\",\"maxVisits\":5},\"domain\":null,\"title\":\"T1\",\"crawlable\":false,\"forwardQuery\":false,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "fie-only-url",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/fie\", \"findIfExists\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "392",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024fie\",\"shortCode\":\"r86024fie\",\"longUrl\":\"https://cmp.example/r86024/fie\",\"dateCreated\":\"2026-11-25T10:53:48+05:00\",\"tags\":[\"a\",\"b\"],\"meta\":{\"validSince\":null,\"validUntil\":\"2027-01-01T00:00:00+05:00\",\"maxVisits\":5},\"domain\":null,\"title\":\"T1\",\"crawlable\":false,\"forwardQuery\":false,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "fie-tags-order",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/fie\", \"findIfExists\": true, \"tags\": [\"a\", \"b\"]}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "392",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024fie\",\"shortCode\":\"r86024fie\",\"longUrl\":\"https://cmp.example/r86024/fie\",\"dateCreated\":\"2026-11-25T10:53:48+05:00\",\"tags\":[\"a\",\"b\"],\"meta\":{\"validSince\":null,\"validUntil\":\"2027-01-01T00:00:00+05:00\",\"maxVisits\":5},\"domain\":null,\"title\":\"T1\",\"crawlable\":false,\"forwardQuery\":false,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "fie-tags-empty",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/fie\", \"findIfExists\": true, \"tags\": []}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "392",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024fie\",\"shortCode\":\"r86024fie\",\"longUrl\":\"https://cmp.example/r86024/fie\",\"dateCreated\":\"2026-11-25T10:53:48+05:00\",\"tags\":[\"a\",\"b\"],\"meta\":{\"validSince\":null,\"validUntil\":\"2027-01-01T00:00:00+05:00\",\"maxVisits\":5},\"domain\":null,\"title\":\"T1\",\"crawlable\":false,\"forwardQuery\":false,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "fie-until-utc",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/fie\", \"findIfExists\": true, \"validUntil\": \"2026-12-31T19:00:00Z\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "392",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024fie\",\"shortCode\":\"r86024fie\",\"longUrl\":\"https://cmp.example/r86024/fie\",\"dateCreated\":\"2026-11-25T10:53:48+05:00\",\"tags\":[\"a\",\"b\"],\"meta\":{\"validSince\":null,\"validUntil\":\"2027-01-01T00:00:00+05:00\",\"maxVisits\":5},\"domain\":null,\"title\":\"T1\",\"crawlable\":false,\"forwardQuery\":false,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "fie-title-diff",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/fie\", \"findIfExists\": true, \"title\": \"other\", \"forwardQuery\": true, \"crawlable\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "392",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024fie\",\"shortCode\":\"r86024fie\",\"longUrl\":\"https://cmp.example/r86024/fie\",\"dateCreated\":\"2026-11-25T10:53:48+05:00\",\"tags\":[\"a\",\"b\"],\"meta\":{\"validSince\":null,\"validUntil\":\"2027-01-01T00:00:00+05:00\",\"maxVisits\":5},\"domain\":null,\"title\":\"T1\",\"crawlable\":false,\"forwardQuery\":false,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "fie-len-diff",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/fie\", \"findIfExists\": true, \"shortCodeLength\": 8}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "392",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024fie\",\"shortCode\":\"r86024fie\",\"longUrl\":\"https://cmp.example/r86024/fie\",\"dateCreated\":\"2026-11-25T10:53:48+05:00\",\"tags\":[\"a\",\"b\"],\"meta\":{\"validSince\":null,\"validUntil\":\"2027-01-01T00:00:00+05:00\",\"maxVisits\":5},\"domain\":null,\"title\":\"T1\",\"crawlable\":false,\"forwardQuery\":false,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "fie-domain-default",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/fie\", \"findIfExists\": true, \"domain\": \"l.demo.test\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "392",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/r86024fie\",\"shortCode\":\"r86024fie\",\"longUrl\":\"https://cmp.example/r86024/fie\",\"dateCreated\":\"2026-11-25T10:53:48+05:00\",\"tags\":[\"a\",\"b\"],\"meta\":{\"validSince\":null,\"validUntil\":\"2027-01-01T00:00:00+05:00\",\"maxVisits\":5},\"domain\":null,\"title\":\"T1\",\"crawlable\":false,\"forwardQuery\":false,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "fie-slug-other-url",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/fie2\", \"findIfExists\": true, \"customSlug\": \"r86024fie\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 400,
+   "responseHeaders": {
+    "Content-Length": "180",
+    "Content-Type": "application/problem+json"
+   },
+   "requestId": true,
+   "responseBody": "{\"customSlug\":\"r86024fie\",\"title\":\"Invalid custom slug\",\"type\":\"https://shlink.io/api/error/non-unique-slug\",\"status\":400,\"detail\":\"Provided slug \\\"r86024fie\\\" is already in use.\"}"
+  },
+  {
+   "name": "fie-tags-subset",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/fie\", \"findIfExists\": true, \"tags\": [\"a\"]}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "359",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/1wetc\",\"shortCode\":\"1wetc\",\"longUrl\":\"https://cmp.example/r86024/fie\",\"dateCreated\":\"2026-11-25T10:53:48+05:00\",\"tags\":[\"a\"],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "fie-until-diff",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/fie\", \"findIfExists\": true, \"validUntil\": \"2027-01-02T00:00:00+05:00\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "379",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/awm8N\",\"shortCode\":\"awm8N\",\"longUrl\":\"https://cmp.example/r86024/fie\",\"dateCreated\":\"2026-11-25T10:53:48+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":\"2027-01-02T00:00:00+05:00\",\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "fie-maxvisits-diff",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/fie\", \"findIfExists\": true, \"maxVisits\": 6}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "353",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/EYmrS\",\"shortCode\":\"EYmrS\",\"longUrl\":\"https://cmp.example/r86024/fie\",\"dateCreated\":\"2026-11-25T10:53:48+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":6},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "fie-domain-other",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/fie\", \"findIfExists\": true, \"domain\": \"sl.demo.test\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "367",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://sl.demo.test/MaksE\",\"shortCode\":\"MaksE\",\"longUrl\":\"https://cmp.example/r86024/fie\",\"dateCreated\":\"2026-11-25T10:53:49+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":\"sl.demo.test\",\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "fie-false-str",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/fie\", \"findIfExists\": \"false\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": true,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "356",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/UGtUK\",\"shortCode\":\"UGtUK\",\"longUrl\":\"https://cmp.example/r86024/fie\",\"dateCreated\":\"2026-11-25T10:53:49+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "fie-dom-first",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/fie/d\", \"domain\": \"sl.demo.test\", \"customSlug\": \"r86024fd\"}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "375",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://sl.demo.test/r86024fd\",\"shortCode\":\"r86024fd\",\"longUrl\":\"https://cmp.example/r86024/fie/d\",\"dateCreated\":\"2026-11-25T10:53:49+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":\"sl.demo.test\",\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  },
+  {
+   "name": "fie-nodomain-finds-other",
+   "method": "POST",
+   "path": "/rest/v3/short-urls",
+   "headers": {
+    "Content-Type": "application/json"
+   },
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/fie/d\", \"findIfExists\": true}",
+   "apiKey": "links-api-key",
+   "generatedCode": false,
+   "status": 200,
+   "responseHeaders": {
+    "Content-Length": "375",
+    "Content-Type": "application/json"
+   },
+   "requestId": true,
+   "responseBody": "{\"shortUrl\":\"https://sl.demo.test/r86024fd\",\"shortCode\":\"r86024fd\",\"longUrl\":\"https://cmp.example/r86024/fie/d\",\"dateCreated\":\"2026-11-25T10:53:49+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":\"sl.demo.test\",\"title\":null,\"crawlable\":false,\"forwardQuery\":true,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+  }
+ ]
+}

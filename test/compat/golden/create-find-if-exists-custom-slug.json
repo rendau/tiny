@@ -1,0 +1,137 @@
+{
+  "scenario": "create-find-if-exists-custom-slug",
+  "about": "findIfExists вместе с customSlug",
+  "steps": [
+    {
+      "name": "создать со своим кодом",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "customSlug": "fie-${run}",
+          "findIfExists": true,
+          "longUrl": "https://shop.example.invalid/${run}/fie-slug"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "380",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/fie-${run}",
+        "shortCode": "fie-${run}",
+        "longUrl": "https://shop.example.invalid/${run}/fie-slug",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "тот же запрос — та же ссылка, а не ошибка «код занят»",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "customSlug": "fie-${run}",
+          "findIfExists": true,
+          "longUrl": "https://shop.example.invalid/${run}/fie-slug"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "380",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/fie-${run}",
+        "shortCode": "fie-${run}",
+        "longUrl": "https://shop.example.invalid/${run}/fie-slug",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "тот же адрес без своего кода — та же ссылка",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "findIfExists": true,
+          "longUrl": "https://shop.example.invalid/${run}/fie-slug"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "380",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/fie-${run}",
+        "shortCode": "fie-${run}",
+        "longUrl": "https://shop.example.invalid/${run}/fie-slug",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    }
+  ]
+}

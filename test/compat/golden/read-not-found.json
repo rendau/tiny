@@ -1,0 +1,95 @@
+{
+  "scenario": "read-not-found",
+  "about": "Ссылки нет",
+  "steps": [
+    {
+      "name": "GET",
+      "request": {
+        "method": "GET",
+        "path": "/rest/v3/short-urls/x${run}",
+        "host": "l.demo.test",
+        "key": "good"
+      },
+      "status": 404,
+      "headers": {
+        "Content-Length": "175",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortCode": "x${run}",
+        "title": "Short URL not found",
+        "type": "https://shlink.io/api/error/short-url-not-found",
+        "status": 404,
+        "detail": "No URL found with short code \"x${run}\""
+      }
+    },
+    {
+      "name": "код из другого регистра не подходит",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "customSlug": "ReadCase${run}",
+          "longUrl": "https://shop.example.invalid/${run}/read-case"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "389",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/ReadCase${run}",
+        "shortCode": "ReadCase${run}",
+        "longUrl": "https://shop.example.invalid/${run}/read-case",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "тот же код строчными",
+      "request": {
+        "method": "GET",
+        "path": "/rest/v3/short-urls/readcase${run}",
+        "host": "l.demo.test",
+        "key": "good"
+      },
+      "status": 404,
+      "headers": {
+        "Content-Length": "189",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortCode": "readcase${run}",
+        "title": "Short URL not found",
+        "type": "https://shlink.io/api/error/short-url-not-found",
+        "status": 404,
+        "detail": "No URL found with short code \"readcase${run}\""
+      }
+    }
+  ]
+}

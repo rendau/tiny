@@ -1,0 +1,140 @@
+{
+  "scenario": "create-find-if-exists-any-domain",
+  "about": "findIfExists без domain ищет по всем доменам — может вернуть ссылку второго домена",
+  "steps": [
+    {
+      "name": "ссылка на втором домене",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "domain": "sl.demo.test",
+          "findIfExists": true,
+          "longUrl": "https://shop.example.invalid/${run}/fie-anydom"
+        }
+      },
+      "saved": {
+        "codeSl": "shortCode =~ ^[0-9a-zA-Z]{5}$"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "383",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://sl.demo.test/${codeSl}",
+        "shortCode": "${codeSl}",
+        "longUrl": "https://shop.example.invalid/${run}/fie-anydom",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": "sl.demo.test",
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "тот же адрес без domain — возвращается ссылка второго домена",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "findIfExists": true,
+          "longUrl": "https://shop.example.invalid/${run}/fie-anydom"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "383",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://sl.demo.test/${codeSl}",
+        "shortCode": "${codeSl}",
+        "longUrl": "https://shop.example.invalid/${run}/fie-anydom",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": "sl.demo.test",
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "тот же адрес, основной домен указан явно — тоже она",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "domain": "l.demo.test",
+          "findIfExists": true,
+          "longUrl": "https://shop.example.invalid/${run}/fie-anydom"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "383",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://sl.demo.test/${codeSl}",
+        "shortCode": "${codeSl}",
+        "longUrl": "https://shop.example.invalid/${run}/fie-anydom",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": "sl.demo.test",
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    }
+  ]
+}

@@ -101,7 +101,7 @@ domain service → repo
 - В `down` объекты удаляются в порядке, обратном `up` (с учётом внешних ключей).
 
 ### API
-- gRPC сервисы: `api/proto/{{ cookiecutter.__proto_pkg }}/*`.
+- gRPC сервисы: `api/proto/tiny_v1/*`.
 - HTTP-gateway: через grpc-gateway + swagger (`docs/api.swagger.json`).
 - DTO маппинг: `internal/handler/grpc/dto`.
 - **REST-пути (route paths) всегда в единственном числе**, без plural:
@@ -241,3 +241,139 @@ domain service → repo
 ```
 make generate-proto  →  gofmt  →  go test ./...  →  go run ./cmd/.
 ```
+
+---
+
+## Что делает сервис
+
+`tiny` — сервис коротких ссылок, **совместимый по внешнему контракту с Shlink 5.1.8**: им можно
+заменить работающий Shlink так, что клиенты не меняют ни адресов, ни запросов, ни ключей.
+Повторяется только то, чем реально пользуются (раздел ниже); внутреннее устройство и схема базы — свои.
+
+Четыре части:
+- **публичный сервер** (`PUBLIC_PORT`, по умолчанию `8080`) — обычный `net/http`, без gRPC: переход
+  по короткой ссылке и `/rest/v3/*`, совместимые с Shlink (`internal/handler/public`);
+- **API админки** — gRPC (`GRPC_PORT`) и HTTP-шлюз (`HTTP_PORT`): `UsrService`, `LinkService`,
+  `TagService` из `api/proto/tiny_v1/`; вход — свои учётки, JWT (как в `github.com/rendau/zorko`);
+- **интерфейс админки** — `admin/` (Nuxt 4 + Nuxt UI 4, как `zorko/admin`); сборка кладётся в
+  `admin-ui/` (`make build-admin`), сервис раздаёт её на `ADMIN_PORT` (`8001`), адрес API — в `/config.js`;
+- **перенос данных** из базы Shlink — `cmd/shlink-import` (разовый инструмент, не часть сервиса).
+
+Сведения о конкретном боевом контуре (кто ходит, объёмы, порядок замены) в репозиторий не
+кладутся — они в локальном `CLAUDE.local.md`.
+
+## Контракт совместимости с Shlink
+
+Образец — `shlinkio/shlink:5.1.8-roadrunner` с настройками `IS_HTTPS_ENABLED=true`,
+`DEFAULT_SHORT_CODES_LENGTH=5`, `DISABLE_TRACKING=true`, без `TIMEZONE`. В тестах и эталонах
+домены условные: `l.demo.test` (основной) и `sl.demo.test`.
+
+**Правило: при любом расхождении прав настоящий Shlink.** Эталонные ответы сняты с настоящего
+Shlink 5.1.8 в docker и лежат в `test/compat/` (сверка — там же, подробности поведения — в
+`test/compat/README.md`, раздел «Что выяснилось»). Повторяется не весь Shlink: статистики
+переходов, QR-кодов, правил перенаправления, управления ключами и доменами через API нет.
+
+| Запрос | Ответ |
+|---|---|
+| `GET`, `HEAD /{код}` | `302` + `Location`; нет ссылки, не началась или истекла — `404` со страницей Shlink |
+| `POST /rest/v3/short-urls` | создание ссылки, `200` и полный объект ссылки Shlink |
+| `GET /rest/v3/short-urls/{код}` | объект ссылки или `404` |
+| `GET /rest/health` | для проб kubernetes |
+| `GET /robots.txt`, `/favicon.ico` | `200`; `GET /` — `404` |
+
+Переход по ссылке:
+- код чувствителен к регистру (`aBc` и `abc` — разные ссылки);
+- ссылка основного домена (`domain = ''`) открывается на любом домене сервиса; ссылка с доменом —
+  только на нём;
+- параметры запроса короткой ссылки дописываются к длинному адресу (`forward_query`);
+- ответ — `302` с пустым телом и одним `Location`, без `Content-Type` и `Cache-Control`
+  (`http.Redirect` из Go не годится); неподдерживаемый метод — `404`, а не `405`; страниц 404 две;
+- посещения не считаются (как при `DISABLE_TRACKING=true`), поэтому `max_visits` хранится, но
+  не применяется.
+
+Создание (`POST /rest/v3/short-urls`, заголовок `X-Api-Key`, тело JSON) принимает все поля
+создания Shlink: `longUrl`, `findIfExists`, `tags`, `validSince`, `validUntil`, `maxVisits`,
+`customSlug`, `shortCodeLength`, `domain`, `title`, `crawlable`, `forwardQuery`. Ответ — поле в
+поле и в том же порядке, что у Shlink:
+
+```json
+{"shortUrl":"https://l.demo.test/56JzUe","shortCode":"56JzUe","longUrl":"https://…","dateCreated":"2026-11-25T05:01:05+00:00",
+ "tags":["news"],"meta":{"validSince":null,"validUntil":"2026-12-05T05:01:00+00:00","maxVisits":null},
+ "domain":null,"title":null,"crawlable":false,"forwardQuery":true,
+ "visitsSummary":{"total":0,"nonBots":0,"bots":0},"hasRedirectRules":false}
+```
+
+- **время в ответах — в UTC (`+00:00`)**, как у Shlink без настройки `TIMEZONE`; от `TZ` пода не
+  зависит. Дата без пояса в запросе понимается в том же поясе;
+- `findIfExists=true` — вернуть самую старую ссылку с тем же длинным адресом, у которой совпадают
+  присланные в запросе поля (метки — точный набор, сроки, `maxVisits`, свой код, домен); `title`,
+  `crawlable`, `forwardQuery`, `shortCodeLength` не сравниваются;
+- `shortCodeLength` — не меньше 4, верхней границы нет; 0 и меньше 4 → `400`;
+- код генерируется из `0-9a-zA-Z`;
+- ошибки — `application/problem+json` (нет ключа или он неверный — `401`, неверные данные — `400`,
+  занятый `customSlug` — `400`, ссылка не найдена — `404`);
+- любой ключ видит все ссылки (как ключи Shlink без ролей).
+
+Сознательно не повторяется: Shlink сам ходит по длинному адресу за заголовком страницы, если
+`title` не прислан, — `tiny` наружу не ходит, `title` остаётся `null`; ответы `500` и зависания
+Shlink на кривых данных.
+
+Ключи API задаются двумя списками, которые складываются: `API_KEYS` — открытым текстом,
+`API_KEY_HASHES` — SHA-256 в hex через запятую, ровно то, что Shlink хранит в `api_keys.key`.
+Вторым способом ключи переезжают из Shlink без переноса самих значений (запрос — в
+`cmd/shlink-import/README.md`; колонку `name` у Shlink не выводить — у старых ключей в ней сам
+ключ). Негодная строка в `API_KEY_HASHES` — сервис не запускается.
+
+### Журнал запросов к `/rest/*`
+
+Нужен после замены Shlink: увидеть, что именно присылают клиенты и на чём они получают отказ.
+Код — `internal/handler/public/reqlog.go`.
+
+- Отказ (код ответа от 400) на создании или чтении ссылки пишется **всегда**: строка
+  `public: rest request rejected` (5xx — `public: rest request failed`) с кодом, адресом клиента,
+  `user_agent`, отпечатком ключа и ответом, в котором названа причина и неверные поля. Тела запроса
+  в ней нет.
+- `LOG_CREATE_REQUESTS=true` — дополнительно пишется **каждый** запрос создания
+  (`public: short url created`) и во все строки создания добавляется тело запроса (до 4 КБ).
+  В длинных адресах могут быть личные данные — включать на время разбора, потом убрать.
+- `key` — отпечаток ключа: первые 8 знаков его SHA-256, то есть начало `api_keys.key` у Shlink и
+  строки в `API_KEY_HASHES`; сам ключ в журнал не попадает. `key_valid=false` с отпечатком —
+  клиент ходит ключом, которого нет в настройках.
+- Неизвестные адреса `/rest/*`, пробы и переходы по ссылкам в этот журнал не идут.
+
+## Тестовый стенд
+
+Только docker, контейнеры с `--rm`. У каждой части свои контейнеры и порты.
+
+| Часть | Что | Контейнер | Порт на хосте | Логин / пароль / БД |
+|---|---|---|---|---|
+| Сервис (основной стенд) | Postgres 17 | `tiny-pg` | `54340` | `tiny` / `tiny` / `tiny` |
+| Тесты входа и людей | Postgres 17 | `tiny-pg-usr` | `54341` | `tiny` / `tiny` / `tiny` |
+| Сверка | настоящий Shlink 5.1.8 | `tiny-compat-shlink` | `18081` | ключ API — `compat-api-key` |
+| Сверка | Postgres 17 для Shlink | `tiny-compat-shlink-pg` | `54342` | `shlink` / `shlink` / `shlink` |
+| Перенос | настоящий Shlink 5.1.8 (наполнить источник) | `tiny-imp-shlink` | `18082` | ключ API — `imp-api-key` |
+| Перенос | Postgres 17 — источник (база Shlink) | `tiny-imp-shlink-pg` | `54344` | `shlink` / `shlink` / `shlink` |
+| Перенос | Postgres 17 — приёмник (база tiny) | `tiny-imp-pg` | `54345` | `tiny` / `tiny` / `tiny` |
+
+DSN основного стенда: `PG_DSN=postgres://tiny:tiny@localhost:54340/tiny?sslmode=disable`.
+Тесты на живой базе помечены тегом `integration` (`go test -tags integration ./...`).
+
+Порты сервиса на стенде: публичный `8080`, gRPC `5050`, HTTP-шлюз `9090`, интерфейс `8001`,
+системный `3003` (зашит).
+
+Сервис целиком на стенде: `make build && make build-admin`, затем запуск с настройками из
+`.env.example` (для сверки — `API_KEYS=compat-api-key DEFAULT_DOMAIN=l.demo.test IS_HTTPS_ENABLED=true`
+и `ADMIN_API_BASE_URL=http://localhost:9090 HTTP_CORS=true`). Интерфейс — `http://localhost:8001`;
+тестовый человек стенда — `admin` / `admin-pass-1` (админ), создаётся вручную на странице первого
+запуска, в базу не зашит. Сверка: `test/compat/stand.sh up`, затем из `test/compat` —
+`TARGET_URL=http://localhost:8080 API_KEY=compat-api-key go test -count=1 ./...`.
+
+Состояние сверки: 53 сценария из 54. Не совпадает один шаг (`create-title`, шаг 2): на
+`"title": ""` Shlink возвращает `""`, `tiny` — `null` (колонка `title` не отличает «пусто» от
+«нет названия»). Оставлено сознательно.
+
+## Сборка образа
+
+`.github/workflows/deploy.yml`: на push в `master` раннер GitHub прогоняет `go vet` и тесты,
+собирает сервер (`make build`) и интерфейс (`make build-admin`), затем образ
+`ghcr.io/rendau/tiny:latest` (Dockerfile только копирует бинарник, `admin-ui`, миграции и доки).

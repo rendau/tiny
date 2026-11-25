@@ -1,0 +1,353 @@
+{
+  "scenario": "create-flags",
+  "about": "Логические поля crawlable, forwardQuery, findIfExists в разных записях",
+  "steps": [
+    {
+      "name": "forwardQuery=false",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "forwardQuery": false,
+          "longUrl": "https://shop.example.invalid/${run}/flags"
+        }
+      },
+      "saved": {
+        "code": "shortCode =~ ^[0-9a-zA-Z]{5}$"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "368",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${code}",
+        "shortCode": "${code}",
+        "longUrl": "https://shop.example.invalid/${run}/flags",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": false,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "forwardQuery строкой \"false\"",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "forwardQuery": "false",
+          "longUrl": "https://shop.example.invalid/${run}/flags"
+        }
+      },
+      "saved": {
+        "code": "shortCode =~ ^[0-9a-zA-Z]{5}$"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "368",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${code}",
+        "shortCode": "${code}",
+        "longUrl": "https://shop.example.invalid/${run}/flags",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": false,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "forwardQuery числом 0",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "forwardQuery": 0,
+          "longUrl": "https://shop.example.invalid/${run}/flags"
+        }
+      },
+      "saved": {
+        "code": "shortCode =~ ^[0-9a-zA-Z]{5}$"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "368",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${code}",
+        "shortCode": "${code}",
+        "longUrl": "https://shop.example.invalid/${run}/flags",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": false,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "forwardQuery строкой \"нет\"",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "forwardQuery": "нет",
+          "longUrl": "https://shop.example.invalid/${run}/flags"
+        }
+      },
+      "status": 400,
+      "headers": {
+        "Content-Length": "160",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "invalidElements": [
+          "forwardQuery"
+        ],
+        "title": "Invalid data",
+        "type": "https://shlink.io/api/error/invalid-data",
+        "status": 400,
+        "detail": "Provided data is not valid"
+      }
+    },
+    {
+      "name": "forwardQuery=null — ошибка",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "forwardQuery": null,
+          "longUrl": "https://shop.example.invalid/${run}/flags"
+        }
+      },
+      "status": 400,
+      "headers": {
+        "Content-Length": "160",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "invalidElements": [
+          "forwardQuery"
+        ],
+        "title": "Invalid data",
+        "type": "https://shlink.io/api/error/invalid-data",
+        "status": 400,
+        "detail": "Provided data is not valid"
+      }
+    },
+    {
+      "name": "crawlable=null — ошибка",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "crawlable": null,
+          "longUrl": "https://shop.example.invalid/${run}/flags"
+        }
+      },
+      "status": 400,
+      "headers": {
+        "Content-Length": "157",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "invalidElements": [
+          "crawlable"
+        ],
+        "title": "Invalid data",
+        "type": "https://shlink.io/api/error/invalid-data",
+        "status": 400,
+        "detail": "Provided data is not valid"
+      }
+    },
+    {
+      "name": "findIfExists=null — ошибка",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "findIfExists": null,
+          "longUrl": "https://shop.example.invalid/${run}/flags"
+        }
+      },
+      "status": 400,
+      "headers": {
+        "Content-Length": "160",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "invalidElements": [
+          "findIfExists"
+        ],
+        "title": "Invalid data",
+        "type": "https://shlink.io/api/error/invalid-data",
+        "status": 400,
+        "detail": "Provided data is not valid"
+      }
+    },
+    {
+      "name": "findIfExists строкой \"true\" — работает как true",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "findIfExists": "true",
+          "longUrl": "https://shop.example.invalid/${run}/flags-fie"
+        }
+      },
+      "saved": {
+        "codeFie": "shortCode =~ ^[0-9a-zA-Z]{5}$"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "371",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${codeFie}",
+        "shortCode": "${codeFie}",
+        "longUrl": "https://shop.example.invalid/${run}/flags-fie",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "и ещё раз — та же ссылка",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "findIfExists": "true",
+          "longUrl": "https://shop.example.invalid/${run}/flags-fie"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "371",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${codeFie}",
+        "shortCode": "${codeFie}",
+        "longUrl": "https://shop.example.invalid/${run}/flags-fie",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    }
+  ]
+}

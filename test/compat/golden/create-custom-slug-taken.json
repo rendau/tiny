@@ -1,0 +1,338 @@
+{
+  "scenario": "create-custom-slug-taken",
+  "about": "Свой код уже занят",
+  "steps": [
+    {
+      "name": "создать",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "customSlug": "taken-${run}",
+          "longUrl": "https://shop.example.invalid/${run}/taken"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "381",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/taken-${run}",
+        "shortCode": "taken-${run}",
+        "longUrl": "https://shop.example.invalid/${run}/taken",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "тот же запрос ещё раз — код занят",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "customSlug": "taken-${run}",
+          "longUrl": "https://shop.example.invalid/${run}/taken"
+        }
+      },
+      "status": 400,
+      "headers": {
+        "Content-Length": "186",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "customSlug": "taken-${run}",
+        "title": "Invalid custom slug",
+        "type": "https://shlink.io/api/error/non-unique-slug",
+        "status": 400,
+        "detail": "Provided slug \"taken-${run}\" is already in use."
+      }
+    },
+    {
+      "name": "другой адрес с тем же кодом — код занят",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "customSlug": "taken-${run}",
+          "longUrl": "https://shop.example.invalid/${run}/taken-other"
+        }
+      },
+      "status": 400,
+      "headers": {
+        "Content-Length": "186",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "customSlug": "taken-${run}",
+        "title": "Invalid custom slug",
+        "type": "https://shlink.io/api/error/non-unique-slug",
+        "status": 400,
+        "detail": "Provided slug \"taken-${run}\" is already in use."
+      }
+    },
+    {
+      "name": "findIfExists и другой адрес — код занят",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "customSlug": "taken-${run}",
+          "findIfExists": true,
+          "longUrl": "https://shop.example.invalid/${run}/taken-other"
+        }
+      },
+      "status": 400,
+      "headers": {
+        "Content-Length": "186",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "customSlug": "taken-${run}",
+        "title": "Invalid custom slug",
+        "type": "https://shlink.io/api/error/non-unique-slug",
+        "status": 400,
+        "detail": "Provided slug \"taken-${run}\" is already in use."
+      }
+    },
+    {
+      "name": "findIfExists и тот же адрес — возвращается существующая ссылка",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "customSlug": "taken-${run}",
+          "findIfExists": true,
+          "longUrl": "https://shop.example.invalid/${run}/taken"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "381",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/taken-${run}",
+        "shortCode": "taken-${run}",
+        "longUrl": "https://shop.example.invalid/${run}/taken",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "код в другом регистре — свободен",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "customSlug": "TAKEN-${run}",
+          "longUrl": "https://shop.example.invalid/${run}/taken-case"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "386",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/TAKEN-${run}",
+        "shortCode": "TAKEN-${run}",
+        "longUrl": "https://shop.example.invalid/${run}/taken-case",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "тот же код на втором домене — свободен",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "customSlug": "taken-${run}",
+          "domain": "sl.demo.test",
+          "longUrl": "https://shop.example.invalid/${run}/taken-sl"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "395",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://sl.demo.test/taken-${run}",
+        "shortCode": "taken-${run}",
+        "longUrl": "https://shop.example.invalid/${run}/taken-sl",
+        "dateCreated": "<now+00:00>",
+        "tags": [],
+        "meta": {
+          "validSince": null,
+          "validUntil": null,
+          "maxVisits": null
+        },
+        "domain": "sl.demo.test",
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "на втором домене ещё раз — код занят",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "customSlug": "taken-${run}",
+          "domain": "sl.demo.test",
+          "longUrl": "https://shop.example.invalid/${run}/taken-sl-2"
+        }
+      },
+      "status": 400,
+      "headers": {
+        "Content-Length": "238",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "customSlug": "taken-${run}",
+        "domain": "sl.demo.test",
+        "title": "Invalid custom slug",
+        "type": "https://shlink.io/api/error/non-unique-slug",
+        "status": 400,
+        "detail": "Provided slug \"taken-${run}\" is already in use for domain \"sl.demo.test\"."
+      }
+    },
+    {
+      "name": "код с пробелом совпадает с кодом с дефисом — код занят",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "customSlug": "taken ${run}",
+          "longUrl": "https://shop.example.invalid/${run}/taken-space"
+        }
+      },
+      "status": 400,
+      "headers": {
+        "Content-Length": "186",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "customSlug": "taken-${run}",
+        "title": "Invalid custom slug",
+        "type": "https://shlink.io/api/error/non-unique-slug",
+        "status": 400,
+        "detail": "Provided slug \"taken-${run}\" is already in use."
+      }
+    },
+    {
+      "name": "старая ссылка по-прежнему ведёт на свой адрес",
+      "request": {
+        "method": "GET",
+        "path": "/taken-${run}",
+        "host": "l.demo.test"
+      },
+      "status": 302,
+      "headers": {
+        "Content-Length": "0",
+        "Location": "https://shop.example.invalid/${run}/taken",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "empty"
+    }
+  ]
+}

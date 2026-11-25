@@ -20,6 +20,7 @@ import (
 
 	"github.com/rendau/tiny/internal/config"
 	"github.com/rendau/tiny/internal/errs"
+	handlerGrpcP "github.com/rendau/tiny/internal/handler/grpc"
 	"github.com/rendau/tiny/internal/infra/metrics"
 	"github.com/rendau/tiny/pkg/proto/common"
 )
@@ -29,8 +30,8 @@ type GrpcServer struct {
 	server *grpc.Server
 }
 
-func NewGrpcServer(name string, register func(*grpc.Server)) *GrpcServer {
-	interceptors := make([]grpc.UnaryServerInterceptor, 0, 5)
+func NewGrpcServer(name string, sessionSvc handlerGrpcP.AuthSessionServiceI, register func(*grpc.Server)) *GrpcServer {
+	interceptors := make([]grpc.UnaryServerInterceptor, 0, 6)
 
 	// ctx without cancel
 	interceptors = append(interceptors, GrpcInterceptorCtxWithoutCancel())
@@ -50,6 +51,9 @@ func NewGrpcServer(name string, register func(*grpc.Server)) *GrpcServer {
 	if metrics.Enabled {
 		interceptors = append(interceptors, GrpcInterceptorMetrics())
 	}
+
+	// session — последним: кладёт вошедшего человека в контекст (только свои учётки, без похода в БД)
+	interceptors = append(interceptors, handlerGrpcP.NewAuthInterceptor(sessionSvc))
 
 	// server
 	server := grpc.NewServer(
@@ -196,7 +200,9 @@ func GrpcInterceptorError() grpc.UnaryServerInterceptor {
 			slog.String("method", info.FullMethod),
 		)
 
-		st := status.New(codes.InvalidArgument, errStr)
+		// «нужен вход» и «нет прав» — своими кодами: HTTP-шлюз отдаёт по ним 401 и 403
+		grpcCode := handlerGrpcP.AuthGrpcCode(ei.Code)
+		st := status.New(grpcCode, errStr)
 		st, err = st.WithDetails(ei)
 		if err != nil {
 			slog.Error(
@@ -204,7 +210,7 @@ func GrpcInterceptorError() grpc.UnaryServerInterceptor {
 				slog.String("error", errStr),
 				slog.String("method", info.FullMethod),
 			)
-			st = status.New(codes.InvalidArgument, errStr)
+			st = status.New(grpcCode, errStr)
 		}
 
 		return h, st.Err()

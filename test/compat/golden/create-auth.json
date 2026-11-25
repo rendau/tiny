@@ -1,0 +1,117 @@
+{
+  "scenario": "create-auth",
+  "about": "Ключ API при создании",
+  "steps": [
+    {
+      "name": "без ключа",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "content_type": "application/json",
+        "body_json": {
+          "longUrl": "https://shop.example.invalid/${run}/auth"
+        }
+      },
+      "status": 401,
+      "headers": {
+        "Content-Length": "243",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "expectedHeaders": [
+          "X-Api-Key"
+        ],
+        "title": "Invalid authorization",
+        "type": "https://shlink.io/api/error/missing-authentication",
+        "status": 401,
+        "detail": "Expected one of the following authentication headers, [\"X-Api-Key\"], but none were provided"
+      }
+    },
+    {
+      "name": "неверный ключ",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "bad",
+        "content_type": "application/json",
+        "body_json": {
+          "longUrl": "https://shop.example.invalid/${run}/auth"
+        }
+      },
+      "status": 401,
+      "headers": {
+        "Content-Length": "151",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "title": "Invalid API key",
+        "type": "https://shlink.io/api/error/invalid-api-key",
+        "status": 401,
+        "detail": "Provided API key does not exist or is invalid."
+      }
+    },
+    {
+      "name": "пустой ключ",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "empty",
+        "content_type": "application/json",
+        "body_json": {
+          "longUrl": "https://shop.example.invalid/${run}/auth"
+        }
+      },
+      "status": 401,
+      "headers": {
+        "Content-Length": "243",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "expectedHeaders": [
+          "X-Api-Key"
+        ],
+        "title": "Invalid authorization",
+        "type": "https://shlink.io/api/error/missing-authentication",
+        "status": 401,
+        "detail": "Expected one of the following authentication headers, [\"X-Api-Key\"], but none were provided"
+      }
+    },
+    {
+      "name": "без ключа и с неверными данными — сначала проверяется ключ",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "content_type": "application/json",
+        "body_json": {
+          "longUrl": ""
+        }
+      },
+      "status": 401,
+      "headers": {
+        "Content-Length": "243",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "expectedHeaders": [
+          "X-Api-Key"
+        ],
+        "title": "Invalid authorization",
+        "type": "https://shlink.io/api/error/missing-authentication",
+        "status": 401,
+        "detail": "Expected one of the following authentication headers, [\"X-Api-Key\"], but none were provided"
+      }
+    }
+  ]
+}

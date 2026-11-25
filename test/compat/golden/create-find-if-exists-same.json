@@ -1,0 +1,315 @@
+{
+  "scenario": "create-find-if-exists-same",
+  "about": "findIfExists — повтор того же запроса возвращает ту же ссылку",
+  "steps": [
+    {
+      "name": "первый запрос — ссылка создаётся",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "findIfExists": true,
+          "longUrl": "https://shop.example.invalid/${run}/fie-same",
+          "tags": [
+            "compat-a",
+            "compat-b"
+          ],
+          "validUntil": "2099-12-05T10:01:00+05:00"
+        }
+      },
+      "saved": {
+        "code": "shortCode =~ ^[0-9a-zA-Z]{5}$"
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "414",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${code}",
+        "shortCode": "${code}",
+        "longUrl": "https://shop.example.invalid/${run}/fie-same",
+        "dateCreated": "<now+00:00>",
+        "tags": [
+          "compat-a",
+          "compat-b"
+        ],
+        "meta": {
+          "validSince": null,
+          "validUntil": "2099-12-05T05:01:00+00:00",
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "тот же запрос — та же ссылка",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "findIfExists": true,
+          "longUrl": "https://shop.example.invalid/${run}/fie-same",
+          "tags": [
+            "compat-a",
+            "compat-b"
+          ],
+          "validUntil": "2099-12-05T10:01:00+05:00"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "414",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${code}",
+        "shortCode": "${code}",
+        "longUrl": "https://shop.example.invalid/${run}/fie-same",
+        "dateCreated": "<now+00:00>",
+        "tags": [
+          "compat-a",
+          "compat-b"
+        ],
+        "meta": {
+          "validSince": null,
+          "validUntil": "2099-12-05T05:01:00+00:00",
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "и в третий раз",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "findIfExists": true,
+          "longUrl": "https://shop.example.invalid/${run}/fie-same",
+          "tags": [
+            "compat-a",
+            "compat-b"
+          ],
+          "validUntil": "2099-12-05T10:01:00+05:00"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "414",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${code}",
+        "shortCode": "${code}",
+        "longUrl": "https://shop.example.invalid/${run}/fie-same",
+        "dateCreated": "<now+00:00>",
+        "tags": [
+          "compat-a",
+          "compat-b"
+        ],
+        "meta": {
+          "validSince": null,
+          "validUntil": "2099-12-05T05:01:00+00:00",
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "метки в другом порядке — та же ссылка",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "findIfExists": true,
+          "longUrl": "https://shop.example.invalid/${run}/fie-same",
+          "tags": [
+            "compat-b",
+            "compat-a"
+          ],
+          "validUntil": "2099-12-05T10:01:00+05:00"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "414",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${code}",
+        "shortCode": "${code}",
+        "longUrl": "https://shop.example.invalid/${run}/fie-same",
+        "dateCreated": "<now+00:00>",
+        "tags": [
+          "compat-a",
+          "compat-b"
+        ],
+        "meta": {
+          "validSince": null,
+          "validUntil": "2099-12-05T05:01:00+00:00",
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "тот же срок, записанный иначе (UTC, с долями секунды) — та же ссылка",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "findIfExists": true,
+          "longUrl": "https://shop.example.invalid/${run}/fie-same",
+          "tags": [
+            "compat-a",
+            "compat-b"
+          ],
+          "validUntil": "2099-12-05T05:01:00.123456789Z"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "414",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${code}",
+        "shortCode": "${code}",
+        "longUrl": "https://shop.example.invalid/${run}/fie-same",
+        "dateCreated": "<now+00:00>",
+        "tags": [
+          "compat-a",
+          "compat-b"
+        ],
+        "meta": {
+          "validSince": null,
+          "validUntil": "2099-12-05T05:01:00+00:00",
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    },
+    {
+      "name": "метки в другом написании (регистр, пробелы по краям) — та же ссылка",
+      "request": {
+        "method": "POST",
+        "path": "/rest/v3/short-urls",
+        "host": "l.demo.test",
+        "key": "good",
+        "content_type": "application/json",
+        "body_json": {
+          "findIfExists": true,
+          "longUrl": "https://shop.example.invalid/${run}/fie-same",
+          "tags": [
+            "Compat-A",
+            " compat-b "
+          ],
+          "validUntil": "2099-12-05T10:01:00+05:00"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "Content-Length": "414",
+        "Content-Type": "application/json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "shortUrl": "https://l.demo.test/${code}",
+        "shortCode": "${code}",
+        "longUrl": "https://shop.example.invalid/${run}/fie-same",
+        "dateCreated": "<now+00:00>",
+        "tags": [
+          "compat-a",
+          "compat-b"
+        ],
+        "meta": {
+          "validSince": null,
+          "validUntil": "2099-12-05T05:01:00+00:00",
+          "maxVisits": null
+        },
+        "domain": null,
+        "title": null,
+        "crawlable": false,
+        "forwardQuery": true,
+        "visitsSummary": {
+          "total": 0,
+          "nonBots": 0,
+          "bots": 0
+        },
+        "hasRedirectRules": false
+      }
+    }
+  ]
+}

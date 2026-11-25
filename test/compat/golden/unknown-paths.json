@@ -1,0 +1,121 @@
+{
+  "scenario": "unknown-paths",
+  "about": "Адреса, которых нет (в основном сюда стучатся боты)",
+  "steps": [
+    {
+      "name": "путь из нескольких частей",
+      "request": {
+        "method": "GET",
+        "path": "/some/deep/path",
+        "host": "l.demo.test"
+      },
+      "status": 404,
+      "headers": {
+        "Content-Length": "1428",
+        "Content-Type": "text/html; charset=utf-8",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "text",
+      "body_file": "bodies/cb22168235ad.html"
+    },
+    {
+      "name": "файл, который ищут боты",
+      "request": {
+        "method": "GET",
+        "path": "/.env",
+        "host": "l.demo.test"
+      },
+      "status": 404,
+      "headers": {
+        "Content-Length": "1488",
+        "Content-Type": "text/html; charset=utf-8",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "text",
+      "body_file": "bodies/a974331f672f.html"
+    },
+    {
+      "name": "php-страница",
+      "request": {
+        "method": "GET",
+        "path": "/index.php",
+        "host": "l.demo.test"
+      },
+      "status": 404,
+      "headers": {
+        "Content-Length": "1488",
+        "Content-Type": "text/html; charset=utf-8",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "text",
+      "body_file": "bodies/a974331f672f.html"
+    },
+    {
+      "name": "/rest без продолжения",
+      "request": {
+        "method": "GET",
+        "path": "/rest",
+        "host": "l.demo.test"
+      },
+      "status": 401,
+      "headers": {
+        "Content-Length": "243",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "expectedHeaders": [
+          "X-Api-Key"
+        ],
+        "title": "Invalid authorization",
+        "type": "https://shlink.io/api/error/missing-authentication",
+        "status": 401,
+        "detail": "Expected one of the following authentication headers, [\"X-Api-Key\"], but none were provided"
+      }
+    },
+    {
+      "name": "неизвестный адрес API с ключом",
+      "request": {
+        "method": "GET",
+        "path": "/rest/v3/unknown-${run}",
+        "host": "l.demo.test",
+        "key": "good"
+      },
+      "status": 404,
+      "headers": {
+        "Content-Length": "141",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "title": "Not Found",
+        "type": "https://shlink.io/api/error/not-found",
+        "status": 404,
+        "detail": "<cannot>"
+      }
+    },
+    {
+      "name": "неизвестный адрес API без ключа",
+      "request": {
+        "method": "GET",
+        "path": "/rest/v3/unknown-${run}",
+        "host": "l.demo.test"
+      },
+      "status": 404,
+      "headers": {
+        "Content-Length": "141",
+        "Content-Type": "application/problem+json",
+        "X-Request-Id": "<uuid>"
+      },
+      "body_kind": "json",
+      "body_json": {
+        "title": "Not Found",
+        "type": "https://shlink.io/api/error/not-found",
+        "status": 404,
+        "detail": "<cannot>"
+      }
+    }
+  ]
+}
