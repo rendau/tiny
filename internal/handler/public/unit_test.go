@@ -388,4 +388,17 @@ func TestRestLog(t *testing.T) {
 	r := httptest.NewRequest(http.MethodGet, "http://l.demo.test/rest/settings", nil)
 	verbose.ServeHTTP(httptest.NewRecorder(), r)
 	assert.Empty(t, logged())
+
+	// зависшее создание пишется всегда — даже успешное и без LogCreateRequests
+	r = httptest.NewRequest(http.MethodPost, "http://l.demo.test/rest/v3/short-urls", nil)
+	quiet.logRest(r, &statusRecorder{status: http.StatusOK}, RouteShortUrlCreate, slowCreate-time.Millisecond)
+	assert.Empty(t, logged(), "обычное успешное создание без LogCreateRequests не пишется")
+
+	quiet.logRest(r, &statusRecorder{status: http.StatusOK}, RouteShortUrlCreate, slowCreate)
+	lines = logged()
+	require.Len(t, lines, 1)
+	assert.Equal(t, "public: rest request slow", lines[0]["msg"])
+	assert.Equal(t, "WARN", lines[0]["level"])
+	assert.EqualValues(t, slowCreate.Milliseconds(), lines[0]["duration_ms"])
+	assert.NotContains(t, lines[0], "body")
 }

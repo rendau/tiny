@@ -14,6 +14,8 @@ import (
 // Пишется:
 //   - каждый отказ (код ответа от 400) на создании и чтении ссылки — всегда, вместе с ответом, в
 //     котором Shlink-формат ошибки называет причину и неверные поля;
+//   - каждое создание ссылки, которое шло дольше slowCreate, — всегда: клиент столько не ждёт, и
+//     без этой строки зависание видно только по жалобам;
 //   - каждый запрос создания ссылки целиком, с телом, — только при LOG_CREATE_REQUESTS=true:
 //     в длинных адресах бывают телефоны, поэтому тела включаются осознанно и на время.
 //
@@ -24,6 +26,9 @@ const (
 	logResponseLimit = 512
 	// у успешного создания ответ длинный и повторяет запрос — хватает начала с shortUrl и shortCode
 	logCreatedResponseLimit = 160
+
+	// slowCreate — с какого времени создание ссылки считается зависшим (обычно это миллисекунды)
+	slowCreate = 5 * time.Second
 )
 
 // requestNote — что обработчик запомнил о запросе для журнала
@@ -49,9 +54,10 @@ func keyFingerprint(keyHash []byte) string {
 func (h *Handler) logRest(r *http.Request, rec *statusRecorder, route string, duration time.Duration) {
 	isCreate := route == RouteShortUrlCreate
 	rejected := rec.status >= http.StatusBadRequest
+	slow := isCreate && duration >= slowCreate
 
 	switch {
-	case isCreate && (rejected || h.logCreateRequests):
+	case isCreate && (rejected || slow || h.logCreateRequests):
 	case route == RouteShortUrlGet && rejected:
 	default:
 		// остальное (неизвестные адреса /rest/*, health, OPTIONS) — это сканеры и пробы, в журнал не идёт
@@ -92,6 +98,8 @@ func (h *Handler) logRest(r *http.Request, rec *statusRecorder, route string, du
 	case rec.status >= http.StatusInternalServerError:
 		// сама ошибка уже записана обработчиком — здесь то, с чем пришёл клиент
 		slog.Warn("public: rest request failed", attrs...)
+	case slow:
+		slog.Warn("public: rest request slow", attrs...)
 	case rejected:
 		slog.Info("public: rest request rejected", attrs...)
 	default:

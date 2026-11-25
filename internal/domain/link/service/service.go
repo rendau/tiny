@@ -65,13 +65,12 @@ func (s *Service) Get(ctx context.Context, id int64, errNE bool) (*model.Main, b
 func (s *Service) Create(ctx context.Context, obj *model.Edit, codeLength int) (int64, error) {
 	obj.ModifiedAt = nil // DB-default устанавливает значение
 
-	defer s.invalidateLists()
-
 	if obj.ShortCode != nil && *obj.ShortCode != "" {
 		newId, err := s.repoDb.Create(ctx, obj)
 		if err != nil {
 			return 0, fmt.Errorf("repoDb.Create: %w", err)
 		}
+		s.invalidateListsOnCreate(obj)
 		return newId, nil
 	}
 
@@ -89,6 +88,7 @@ func (s *Service) Create(ctx context.Context, obj *model.Edit, codeLength int) (
 			}
 			return 0, fmt.Errorf("repoDb.Create: %w", err)
 		}
+		s.invalidateListsOnCreate(obj)
 		return newId, nil
 	}
 
@@ -173,9 +173,22 @@ func (s *Service) Ping(ctx context.Context) error {
 	return nil
 }
 
+// invalidateLists — ссылку изменили или удалили: оба списка могли измениться
 func (s *Service) invalidateLists() {
 	s.tags.invalidate()
 	s.crawlable.invalidate()
+}
+
+// invalidateListsOnCreate — ссылка добавлена. Списки сбрасываются, только если она их меняет:
+// принесла метку, которой ещё не было, или открыта поисковикам. Ссылки создаются постоянно, и
+// сброс на каждую заставлял бы читать всю таблицу при каждом запросе списка.
+func (s *Service) invalidateListsOnCreate(obj *model.Edit) {
+	if obj.Tags != nil {
+		s.tags.invalidateIfMissing(*obj.Tags)
+	}
+	if obj.Crawlable != nil && *obj.Crawlable {
+		s.crawlable.invalidate()
+	}
 }
 
 // GenerateCode — случайный код из codeAlphabet. Байты берутся из crypto/rand; байт, который дал бы

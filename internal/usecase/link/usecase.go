@@ -227,7 +227,9 @@ func (u *Usecase) create(ctx context.Context, req *model.CreateReq) (*model.Main
 		return nil, fmt.Errorf("svc.Create: %w", err)
 	}
 
-	result, _, err := u.svc.Get(ctx, newId, true)
+	// ссылка уже записана: читаем её для ответа, даже если клиент перестал ждать, — иначе
+	// состоявшееся создание выглядело бы сбоем
+	result, _, err := u.svc.Get(context.WithoutCancel(ctx), newId, true)
 	if err != nil {
 		return nil, fmt.Errorf("svc.Get: %w", err)
 	}

@@ -24,6 +24,10 @@ type fakeRepo struct {
 	tagCalls   int
 	tags       []string
 	crawlCalls int
+
+	// если заданы — TagList сообщает о начале выборки и ждёт разрешения закончить
+	tagStarted chan struct{}
+	tagRelease chan struct{}
 }
 
 func (r *fakeRepo) Create(_ context.Context, obj *model.Edit) (int64, error) {
@@ -46,6 +50,11 @@ func (r *fakeRepo) Update(context.Context, int64, *model.Edit) error { return ni
 
 func (r *fakeRepo) TagList(context.Context) ([]string, error) {
 	r.tagCalls++
+	if r.tagStarted != nil {
+		close(r.tagStarted)
+		<-r.tagRelease
+		r.tagStarted = nil
+	}
 	return r.tags, nil
 }
 
@@ -194,4 +203,123 @@ func TestCachedListExpires(t *testing.T) {
 	got, err := failing.get(ctx, load)
 	require.NoError(t, err)
 	assert.Equal(t, []string{"x"}, got)
+}
+
+// Создание ссылки не ждёт выборку списка: сброс берёт только замок состояния. Иначе создание
+// стоит в очереди за чтением всей таблицы (так три запроса провисели по 40–55 секунд).
+func TestCreateDoesNotWaitForListLoad(t *testing.T) {
+	ctx := context.Background()
+	repo := &fakeRepo{tags: []string{"a"}, tagStarted: make(chan struct{}), tagRelease: make(chan struct{})}
+	svc := New(repo)
+
+	loaded := make(chan []string)
+	go func() {
+		tags, _ := svc.TagList(ctx)
+		loaded <- tags
+	}()
+	<-repo.tagStarted // выборка меток идёт и держит свой замок
+
+	created := make(chan error)
+	go func() {
+		// новая метка и crawlable — сбрасываются оба списка
+		_, err := svc.Create(ctx, &model.Edit{
+			LongUrl: new("https://example.com"), Tags: new([]string{"b"}), Crawlable: new(true),
+		}, 5)
+		created <- err
+	}()
+
+	select {
+	case err := <-created:
+		require.NoError(t, err)
+	case <-time.After(2 * time.Second):
+		t.Fatal("создание ссылки ждёт выборку списка меток")
+	}
+
+	close(repo.tagRelease)
+	assert.Equal(t, []string{"a"}, <-loaded, "запрос получает то, что прочитал")
+
+	// выборка началась до сброса — её результат не запомнился
+	_, err := svc.TagList(ctx)
+	require.NoError(t, err)
+	assert.Equal(t, 2, repo.tagCalls)
+}
+
+// Создание сбрасывает списки, только если меняет их: ссылки создаются постоянно, и сброс на
+// каждую заставлял бы читать всю таблицу при каждом запросе списка
+func TestCreateInvalidatesListsOnlyWhenChanged(t *testing.T) {
+	ctx := context.Background()
+	repo := &fakeRepo{tags: []string{"a", "b"}}
+	svc := New(repo)
+
+	lists := func() {
+		_, err := svc.TagList(ctx)
+		require.NoError(t, err)
+		_, err = svc.CrawlableCodes(ctx)
+		require.NoError(t, err)
+	}
+	create := func(obj *model.Edit) {
+		obj.LongUrl = new("https://example.com")
+		_, err := svc.Create(ctx, obj, 5)
+		require.NoError(t, err)
+	}
+
+	lists()
+	require.Equal(t, 1, repo.tagCalls)
+	require.Equal(t, 1, repo.crawlCalls)
+
+	// известная метка, без метки, свой код — списки те же
+	create(&model.Edit{Tags: new([]string{"b"})})
+	create(&model.Edit{})
+	create(&model.Edit{ShortCode: new("mine"), Tags: new([]string{"a", "b"}), Crawlable: new(false)})
+	lists()
+	assert.Equal(t, 1, repo.tagCalls, "известные метки список не меняют")
+	assert.Equal(t, 1, repo.crawlCalls)
+
+	// новая метка — только список меток
+	create(&model.Edit{Tags: new([]string{"a", "new"})})
+	lists()
+	assert.Equal(t, 2, repo.tagCalls)
+	assert.Equal(t, 1, repo.crawlCalls)
+
+	// ссылка открыта поисковикам — только список для robots.txt
+	create(&model.Edit{ShortCode: new("open"), Crawlable: new(true)})
+	lists()
+	assert.Equal(t, 2, repo.tagCalls)
+	assert.Equal(t, 2, repo.crawlCalls)
+
+	// неудачное создание ничего не сбрасывает
+	repo.createErr = errors.New("db down")
+	_, err := svc.Create(ctx, &model.Edit{LongUrl: new("https://example.com"), Tags: new([]string{"zzz"})}, 5)
+	require.Error(t, err)
+	repo.createErr = nil
+	lists()
+	assert.Equal(t, 2, repo.tagCalls)
+}
+
+// Запрос, который ждёт чужую выборку, уходит, когда его отменили
+func TestCachedListWaitHonorsContext(t *testing.T) {
+	c := newCachedList(time.Minute)
+	started, release := make(chan struct{}), make(chan struct{})
+
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		_, _ = c.get(context.Background(), func(context.Context) ([]string, error) {
+			close(started)
+			<-release
+			return []string{"x"}, nil
+		})
+	}()
+	<-started
+
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	_, err := c.get(ctx, func(context.Context) ([]string, error) {
+		t.Error("вторая выборка не должна запускаться")
+		return nil, nil
+	})
+	require.ErrorIs(t, err, context.Canceled)
+
+	close(release)
+	<-done
 }

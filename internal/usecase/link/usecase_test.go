@@ -38,7 +38,10 @@ func (s *fakeSvc) List(_ context.Context, pars *model.ListReq) ([]*model.Main, i
 	return []*model.Main{{Id: 1, ShortCode: "abc"}, {Id: 2, ShortCode: "def", Domain: "sl.demo.test"}}, 2, nil
 }
 
-func (s *fakeSvc) Get(_ context.Context, id int64, _ bool) (*model.Main, bool, error) {
+func (s *fakeSvc) Get(ctx context.Context, id int64, _ bool) (*model.Main, bool, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, false, err
+	}
 	link, ok := s.links[id]
 	if !ok {
 		return nil, false, errs.ObjectNotFound
@@ -489,4 +492,18 @@ func TestPublicGet(t *testing.T) {
 	_, err = u.PublicGet(anonCtx, "nope", new("l.demo.test"))
 	codeErr, _ = errors.AsType[CodeError](err)
 	assert.Empty(t, codeErr.Domain, "основной домен в ошибке не называется")
+}
+
+// Клиент перестал ждать, когда ссылка уже записана: создание всё равно доводится до ответа, а не
+// обрывается ошибкой — иначе состоявшееся создание выглядит сбоем
+func TestCreateSurvivesCancelAfterInsert(t *testing.T) {
+	svc := &fakeSvc{}
+	u := newUsecase(svc)
+
+	ctx, cancel := context.WithCancel(anonCtx)
+	cancel()
+
+	link, err := u.PublicCreate(ctx, &model.CreateReq{LongUrl: "https://example.com/a"})
+	require.NoError(t, err)
+	assert.NotEmpty(t, link.ShortCode)
 }
