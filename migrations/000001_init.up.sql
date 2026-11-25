@@ -1,3 +1,10 @@
+-- поиск по части адреса и названия в админке (индексы link_*_trgm_idx ниже). Расширение — в
+-- схеме public, и в индексах оно названо со схемой: так миграция не зависит от search_path.
+-- Блокировка — чтобы два одновременных запуска на одной базе (тесты в своих схемах) не
+-- столкнулись на создании расширения: «if not exists» от этого не защищает.
+select pg_advisory_xact_lock(7411001);
+create extension if not exists pg_trgm with schema public;
+
 -- люди админки: вход по логину и паролю (как в zorko/kusec); password — хеш bcrypt
 create table usr (
     id          bigserial primary key,
@@ -38,3 +45,8 @@ create index link_tags_idx on link using gin (tags);
 create index link_created_at_idx on link (created_at desc, id desc);
 -- истёкшие ссылки
 create index link_valid_until_idx on link (valid_until) where valid_until is not null;
+-- поиск в админке по части длинного адреса или названия (ilike '%…%'): без этих индексов на
+-- 2 млн ссылок — 5–12 с перебором всей таблицы, с ними — от десятков мс до 1,5 с.
+-- Цена: +0,4 ГБ на 2 млн ссылок и вставка в несколько раз медленнее (создание ссылки — те же ~5 мс)
+create index link_long_url_trgm_idx on link using gin (long_url public.gin_trgm_ops);
+create index link_title_trgm_idx on link using gin (title public.gin_trgm_ops);
