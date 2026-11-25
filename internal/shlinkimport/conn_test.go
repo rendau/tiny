@@ -31,26 +31,26 @@ func TestConnect_ErrorsDoNotLeakAddress(t *testing.T) {
 	}
 
 	t.Run("никто не слушает", func(t *testing.T) {
-		_, err := connect(ctx, "postgres://secretuser:s3cretPassw0rd@127.0.0.1:1/secretdb?sslmode=disable", roleSrc)
+		_, err := connect(ctx, "postgres://secretuser:s3cretPassw0rd@127.0.0.1:1/secretdb?sslmode=disable", roleSrc, true)
 		assertClean(t, err)
 		assert.Contains(t, err.Error(), "соединение отклонено")
 		assert.Contains(t, err.Error(), "SRC_DSN")
 	})
 
 	t.Run("имя сервера не найдено", func(t *testing.T) {
-		_, err := connect(ctx, "postgres://secretuser:s3cretPassw0rd@secret-host.invalid:5439/secretdb?sslmode=disable", roleDst)
+		_, err := connect(ctx, "postgres://secretuser:s3cretPassw0rd@secret-host.invalid:5439/secretdb?sslmode=disable", roleDst, false)
 		assertClean(t, err)
 		assert.Contains(t, err.Error(), "DST_DSN")
 	})
 
 	t.Run("адрес не разобран", func(t *testing.T) {
-		_, err := connect(ctx, "postgres://secretuser:s3cretPassw0rd@127.0.0.1:port/secretdb", roleSrc)
+		_, err := connect(ctx, "postgres://secretuser:s3cretPassw0rd@127.0.0.1:port/secretdb", roleSrc, true)
 		assertClean(t, err)
 		assert.Contains(t, err.Error(), "не разобран")
 	})
 
 	t.Run("адрес не задан", func(t *testing.T) {
-		_, err := connect(ctx, "", roleDst)
+		_, err := connect(ctx, "", roleDst, false)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "не задан")
 	})
@@ -66,7 +66,7 @@ func TestConnect_ErrorsDoNotLeakAddress(t *testing.T) {
 
 	t.Run("неверный пароль на стенде", func(t *testing.T) {
 		connectOrSkip(t, standSrcDSN())
-		_, err := connect(ctx, "postgres://shlink:s3cretPassw0rd@localhost:54344/shlink?sslmode=disable", roleSrc)
+		_, err := connect(ctx, "postgres://shlink:s3cretPassw0rd@localhost:54344/shlink?sslmode=disable", roleSrc, true)
 		require.Error(t, err)
 		t.Log(err)
 		assert.Contains(t, err.Error(), "неверный логин или пароль")
@@ -76,7 +76,10 @@ func TestConnect_ErrorsDoNotLeakAddress(t *testing.T) {
 	})
 }
 
-// Через соединение с источником записать ничего нельзя — ни в транзакции, ни вне её.
+// Из источника инструмент только читает: все его запросы идут через readTx — транзакции «только
+// чтение», в них запись невозможна. Настроек на само соединение при этом не остаётся: через пулер
+// соединение с сервером общее с Shlink, и оставшийся на нём режим «только чтение» сломал бы
+// Shlink запись.
 func TestSource_IsReadOnly(t *testing.T) {
 	srcDSN, srcConn := newSrcSchema(t)
 	ctx := context.Background()
@@ -93,10 +96,14 @@ func TestSource_IsReadOnly(t *testing.T) {
 		assert.Equal(t, "25006", pgErr.Code, "read_only_sql_transaction")
 	}
 
-	_, err = src.conn.Exec(ctx, "insert into tags (name) values ('нельзя')")
-	assertReadOnlyError(err)
+	var sessionReadOnly string
+	require.NoError(t, src.conn.QueryRow(ctx, "show default_transaction_read_only").Scan(&sessionReadOnly))
+	assert.Equal(t, "off", sessionReadOnly, "на соединении с источником не должно оставаться настроек")
 
-	_, err = src.conn.Exec(ctx, "delete from short_urls")
+	err = src.readTx(ctx, func(tx pgx.Tx) error {
+		_, err := tx.Exec(ctx, "delete from short_urls")
+		return err
+	})
 	assertReadOnlyError(err)
 
 	err = src.readTx(ctx, func(tx pgx.Tx) error {

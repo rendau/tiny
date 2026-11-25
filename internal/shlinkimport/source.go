@@ -9,24 +9,21 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-// source — база Shlink. Из неё только читаем: соединение помечено «только чтение», и каждый
-// запрос идёт в отдельной короткой транзакции «только чтение» (длинных транзакций на живой
-// базе не держим).
+// source — база Shlink. Из неё только читаем: каждый запрос идёт в отдельной короткой транзакции
+// «только чтение» (длинных транзакций на живой базе не держим), других обращений к соединению нет.
+//
+// Настроек на само соединение (set …) не ставим нарочно: к боевой базе обычно ходят через пулер,
+// а он может отдать то же соединение с сервером самому Shlink — и настройка «только чтение»,
+// оставшаяся на нём, сломала бы Shlink запись.
 type source struct {
 	conn *pgx.Conn
 	loc  *time.Location // пояс, в котором Shlink хранит время
 }
 
 func openSource(ctx context.Context, dsn string, loc *time.Location) (*source, error) {
-	conn, err := connect(ctx, dsn, roleSrc)
+	conn, err := connect(ctx, dsn, roleSrc, true)
 	if err != nil {
 		return nil, err
-	}
-
-	// страховка поверх транзакций «только чтение»: любая запись через это соединение запрещена
-	if _, err = conn.Exec(ctx, "set default_transaction_read_only = on"); err != nil {
-		closeConn(ctx, conn)
-		return nil, fmt.Errorf("%s: не удалось перевести соединение в режим «только чтение»: %w", roleSrc, err)
 	}
 
 	s := &source{conn: conn, loc: loc}

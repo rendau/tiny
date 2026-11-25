@@ -23,7 +23,7 @@ var batchColumns = []string{
 // openDest подключается к приёмнику. readOnly — пробный режим и проверка: соединение помечается
 // «только чтение», записать через него нельзя.
 func openDest(ctx context.Context, dsn string, readOnly bool) (*dest, error) {
-	conn, err := connect(ctx, dsn, roleDst)
+	conn, err := connect(ctx, dsn, roleDst, false)
 	if err != nil {
 		return nil, err
 	}

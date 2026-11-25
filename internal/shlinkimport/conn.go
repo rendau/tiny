@@ -25,7 +25,12 @@ const (
 // connect открывает одно соединение с базой. Адрес базы секретен: ни сам DSN, ни исходный текст
 // ошибки подключения (в нём есть хост, логин и имя базы) наружу не отдаются — только причина
 // обычными словами.
-func connect(ctx context.Context, dsn, role string) (*pgx.Conn, error) {
+//
+// viaPooler — соединение может идти через пулер (pgbouncer, Odyssey; у управляемых баз это обычно
+// порт 6432), который отдаёт каждой транзакции любое свободное соединение с сервером. Тогда
+// нельзя рассчитывать ни на что, что живёт дольше транзакции: подготовленные запросы pgx по
+// умолчанию запоминает на соединении — здесь они выключаются.
+func connect(ctx context.Context, dsn, role string, viaPooler bool) (*pgx.Conn, error) {
 	if dsn == "" {
 		return nil, fmt.Errorf("%s: адрес базы не задан", role)
 	}
@@ -36,6 +41,11 @@ func connect(ctx context.Context, dsn, role string) (*pgx.Conn, error) {
 		return nil, fmt.Errorf("%s: адрес базы не разобран, ожидается вид postgres://логин:пароль@хост:порт/база", role)
 	}
 	cfg.RuntimeParams["application_name"] = appName
+	if viaPooler {
+		cfg.DefaultQueryExecMode = pgx.QueryExecModeExec
+		cfg.StatementCacheCapacity = 0
+		cfg.DescriptionCacheCapacity = 0
+	}
 	if cfg.ConnectTimeout == 0 {
 		cfg.ConnectTimeout = connectTimeout
 	}
