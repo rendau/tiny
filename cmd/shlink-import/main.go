@@ -21,6 +21,7 @@ const usage = `shlink-import — перенос коротких ссылок и
 Адреса баз берутся только из переменных окружения и нигде не печатаются:
   SRC_DSN  база Shlink (из неё только читаем)   postgres://логин:пароль@хост:порт/база
   DST_DSN  база tiny (таблица link)             postgres://логин:пароль@хост:порт/база
+           не задан — берётся PG_DSN (адрес базы самого сервиса: так инструмент запускают в его поде)
   SRC_TZ   пояс, в котором работает Shlink (его настройка TIMEZONE), например Asia/Almaty;
            можно задать и флагом -src-tz
 
@@ -75,6 +76,10 @@ func run() int {
 	}
 
 	srcDSN, dstDSN := os.Getenv("SRC_DSN"), os.Getenv("DST_DSN")
+	if dstDSN == "" {
+		// в поде сервиса адрес его базы уже есть
+		dstDSN = os.Getenv("PG_DSN")
+	}
 	if srcDSN == "" || (dstDSN == "" && !*survey) {
 		fail("задайте адреса баз в переменных окружения SRC_DSN и DST_DSN (подсказка: -h)")
 		return 2

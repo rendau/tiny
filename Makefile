@@ -46,6 +46,8 @@ PROTOC_PLUGINS = \
 build:
 	mkdir -p $(BUILD_PATH)
 	CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" -o $(BUILD_PATH)/$(BINARY_NAME) cmd/main.go
+	# разовый инструмент переноса ссылок из Shlink — рядом с сервисом, чтобы запускать его в поде
+	CGO_ENABLED=0 go build -o $(BUILD_PATH)/shlink-import ./cmd/shlink-import
 
 clean:
 	rm -rf $(BUILD_PATH) admin-ui admin/.output
