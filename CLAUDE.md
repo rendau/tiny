@@ -137,6 +137,11 @@ domain service → repo
   `/secret`, `/secret/{id}`, `/app`, `/item` (не `/secrets`, `/apps`, `/items`).
 - **Пагинация: во всех `list` запросах `page` начинается с `0`** (нумерация страниц с нуля).
 - **Для update использовать HTTP-метод `PUT`** (не `PATCH`): `put: "/<entity>/{id}"`.
+- **Размер запроса к API админки ограничен, пределы не снимать**: тело HTTP — 1 МБ
+  (`httpMaxBodySize` в `internal/app/grpc_gateway.go`, больше — `413`), сообщение gRPC — 4 МБ
+  (`grpcMaxRecvMsgSize` в `internal/app/grpc.go`). Запрос читается в память целиком ещё до проверки
+  входа: без предела один запрос на 200 МБ поднимал память процесса с 22 МБ до 1,2 ГБ, а процесс
+  общий с переходами по ссылкам.
 
 ### Ошибки и валидация
 - Семантические ошибки — через `internal/errs` (см. gRPC interceptor в `internal/app/grpc.go`).

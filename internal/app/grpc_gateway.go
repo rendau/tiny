@@ -21,6 +21,32 @@ import (
 	"github.com/rendau/tiny/internal/config"
 )
 
+// httpMaxBodySize — предел тела запроса к API админки. Самое большое, что сюда приходит, — ссылка
+// с длинным адресом; у публичного сервера предел тот же (maxBodySize в internal/handler/public).
+// Без предела шлюз читает тело в память целиком: запрос в сотни мегабайт — входа для этого не
+// нужно — переполнял память пода, а с ним вставали и переходы по ссылкам (процесс общий).
+const httpMaxBodySize = 1 << 20
+
+// httpBodyTooLargeRep — ответ на слишком большое тело, в виде ErrorRep
+const httpBodyTooLargeRep = `{"code":"invalid_request","message":"request body is too large","fields":{}}`
+
+// limitBodyMiddleware не пускает запросы с телом больше limit. Длина объявлена в Content-Length —
+// отказ 413 сразу, тело не читается. Не объявлена (тело идёт частями) — чтение обрывается на
+// пределе, и обработчик получает ошибку чтения тела.
+func limitBodyMiddleware(h http.Handler, limit int64) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.ContentLength > limit {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusRequestEntityTooLarge)
+			_, _ = io.WriteString(w, httpBodyTooLargeRep)
+			return
+		}
+
+		r.Body = http.MaxBytesReader(w, r.Body, limit)
+		h.ServeHTTP(w, r)
+	})
+}
+
 func GrpcGatewayCreateHandler(muxHook func(*runtime.ServeMux) error) (http.Handler, error) {
 	mux := runtime.NewServeMux(
 		runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{
@@ -94,7 +120,8 @@ func GrpcGatewayCreateHandler(muxHook func(*runtime.ServeMux) error) (http.Handl
 		}
 	}
 
-	handler := http.Handler(mux)
+	// предел тела запроса — до CORS: отказ 413 тоже уходит с заголовками CORS, интерфейс его прочитает
+	handler := limitBodyMiddleware(mux, httpMaxBodySize)
 
 	// add cors middleware
 	if config.Conf.HttpCors {

@@ -25,6 +25,11 @@ import (
 	"github.com/rendau/tiny/pkg/proto/common"
 )
 
+// grpcMaxRecvMsgSize — предел входящего сообщения gRPC (столько же, сколько gRPC ставит сам, если
+// предел не задан). Запросы от HTTP-шлюза меньше: их тело ограничено httpMaxBodySize. Предел
+// нужен тем, кто ходит в gRPC-порт напрямую: сообщение читается в память целиком до проверки входа.
+const grpcMaxRecvMsgSize = 4 << 20
+
 type GrpcServer struct {
 	name   string
 	server *grpc.Server
@@ -58,7 +63,7 @@ func NewGrpcServer(name string, sessionSvc handlerGrpcP.AuthSessionServiceI, reg
 	// server
 	server := grpc.NewServer(
 		grpc.MaxSendMsgSize(math.MaxUint32),
-		grpc.MaxRecvMsgSize(math.MaxUint32),
+		grpc.MaxRecvMsgSize(grpcMaxRecvMsgSize),
 		grpc.KeepaliveEnforcementPolicy(keepalive.EnforcementPolicy{
 			MinTime:             5 * time.Second,
 			PermitWithoutStream: true,
