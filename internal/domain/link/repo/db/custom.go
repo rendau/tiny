@@ -22,6 +22,9 @@ var allowedSortFields = map[string]string{
 	"valid_until": "valid_until",
 }
 
+// findExistingCte — имя шага запроса FindExisting, в котором ссылки отобраны по длинному адресу
+const findExistingCte = "same_url"
+
 // likeEscaper — подстрока поиска не должна работать как шаблон LIKE
 var likeEscaper = strings.NewReplacer(`\`, `\\`, `%`, `\%`, `_`, `\_`)
 
@@ -85,11 +88,30 @@ func (r *Repo) FindForRedirect(ctx context.Context, shortCode, domain string) (*
 }
 
 // FindExisting — самая старая ссылка с этим длинным адресом и переданными параметрами.
-// Длинный адрес ищется по индексу link_long_url_md5_idx.
+//
+// Ссылки с таким адресом сначала отбираются отдельным шагом (materialized) — только по индексу
+// link_long_url_md5_idx, это 3 страницы. Остальные условия проверяются уже на отобранных строках.
+// Одним запросом нельзя: условие long_url = ? умеет выполнять и индекс поиска по части адреса
+// (link_long_url_trgm_idx), и база выбирала его — 7–10 тыс. страниц на каждый запрос, с холодного
+// диска 15 секунд.
 func (r *Repo) FindExisting(ctx context.Context, pars *model.FindExistingReq) (*model.Main, bool, error) {
-	qb := r.QB.Select(repoModel.SelectColumns).From(tableName).
-		Where("md5(long_url) = md5(?)", pars.LongUrl).
-		Where(sq.Eq{"long_url": pars.LongUrl}).
+	query, args, err := r.findExistingQuery(pars)
+	if err != nil {
+		return nil, false, fmt.Errorf("FindExisting build query: %w", err)
+	}
+
+	return r.queryOne(ctx, query, args...)
+}
+
+func (r *Repo) findExistingQuery(pars *model.FindExistingReq) (string, []any, error) {
+	qb := r.QB.Select(repoModel.SelectColumns).
+		Prefix(
+			`with `+findExistingCte+` as materialized (select `+repoModel.SelectColumns+
+				` from `+tableName+` where md5(long_url) = md5(?))`,
+			pars.LongUrl,
+		).
+		From(findExistingCte).
+		Where(sq.Eq{"long_url": pars.LongUrl}). // md5 совпадает и у разных адресов
 		OrderBy("id").
 		Limit(1)
 
@@ -113,12 +135,7 @@ func (r *Repo) FindExisting(ctx context.Context, pars *model.FindExistingReq) (*
 		qb = qb.Where("tags @> ? and cardinality(tags) = ?", pars.Tags, len(pars.Tags))
 	}
 
-	query, args, err := qb.ToSql()
-	if err != nil {
-		return nil, false, fmt.Errorf("FindExisting build query: %w", err)
-	}
-
-	return r.queryOne(ctx, query, args...)
+	return qb.ToSql()
 }
 
 // CountAll — сколько всего ссылок; по индексу первичного ключа, таблица не читается

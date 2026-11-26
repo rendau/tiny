@@ -6,9 +6,11 @@ import (
 	"context"
 	"fmt"
 	"slices"
+	"strings"
 	"testing"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -157,6 +159,70 @@ func TestGetByCodeAndFindForRedirect(t *testing.T) {
 	assert.Empty(t, longUrl(repo.FindForRedirect(ctx, "onlysl", "")), "ссылка домена на основном не открывается")
 	assert.Empty(t, longUrl(repo.FindForRedirect(ctx, "onlysl", "unknown.example")))
 	assert.Empty(t, longUrl(repo.FindForRedirect(ctx, "nope", "sl.demo.test")))
+}
+
+// Поиск существующей ссылки идёт только по индексу md5 длинного адреса. Условие long_url = ? умеет
+// выполнять и индекс поиска по части адреса — на 1,8 млн ссылок это 7–10 тыс. страниц вместо трёх.
+func TestFindExistingPlan(t *testing.T) {
+	ctx := context.Background()
+	pool := linktest.PgPool(t)
+	repo := New(pool)
+
+	until := time.Date(2027, 1, 1, 0, 0, 0, 0, time.UTC)
+	cases := map[string]model.FindExistingReq{
+		"только адрес": {},
+		"с меткой":     {Tags: []string{"product"}},
+		"все условия": {
+			Tags: []string{"a", "b"}, ShortCode: new("code"), Domain: new(""),
+			ValidSince: &until, ValidUntil: &until, MaxVisits: new(int32(5)),
+		},
+	}
+
+	for name, req := range cases {
+		t.Run(name, func(t *testing.T) {
+			req.LongUrl = "https://demo.test/p/5d4f6131-e94c-11f1-a282-005056b6e990/"
+			query, args, err := repo.findExistingQuery(&req)
+			require.NoError(t, err)
+
+			tx, err := pool.Begin(ctx)
+			require.NoError(t, err)
+			defer func() { _ = tx.Rollback(ctx) }()
+
+			// таблица пустая: без этого база прочла бы её подряд, не выбирая индекс
+			_, err = tx.Exec(ctx, `set local enable_seqscan = off`)
+			require.NoError(t, err)
+
+			rows, err := tx.Query(ctx, `explain (costs off) `+query, args...)
+			require.NoError(t, err)
+			lines, err := pgx.CollectRows(rows, pgx.RowTo[string])
+			require.NoError(t, err)
+			plan := strings.Join(lines, "\n")
+
+			assert.Contains(t, plan, "link_long_url_md5_idx", plan)
+			assert.Equal(t, 1, strings.Count(plan, "_idx"), "других индексов в запросе нет:\n%s", plan)
+			assert.NotContains(t, plan, "trgm", plan)
+		})
+	}
+}
+
+// Индексы поиска по части адреса и названия — без очереди отложенных записей: с ней раз в ~2000
+// ссылок одна вставка разбирает всю очередь, и на медленном диске создание ссылок встаёт на минуты
+// (migrations/000003)
+func TestSearchIndexesWithoutPendingList(t *testing.T) {
+	ctx := context.Background()
+	pool := linktest.PgPool(t)
+
+	for _, index := range []string{"link_long_url_trgm_idx", "link_title_trgm_idx"} {
+		var options []string
+		err := pool.QueryRow(ctx, `select coalesce(reloptions, '{}') from pg_class where oid = to_regclass($1)`, index).Scan(&options)
+		require.NoError(t, err, index)
+		assert.Contains(t, options, "fastupdate=off", index)
+
+		// инструмент переноса снимает индексы и строит заново по этому определению
+		var def string
+		require.NoError(t, pool.QueryRow(ctx, `select pg_get_indexdef(to_regclass($1))`, index).Scan(&def))
+		assert.Contains(t, def, "fastupdate=off", index)
+	}
 }
 
 func TestFindExisting(t *testing.T) {
