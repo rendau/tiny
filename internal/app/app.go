@@ -90,7 +90,7 @@ func (a *App) Init() {
 	// usr
 	usrRepo := domainUsrRepoDbP.New(a.pgpool)
 	usrService := domainUsrServiceP.New(usrRepo)
-	usrUsecase := usecaseUsrP.New(usrService, sessionService, serviceLoginlimitServiceP.New(5, time.Minute))
+	usrUsecase := usecaseUsrP.New(usrService, sessionService, serviceLoginlimitServiceP.New(time.Minute))
 	usrHandler := handlerGrpcP.NewUsr(usrUsecase)
 
 	// link

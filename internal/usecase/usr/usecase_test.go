@@ -3,7 +3,10 @@ package usr
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
+	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -104,7 +107,7 @@ func newEnv() *env {
 	sessions := sessionService.New("test-secret")
 	repo := &repoFake{items: map[int64]*model.Main{}}
 	return &env{
-		uc:       New(usrService.New(repo), sessions, loginlimitService.New(5, time.Minute)),
+		uc:       New(usrService.New(repo), sessions, loginlimitService.New(time.Minute)),
 		sessions: sessions,
 		repo:     repo,
 	}
@@ -229,15 +232,110 @@ func TestLoginRateLimit(t *testing.T) {
 	_, err := e.uc.Create(context.Background(), &model.Edit{Username: new("admin"), Password: new("password-1")})
 	require.NoError(t, err)
 
-	for range 5 {
+	for range loginMaxPerUsrIp {
 		_, err = e.uc.Login(context.Background(), "admin", "wrong", "10.0.0.1")
 		assert.ErrorIs(t, err, errs.NotAuthorized)
 	}
-	_, err = e.uc.Login(context.Background(), "admin", "password-1", "10.0.0.9")
-	assert.ErrorIs(t, err, errs.LoginRateLimited, "логин заблокирован на минуту даже с верным паролем")
+	_, err = e.uc.Login(context.Background(), "admin", "password-1", "10.0.0.1")
+	assert.ErrorIs(t, err, errs.LoginRateLimited, "с этого адреса логин закрыт на минуту даже с верным паролем")
 
-	_, err = e.uc.Login(context.Background(), "other", "x", "10.0.0.1")
-	assert.ErrorIs(t, err, errs.LoginRateLimited, "и IP тоже")
+	_, err = e.uc.Login(context.Background(), "admin", "password-1", "10.0.0.9")
+	assert.NoError(t, err, "чужие неудачи с другого адреса не мешают войти со своего")
+
+	_, err = e.uc.Login(context.Background(), "other", "wrong", "10.0.0.1")
+	assert.ErrorIs(t, err, errs.NotAuthorized, "другой логин с того же адреса ещё можно пробовать")
+}
+
+// Одновременные запросы не обходят предел: место под попытку занимается до проверки пароля
+func TestLoginRateLimitParallel(t *testing.T) {
+	e := newEnv()
+	_, err := e.uc.Create(context.Background(), &model.Edit{Username: new("admin"), Password: new("password-1")})
+	require.NoError(t, err)
+
+	const requests = 40
+
+	var (
+		wg               sync.WaitGroup
+		rejected, limits atomic.Int32
+	)
+	for range requests {
+		wg.Go(func() {
+			_, err := e.uc.Login(context.Background(), "admin", "wrong", "10.0.0.1")
+			switch {
+			case errors.Is(err, errs.NotAuthorized):
+				rejected.Add(1)
+			case errors.Is(err, errs.LoginRateLimited):
+				limits.Add(1)
+			}
+		})
+	}
+	wg.Wait()
+
+	assert.EqualValues(t, loginMaxPerUsrIp, rejected.Load(), "пароль проверен ровно столько раз, сколько разрешено")
+	assert.EqualValues(t, requests-loginMaxPerUsrIp, limits.Load())
+}
+
+// Удачный вход места в счёте не занимает
+func TestLoginRateLimitSuccessNotCounted(t *testing.T) {
+	e := newEnv()
+	_, err := e.uc.Create(context.Background(), &model.Edit{Username: new("admin"), Password: new("password-1")})
+	require.NoError(t, err)
+
+	for range loginMaxPerUsrIp + 2 {
+		_, err = e.uc.Login(context.Background(), "admin", "password-1", "10.0.0.1")
+		require.NoError(t, err)
+	}
+}
+
+// С одного адреса по разным логинам — свой предел (перебор логинов)
+func TestLoginRateLimitPerIp(t *testing.T) {
+	e := newEnv()
+
+	for i := range loginMaxPerIp {
+		// по одному логину с адреса — не больше loginMaxPerUsrIp, поэтому логины меняются
+		_, err := e.uc.Login(context.Background(), fmt.Sprintf("user-%d", i/loginMaxPerUsrIp), "wrong", "10.0.0.1")
+		require.ErrorIs(t, err, errs.NotAuthorized)
+	}
+
+	_, err := e.uc.Login(context.Background(), "fresh-user", "wrong", "10.0.0.1")
+	assert.ErrorIs(t, err, errs.LoginRateLimited, "адрес исчерпал свой предел")
+
+	_, err = e.uc.Login(context.Background(), "fresh-user", "wrong", "10.0.0.2")
+	assert.ErrorIs(t, err, errs.NotAuthorized, "другой адрес не затронут")
+}
+
+// По одному логину со многих адресов — общий предел: подбор с разных адресов тоже упирается
+func TestLoginRateLimitPerUsr(t *testing.T) {
+	e := newEnv()
+
+	for i := range loginMaxPerUsr {
+		// с одного адреса по логину — не больше loginMaxPerUsrIp, поэтому адреса меняются
+		_, err := e.uc.Login(context.Background(), "admin", "wrong", fmt.Sprintf("10.0.1.%d", i/loginMaxPerUsrIp))
+		require.ErrorIs(t, err, errs.NotAuthorized)
+	}
+
+	_, err := e.uc.Login(context.Background(), "admin", "wrong", "10.0.2.1")
+	assert.ErrorIs(t, err, errs.LoginRateLimited, "логин закрыт для всех адресов")
+
+	_, err = e.uc.Login(context.Background(), "other", "wrong", "10.0.2.1")
+	assert.ErrorIs(t, err, errs.NotAuthorized, "другой логин не затронут")
+}
+
+// Логин, которого в базе быть не может, отклоняется сразу и в счётчики не попадает
+func TestLoginBadUsernameNotCounted(t *testing.T) {
+	e := newEnv()
+	_, err := e.uc.Create(context.Background(), &model.Edit{Username: new("admin"), Password: new("password-1")})
+	require.NoError(t, err)
+
+	for _, username := range []string{"", "ab", "with space", "кириллица", strings.Repeat("a", 65)} {
+		for range loginMaxPerIp + 1 {
+			_, err = e.uc.Login(context.Background(), username, "wrong", "10.0.0.1")
+			require.ErrorIs(t, err, errs.NotAuthorized, "логин %q", username)
+		}
+	}
+
+	_, err = e.uc.Login(context.Background(), "admin", "password-1", "10.0.0.1")
+	assert.NoError(t, err, "адрес не исчерпал предел")
 }
 
 func TestPermissions(t *testing.T) {

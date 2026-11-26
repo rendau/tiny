@@ -28,7 +28,7 @@ const (
 	ShortCodeExists = Err("short_code_exists")
 
 	UsrUsernameExists = Err("usr_username_exists") // логин занят
-	LoginRateLimited  = Err("login_rate_limited")  // слишком много неудачных входов по логину или адресу
+	LoginRateLimited  = Err("login_rate_limited")  // слишком много неудачных входов: по логину, по адресу или по их паре
 	UsrSelfChange     = Err("usr_self_change")     // нельзя удалить, отключить или лишить прав админа себя
 )
 

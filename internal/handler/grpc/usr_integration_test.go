@@ -38,7 +38,7 @@ func usrClient(t *testing.T) proto.UsrServiceClient {
 	sessionService := domainSessionServiceP.New("test-secret")
 	usrRepo := domainUsrRepoDbP.New(usrtest.PgPool(t))
 	usrService := domainUsrServiceP.New(usrRepo)
-	usrUsecase := usecaseUsrP.New(usrService, sessionService, serviceLoginlimitServiceP.New(5, time.Minute))
+	usrUsecase := usecaseUsrP.New(usrService, sessionService, serviceLoginlimitServiceP.New(time.Minute))
 	usrHandler := handlerGrpcP.NewUsr(usrUsecase)
 
 	server := grpc.NewServer(grpc.ChainUnaryInterceptor(handlerGrpcP.NewAuthInterceptor(sessionService)))
@@ -208,7 +208,8 @@ func TestUsrFullPath(t *testing.T) {
 	assertCode(t, err, errs.ObjectNotFound, "удалён")
 }
 
-// TestUsrLoginRateLimit — после 5 неудачных входов логин закрыт на минуту даже с верным паролем
+// TestUsrLoginRateLimit — после 5 неудачных входов с одного адреса логин закрыт для этого адреса
+// на минуту даже с верным паролем
 func TestUsrLoginRateLimit(t *testing.T) {
 	client := usrClient(t)
 	anon := context.Background()

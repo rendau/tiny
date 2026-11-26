@@ -27,7 +27,9 @@ type SessionServiceI interface {
 	CheckRefreshToken(tokenStr, currentPasswordHash string) error
 }
 
+// LoginLimiterI — счёт неудачных входов (internal/service/loginlimit). limits — предел по каждому
+// ключу; ok=false — хотя бы один исчерпан. release возвращает занятое место: его зовут, если вход
+// удался или попытки не было.
 type LoginLimiterI interface {
-	Allowed(key string) bool
-	Fail(key string)
+	Reserve(limits map[string]int) (release func(), ok bool)
 }

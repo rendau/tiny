@@ -17,6 +17,18 @@ const (
 	passwordMaxLen = 72 // в байтах: bcrypt молча обрезает длиннее
 )
 
+// Сколько неудачных входов за минуту допускается. Счётчиков три, у каждого своя задача:
+const (
+	// с одного адреса по одному логину — сам подбор пароля. Счёт привязан к адресу, поэтому чужие
+	// неудачи с другого адреса не мешают человеку войти со своего
+	loginMaxPerUsrIp = 5
+	// с одного адреса по всем логинам — перебор логинов с одним паролем
+	loginMaxPerIp = 20
+	// по одному логину со всех адресов — подбор со многих адресов сразу (или с подменой адреса).
+	// С одного адреса до него не дойти: раньше сработает loginMaxPerUsrIp
+	loginMaxPerUsr = 50
+)
+
 var usernameRe = regexp.MustCompile(`^[a-z0-9][a-z0-9._-]{2,63}$`)
 
 type Usecase struct {
@@ -29,27 +41,38 @@ func New(svc ServiceI, sessionSvc SessionServiceI, loginLimiter LoginLimiterI) *
 	return &Usecase{svc: svc, sessionSvc: sessionSvc, loginLimiter: loginLimiter}
 }
 
-// Login — пара токенов. Не больше 5 неудачных попыток в минуту на логин и на IP.
+// Login — пара токенов. Неудачные входы считаются тремя счётчиками (loginMax*); исчерпан хотя бы
+// один — errs.LoginRateLimited, пароль при этом не проверяется.
 func (u *Usecase) Login(ctx context.Context, username, password, clientIp string) (*TokenPair, error) {
 	username = normalizeUsername(username)
-	keys := []string{"usr:" + username, "ip:" + clientIp}
 
-	for _, k := range keys {
-		if !u.loginLimiter.Allowed(k) {
-			return nil, errs.LoginRateLimited
-		}
+	// логина такого вида в базе быть не может (validateEdit): ни в базу, ни в счётчики он не идёт —
+	// иначе счётчики хранили бы любые присланные строки
+	if !usernameRe.MatchString(username) {
+		return nil, errs.NotAuthorized
+	}
+
+	// место под попытку занимается до проверки пароля: одновременные запросы не обходят предел
+	release, ok := u.loginLimiter.Reserve(map[string]int{
+		"usr:" + username + "|ip:" + clientIp: loginMaxPerUsrIp,
+		"ip:" + clientIp:                      loginMaxPerIp,
+		"usr:" + username:                     loginMaxPerUsr,
+	})
+	if !ok {
+		return nil, errs.LoginRateLimited
 	}
 
 	item, found, err := u.svc.AuthByUsernamePassword(ctx, username, password)
 	if err != nil {
+		release() // сбой — не попытка подбора
 		return nil, fmt.Errorf("svc.AuthByUsernamePassword: %w", err)
 	}
 	if !found || !item.Active {
-		for _, k := range keys {
-			u.loginLimiter.Fail(k)
-		}
+		// место не возвращается: неудача остаётся в счёте до конца минуты
 		return nil, errs.NotAuthorized
 	}
+
+	release()
 
 	return u.issueTokenPair(item)
 }
