@@ -79,7 +79,7 @@ const (
              join tags t on t.id = sit.tag_id
              where sit.short_url_id = s.id
              order by t.name),
-       s.valid_since, s.valid_until, s.max_visits, s.crawlable, s.forward_query, s.date_created`
+       s.valid_since, s.valid_until, s.max_visits, s.forward_query, s.date_created`
 
 	// дубль — строка, у которой тот же код и домен, что у более ранней строки. Shlink сам такого
 	// не допускает, но база от этого защищает только ссылки с доменом (у основного домена
@@ -150,7 +150,7 @@ func (s *source) scanRows(rows pgx.Rows, withDup bool, buf []srcRow) ([]srcRow, 
 		)
 		dest := []any{
 			&r.SrcID, &r.ShortCode, &r.Domain, &r.LongURL, &r.Title, &r.Tags,
-			&validSince, &validUntil, &r.MaxVisits, &r.Crawlable, &r.ForwardQuery, &created,
+			&validSince, &validUntil, &r.MaxVisits, &r.ForwardQuery, &created,
 		}
 		if withDup {
 			dest = append(dest, &r.IsDup)

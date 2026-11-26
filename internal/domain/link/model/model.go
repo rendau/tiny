@@ -22,7 +22,6 @@ type Main struct {
 	ValidUntil *time.Time
 	// MaxVisits — хранится для совместимости с Shlink; посещения не считаются
 	MaxVisits    *int32
-	Crawlable    bool
 	ForwardQuery bool
 
 	// ShortUrl — полный короткий адрес (https://l.demo.test/aBc12). В базе не хранится:
@@ -45,7 +44,6 @@ type Edit struct {
 	ValidSince   **time.Time
 	ValidUntil   **time.Time
 	MaxVisits    **int32
-	Crawlable    *bool
 	ForwardQuery *bool
 }
 
@@ -64,7 +62,7 @@ type ListReq struct {
 }
 
 // FindExistingReq — поиск уже существующей ссылки (findIfExists Shlink): сравнивается длинный адрес
-// и только те параметры, которые переданы (nil — не сравнивается). Название, crawlable и
+// и только те параметры, которые переданы (nil — не сравнивается). Название и
 // forward_query не сравниваются — как в Shlink
 type FindExistingReq struct {
 	LongUrl    string
@@ -91,7 +89,6 @@ type CreateReq struct {
 	ValidSince   *time.Time
 	ValidUntil   *time.Time
 	MaxVisits    *int32
-	Crawlable    *bool // nil — false
 	ForwardQuery *bool // nil — true
 	// FindIfExists — вернуть уже существующую ссылку с такими параметрами, новую не создавать
 	FindIfExists bool

@@ -59,7 +59,6 @@ type normalizedCreate struct {
 	validSince   *time.Time
 	validUntil   *time.Time
 	maxVisits    *int32
-	crawlable    bool
 	forwardQuery bool
 }
 
@@ -74,7 +73,6 @@ func (u *Usecase) normalizeCreate(req *model.CreateReq) (*normalizedCreate, erro
 		validSince:   truncateToSecond(req.ValidSince),
 		validUntil:   truncateToSecond(req.ValidUntil),
 		maxVisits:    req.MaxVisits,
-		crawlable:    lo.FromPtrOr(req.Crawlable, false),
 		forwardQuery: lo.FromPtrOr(req.ForwardQuery, true),
 	}
 

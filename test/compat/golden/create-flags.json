@@ -1,6 +1,6 @@
 {
   "scenario": "create-flags",
-  "about": "Логические поля crawlable, forwardQuery, findIfExists в разных записях",
+  "about": "Логические поля forwardQuery, findIfExists в разных записях",
   "steps": [
     {
       "name": "forwardQuery=false",
@@ -193,36 +193,6 @@
       "body_json": {
         "invalidElements": [
           "forwardQuery"
-        ],
-        "title": "Invalid data",
-        "type": "https://shlink.io/api/error/invalid-data",
-        "status": 400,
-        "detail": "Provided data is not valid"
-      }
-    },
-    {
-      "name": "crawlable=null — ошибка",
-      "request": {
-        "method": "POST",
-        "path": "/rest/v3/short-urls",
-        "host": "l.demo.test",
-        "key": "good",
-        "content_type": "application/json",
-        "body_json": {
-          "crawlable": null,
-          "longUrl": "https://shop.example.invalid/${run}/flags"
-        }
-      },
-      "status": 400,
-      "headers": {
-        "Content-Length": "157",
-        "Content-Type": "application/problem+json",
-        "X-Request-Id": "<uuid>"
-      },
-      "body_kind": "json",
-      "body_json": {
-        "invalidElements": [
-          "crawlable"
         ],
         "title": "Invalid data",
         "type": "https://shlink.io/api/error/invalid-data",

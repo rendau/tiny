@@ -31,6 +31,7 @@ const usage = `shlink-import — перенос коротких ссылок и
   -since МОМЕНТ  докачать только созданное не раньше момента (2026-11-25T10:00:00+05:00)
   -after-id N    докачать только ссылки с id источника больше N
   -dry-run       пробный запуск без записи (сочетается с режимами выше)
+  -keep-indexes  основной перенос, не снимая индексы таблицы link (если сервис уже работает на этой базе)
   -verify        проверка после переноса: число ссылок и сверка случайной выборки по всем полям
   -survey        только обзор источника: что в нём есть и что не переносится
 
@@ -44,6 +45,7 @@ func main() {
 func run() int {
 	var (
 		dryRun       = flag.Bool("dry-run", false, "пробный запуск: в приёмник ничего не пишется")
+		keepIndexes  = flag.Bool("keep-indexes", false, "не снимать индексы таблицы link на время основного переноса (нужно, если сервис уже работает на этой базе)")
 		verify       = flag.Bool("verify", false, "проверка после переноса (ничего не пишет)")
 		verifySample = flag.Int("verify-sample", shlinkimport.DefaultVerifySample, "сколько случайных ссылок сверять при -verify")
 		verifyAll    = flag.Bool("verify-all", false, "при -verify сверять все ссылки, а не выборку")
@@ -161,6 +163,7 @@ func run() int {
 			New:           *onlyNew,
 			Overlap:       *overlap,
 			DryRun:        *dryRun,
+			KeepIndexes:   *keepIndexes,
 			Survey:        !*onlyNew && since == nil && *afterID == 0, // обзор — только при полном переносе
 			ProgressEvery: *progress,
 			Logf:          logf,

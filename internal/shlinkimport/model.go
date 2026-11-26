@@ -10,7 +10,8 @@
 //	tags через short_urls_in_tags   → tags, по алфавиту (в таком порядке их отдаёт сам Shlink)
 //	valid_since, valid_until        → valid_since, valid_until
 //	max_visits                      → max_visits
-//	crawlable, forward_query        → crawlable, forward_query
+//	forward_query                   → forward_query
+//	crawlable                       → не переносится: у tiny такого нет
 //	date_created                    → created_at и modified_at
 //
 // Время Shlink хранит без часового пояса — в поясе, в котором он сам работает (его настройка
@@ -47,7 +48,6 @@ type Link struct {
 	ValidSince   *time.Time
 	ValidUntil   *time.Time
 	MaxVisits    *int32
-	Crawlable    bool
 	ForwardQuery bool
 }
 
@@ -72,7 +72,6 @@ func (l *Link) diff(dst *Link) []string {
 	add(equalTimePtr(l.ValidSince, dst.ValidSince), "valid_since")
 	add(equalTimePtr(l.ValidUntil, dst.ValidUntil), "valid_until")
 	add(equalPtr(l.MaxVisits, dst.MaxVisits), "max_visits")
-	add(l.Crawlable == dst.Crawlable, "crawlable")
 	add(l.ForwardQuery == dst.ForwardQuery, "forward_query")
 	return fields
 }

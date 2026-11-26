@@ -247,7 +247,7 @@
       }
     },
     {
-      "name": "другие title, crawlable, forwardQuery, shortCodeLength — не сравниваются, та же",
+      "name": "другие title, forwardQuery, shortCodeLength — не сравниваются, та же",
       "request": {
         "method": "POST",
         "path": "/rest/v3/short-urls",
@@ -255,7 +255,6 @@
         "key": "good",
         "content_type": "application/json",
         "body_json": {
-          "crawlable": true,
           "findIfExists": true,
           "forwardQuery": false,
           "longUrl": "https://shop.example.invalid/${run}/fie-loose",

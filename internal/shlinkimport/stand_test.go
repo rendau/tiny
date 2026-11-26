@@ -17,6 +17,8 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
+	"slices"
 	"strings"
 	"sync"
 	"testing"
@@ -102,10 +104,16 @@ func newDstSchema(t testing.TB) (dsn string, conn *pgx.Conn) {
 	dsn = withSearchPath(t, standDstDSN(), schema)
 	conn = connectOrSkip(t, dsn)
 
-	migration, err := os.ReadFile("../../migrations/000001_init.up.sql")
+	migrations, err := filepath.Glob("../../migrations/*.up.sql")
 	require.NoError(t, err)
-	_, err = conn.Exec(ctx, string(migration), pgx.QueryExecModeSimpleProtocol)
-	require.NoError(t, err)
+	require.NotEmpty(t, migrations)
+	slices.Sort(migrations)
+	for _, file := range migrations {
+		migration, err := os.ReadFile(file)
+		require.NoError(t, err)
+		_, err = conn.Exec(ctx, string(migration), pgx.QueryExecModeSimpleProtocol)
+		require.NoError(t, err, file)
+	}
 
 	return dsn, conn
 }

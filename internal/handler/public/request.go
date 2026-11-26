@@ -27,14 +27,13 @@ const (
 	fieldShortCodeLength = "shortCodeLength"
 	fieldTitle           = "title"
 	fieldTags            = "tags"
-	fieldCrawlable       = "crawlable"
 	fieldForwardQuery    = "forwardQuery"
 )
 
 // invalidElementsOrder — порядок, в котором Shlink перечисляет неверные поля в invalidElements
 var invalidElementsOrder = []string{
 	fieldLongUrl, fieldValidSince, fieldValidUntil, fieldCustomSlug, fieldMaxVisits, fieldFindIfExists,
-	fieldDomain, fieldShortCodeLength, fieldTitle, fieldTags, fieldCrawlable, fieldForwardQuery,
+	fieldDomain, fieldShortCodeLength, fieldTitle, fieldTags, fieldForwardQuery,
 }
 
 // usecaseFieldNames — имена полей usecase → имена полей Shlink
@@ -187,7 +186,6 @@ func decodeCreateReq(fields rawFields, zone *time.Location) (*model.CreateReq, [
 		}
 	}
 
-	req.Crawlable = fields.boolean(fieldCrawlable, fail)
 	req.ForwardQuery = fields.boolean(fieldForwardQuery, fail)
 
 	return req, invalid

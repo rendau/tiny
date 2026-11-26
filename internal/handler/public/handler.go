@@ -22,7 +22,6 @@ import (
 // Имена маршрутов для учёта запросов (Config.Observe)
 const (
 	RouteRedirect       = "redirect"
-	RouteRobots         = "robots"
 	RouteFavicon        = "favicon"
 	RouteNotFound       = "not_found"
 	RouteHealth         = "rest_health"
@@ -144,8 +143,6 @@ func (h *Handler) serve(w http.ResponseWriter, r *http.Request) string {
 
 	switch {
 	case !isRead:
-	case path == "/robots.txt":
-		return h.robots(w, r)
 	case path == "/favicon.ico":
 		return h.favicon(w, r)
 	case len(path) > 1 && !strings.Contains(path[1:], "/"):

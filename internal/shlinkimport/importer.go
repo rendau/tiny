@@ -39,7 +39,14 @@ type ImportOptions struct {
 	Overlap int64
 
 	DryRun bool // пробный режим: в приёмник ничего не пишется
-	Survey bool // перед переносом показать обзор источника
+
+	// KeepIndexes — не снимать индексы таблицы link на время основного переноса. По умолчанию
+	// они снимаются (кроме первичного ключа и уникальности «код + домен») и строятся заново в
+	// конце: так перенос идёт в разы быстрее. Оставлять индексы нужно, если сервис в это время
+	// уже работает на этой базе: без них его запросы читают всю таблицу. При докачке индексы не
+	// снимаются никогда.
+	KeepIndexes bool
+	Survey      bool // перед переносом показать обзор источника
 
 	ProgressEvery time.Duration // как часто писать ход; 0 — DefaultProgressEvery
 	Logf          Logf
@@ -109,7 +116,7 @@ func Import(ctx context.Context, opts ImportOptions) (*ImportResult, error) {
 	return res, safeError(err)
 }
 
-func doImport(ctx context.Context, opts ImportOptions) (*ImportResult, error) {
+func doImport(ctx context.Context, opts ImportOptions) (res *ImportResult, err error) {
 	logf := opts.Logf
 	started := time.Now()
 
@@ -125,6 +132,17 @@ func doImport(ctx context.Context, opts ImportOptions) (*ImportResult, error) {
 	}
 	defer dst.close(ctx)
 
+	if !opts.DryRun {
+		// Снятые индексы возвращаются при любом исходе: и после удачного переноса, и после
+		// оборванного, и оставшиеся от прошлого запуска, который не дошёл до конца. Отмена
+		// (Ctrl+C) построение не прерывает: база без индексов хуже, чем лишние минуты ожидания.
+		defer func() {
+			if restoreErr := restoreIndexes(ctx, opts.DstDSN, dst, logf); restoreErr != nil {
+				err = errors.Join(err, restoreErr)
+			}
+		}()
+	}
+
 	if opts.DryRun {
 		logf("ПРОБНЫЙ РЕЖИМ: в приёмник ничего не пишется")
 	}
@@ -138,7 +156,7 @@ func doImport(ctx context.Context, opts ImportOptions) (*ImportResult, error) {
 		survey.log(logf)
 	}
 
-	res := &ImportResult{DryRun: opts.DryRun}
+	res = &ImportResult{DryRun: opts.DryRun}
 
 	// граница переноса: всё, что появится в Shlink после этой точки, заберёт докачка
 	res.MaxID, err = src.maxID(ctx)
@@ -173,6 +191,18 @@ func doImport(ctx context.Context, opts ImportOptions) (*ImportResult, error) {
 		return nil, err
 	}
 	logf("к переносу: %d ссылок (id источника от %d до %d), пачками по %d", res.Total, sc.afterID+1, res.MaxID, opts.BatchSize)
+
+	// основной перенос (не докачка) идёт без лишних индексов
+	if full := !opts.New && opts.Since == nil && opts.AfterID == 0; full && !opts.DryRun && !opts.KeepIndexes && res.Total > 0 {
+		dropped, err := dst.dropIndexes(ctx)
+		if err != nil {
+			return res, err
+		}
+		if len(dropped) > 0 {
+			logf("индексы: на время переноса сняты %d (%s); первичный ключ и уникальность «код + домен» оставлены. После переноса они будут построены заново",
+				len(dropped), strings.Join(dropped, ", "))
+		}
+	}
 
 	var (
 		buf          = make([]srcRow, 0, opts.BatchSize)
@@ -223,6 +253,45 @@ func doImport(ctx context.Context, opts ImportOptions) (*ImportResult, error) {
 	res.Elapsed = time.Since(started)
 	res.logSummary(logf)
 	return res, nil
+}
+
+// restoreIndexes возвращает снятые индексы таблицы link. Ошибка не теряет их определения: они
+// остаются в базе приёмника, и следующий запуск переноса достроит недостающее.
+func restoreIndexes(ctx context.Context, dstDSN string, dst *dest, logf Logf) error {
+	ctx = context.WithoutCancel(ctx)
+
+	// отмена посреди запроса (Ctrl+C) закрывает соединение — для возврата индексов берётся новое
+	if dst.conn.IsClosed() {
+		fresh, err := openDest(ctx, dstDSN, false)
+		if err != nil {
+			return fmt.Errorf("ВНИМАНИЕ: не удалось проверить индексы таблицы link — соединение с приёмником потеряно. "+
+				"Если они были сняты, их определения сохранены в таблице %s; запустите перенос ещё раз (например с -new), он их вернёт: %w",
+				savedIndexTable, err)
+		}
+		defer fresh.close(ctx)
+		dst = fresh
+	}
+
+	saved, err := dst.savedIndexes(ctx)
+	if err != nil {
+		return err
+	}
+	if len(saved) == 0 {
+		_, err = dst.restoreIndexes(ctx, logf) // убрать пустую таблицу определений, если осталась
+		return err
+	}
+
+	logf("индексы: строятся заново %d — на большой таблице это минуты, не прерывайте", len(saved))
+	started := time.Now()
+
+	n, err := dst.restoreIndexes(ctx, logf)
+	if err != nil {
+		return fmt.Errorf("ВНИМАНИЕ: индексы таблицы link возвращены не все (%d из %d) — без них сервис работает медленно. "+
+			"Их определения сохранены в таблице %s; запустите перенос ещё раз (например с -new), он достроит остальные: %w",
+			n, len(saved), savedIndexTable, err)
+	}
+	logf("индексы: все %d на месте, заняло %s", n, time.Since(started).Round(time.Millisecond))
+	return nil
 }
 
 // interrupted дополняет ошибку подсказкой, с какого места продолжать.

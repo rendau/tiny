@@ -16,7 +16,6 @@ export interface LinkMain {
   valid_since?: string | null
   valid_until?: string | null
   max_visits?: number | null
-  crawlable: boolean
   forward_query: boolean
 }
 
@@ -39,7 +38,6 @@ export interface LinkCreate {
   valid_since?: string
   valid_until?: string
   max_visits?: number
-  crawlable?: boolean
   forward_query?: boolean
 }
 
@@ -57,6 +55,5 @@ export interface LinkUpdate {
   valid_since?: string
   valid_until?: string
   max_visits?: number
-  crawlable: boolean
   forward_query: boolean
 }

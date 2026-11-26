@@ -25,7 +25,7 @@ func readSrcIndependent(t testing.TB, conn *pgx.Conn, maxID int64) map[Key]Link 
 		                 from short_urls_in_tags x join tags t on t.id = x.tag_id
 		                 where x.short_url_id = s.id), '{}'),
 		       s.valid_since at time zone $2, s.valid_until at time zone $2, s.max_visits,
-		       s.crawlable, s.forward_query, s.date_created at time zone $2
+		       s.forward_query, s.date_created at time zone $2
 		from short_urls s
 		left join domains d on d.id = s.domain_id
 		where s.id <= $1
@@ -37,7 +37,7 @@ func readSrcIndependent(t testing.TB, conn *pgx.Conn, maxID int64) map[Key]Link 
 	for rows.Next() {
 		var l Link
 		require.NoError(t, rows.Scan(&l.SrcID, &l.ShortCode, &l.Domain, &l.LongURL, &l.Title, &l.Tags,
-			&l.ValidSince, &l.ValidUntil, &l.MaxVisits, &l.Crawlable, &l.ForwardQuery, &l.CreatedAt))
+			&l.ValidSince, &l.ValidUntil, &l.MaxVisits, &l.ForwardQuery, &l.CreatedAt))
 		if _, dup := res[l.Key()]; dup {
 			continue // переносится самая ранняя строка
 		}
@@ -81,7 +81,6 @@ func assertSameAsShlinkAPI(t testing.TB, got Link) {
 		ValidSince:   parse(api.Meta.ValidSince),
 		ValidUntil:   parse(api.Meta.ValidUntil),
 		MaxVisits:    api.Meta.MaxVisits,
-		Crawlable:    api.Crawlable,
 		ForwardQuery: api.ForwardQuery,
 	}
 	assert.Empty(t, want.diff(&got), "ссылка %s в приёмнике отличается от ответа Shlink", got.Key())
@@ -121,7 +120,7 @@ func TestImport_RealShlink(t *testing.T) {
 	got := readDst(t, dstConn)
 	require.Len(t, got, len(want))
 
-	var withTags, withDomain, withSince, withUntil, withMax, withTitle, crawlable, noForward, longURLs int
+	var withTags, withDomain, withSince, withUntil, withMax, withTitle, noForward, longURLs int
 	codeLens := map[int]int{}
 	for key, w := range want {
 		g, ok := got[key]
@@ -145,14 +144,13 @@ func TestImport_RealShlink(t *testing.T) {
 		count(g.ValidUntil != nil, &withUntil)
 		count(g.MaxVisits != nil, &withMax)
 		count(g.Title != "", &withTitle)
-		count(g.Crawlable, &crawlable)
 		count(!g.ForwardQuery, &noForward)
 		count(len(g.LongURL) > 5000, &longURLs)
 	}
 	// стенд действительно разнообразен — иначе сверка мало что доказывает
 	for name, n := range map[string]int{
 		"с метками": withTags, "со вторым доменом": withDomain, "со сроком «с»": withSince, "со сроком «до»": withUntil,
-		"с пределом посещений": withMax, "с названием": withTitle, "crawlable": crawlable,
+		"с пределом посещений": withMax, "с названием": withTitle,
 		"без forward_query": noForward, "с очень длинным адресом": longURLs,
 		"с кодом из 4 символов": codeLens[4], "с кодом из 5 символов": codeLens[5], "с кодом из 6 символов": codeLens[6],
 	} {
@@ -163,7 +161,7 @@ func TestImport_RealShlink(t *testing.T) {
 	i, checked := 0, 0
 	for _, g := range got {
 		i++
-		special := g.Domain != "" || g.ValidSince != nil || g.MaxVisits != nil || !g.ForwardQuery || g.Crawlable
+		special := g.Domain != "" || g.ValidSince != nil || g.MaxVisits != nil || !g.ForwardQuery
 		if i%50 != 0 && !(special && i%7 == 0) {
 			continue
 		}

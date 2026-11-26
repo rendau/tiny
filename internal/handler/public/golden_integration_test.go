@@ -60,6 +60,11 @@ var comparedHeaders = []string{
 	"Access-Control-Allow-Origin", "Access-Control-Allow-Methods", "Access-Control-Allow-Headers", "Access-Control-Max-Age",
 }
 
+// noTagKeeper — справочник меток этим тестам не нужен
+type noTagKeeper struct{}
+
+func (noTagKeeper) Changed(_, _ []string) {}
+
 func newTestHandler(t *testing.T) *Handler {
 	t.Helper()
 
@@ -69,6 +74,7 @@ func newTestHandler(t *testing.T) *Handler {
 	uc := usecase.New(
 		domainLinkService.New(domainLinkRepoDb.New(linktest.PgPool(t))),
 		domainSessionService.New("test-secret"),
+		noTagKeeper{},
 		usecase.Config{DefaultDomain: "l.demo.test", HttpsEnabled: true, DefaultCodeLength: 5},
 	)
 
@@ -144,34 +150,19 @@ func TestMatchesShlink(t *testing.T) {
 	}
 }
 
-func TestRobots(t *testing.T) {
+// Ручки robots.txt у сервиса нет: такой адрес — обычный код короткой ссылки, которой нет
+func TestNoRobots(t *testing.T) {
 	h := newTestHandler(t)
 
-	want, err := os.ReadFile("testdata/shlink_robots.txt")
-	require.NoError(t, err)
-
 	w := do(h, http.MethodGet, "/robots.txt", nil, "")
-	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Equal(t, "text/plain", w.Header().Get("Content-Type"))
-	assert.Equal(t, string(want), w.Body.String(), "пока открытых поисковикам ссылок нет — как у пустого Shlink")
+	assert.Equal(t, http.StatusNotFound, w.Code)
+	assert.Equal(t, "text/html; charset=utf-8", w.Header().Get("Content-Type"))
 
-	create := func(body string) {
-		w := do(h, http.MethodPost, "/rest/v3/short-urls", map[string]string{"X-Api-Key": testApiKey}, body)
-		require.Equal(t, http.StatusOK, w.Code, w.Body.String())
-	}
-	create(`{"longUrl":"https://example.invalid/1","customSlug":"zeta","crawlable":true}`)
-	create(`{"longUrl":"https://example.invalid/2","customSlug":"Alpha","crawlable":true}`)
-	create(`{"longUrl":"https://example.invalid/3","customSlug":"hidden"}`)
-
-	w = do(h, http.MethodGet, "/robots.txt", nil, "")
-	assert.Equal(t, "# For more information about the robots.txt standard, see:\n"+
-		"# https://www.robotstxt.org/orig.html\n\n"+
-		"User-agent: *\nAllow: /Alpha\nAllow: /zeta\nDisallow: /", w.Body.String())
-
-	w = do(h, http.MethodHead, "/robots.txt", nil, "")
-	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Equal(t, "0", w.Header().Get("Content-Length"))
-	assert.Empty(t, w.Body.String())
+	// crawlable («открыта поисковикам») в запросе не действует; ключ в ответе — постоянный
+	w = do(h, http.MethodPost, "/rest/v3/short-urls", map[string]string{"X-Api-Key": testApiKey},
+		`{"longUrl":"https://example.invalid/1","customSlug":"zeta","crawlable":true}`)
+	require.Equal(t, http.StatusOK, w.Code, w.Body.String())
+	assert.Contains(t, w.Body.String(), `"crawlable":false`)
 }
 
 func TestFavicon(t *testing.T) {

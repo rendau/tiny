@@ -29,7 +29,6 @@ func EncodeLinkMain(v *domainModel.Main, _ int) *proto.LinkMain {
 		ValidSince:   encodeLinkTime(v.ValidSince),
 		ValidUntil:   encodeLinkTime(v.ValidUntil),
 		MaxVisits:    v.MaxVisits,
-		Crawlable:    v.Crawlable,
 		ForwardQuery: v.ForwardQuery,
 	}
 }
@@ -67,7 +66,6 @@ func DecodeLinkCreateReq(v *proto.LinkCreateReq) *domainModel.CreateReq {
 		ValidSince:      decodeLinkTime(v.GetValidSince()),
 		ValidUntil:      decodeLinkTime(v.GetValidUntil()),
 		MaxVisits:       v.MaxVisits,
-		Crawlable:       v.Crawlable,
 		ForwardQuery:    v.ForwardQuery,
 	}
 }
@@ -87,7 +85,6 @@ func DecodeLinkUpdateReq(v *proto.LinkUpdateReq) *domainModel.Edit {
 		ValidSince:   new(decodeLinkTime(v.GetValidSince())),
 		ValidUntil:   new(decodeLinkTime(v.GetValidUntil())),
 		MaxVisits:    new(v.MaxVisits),
-		Crawlable:    new(v.GetCrawlable()),
 		ForwardQuery: new(v.GetForwardQuery()),
 	}
 }

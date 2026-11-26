@@ -4,12 +4,15 @@ package db
 
 import (
 	"context"
+	"fmt"
+	"slices"
 	"testing"
 	"time"
 
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"golang.org/x/sync/errgroup"
 
 	commonModel "github.com/rendau/tiny/internal/domain/common/model"
 	"github.com/rendau/tiny/internal/domain/link/linktest"
@@ -42,7 +45,6 @@ func TestCrud(t *testing.T) {
 		Tags:         new([]string{"a", "b"}),
 		ValidUntil:   new(&until),
 		MaxVisits:    new(new(int32(7))),
-		Crawlable:    new(true),
 		ForwardQuery: new(false),
 	})
 	require.NoError(t, err)
@@ -61,7 +63,6 @@ func TestCrud(t *testing.T) {
 	assert.True(t, until.Equal(*item.ValidUntil))
 	require.NotNil(t, item.MaxVisits)
 	assert.EqualValues(t, 7, *item.MaxVisits)
-	assert.True(t, item.Crawlable)
 	assert.False(t, item.ForwardQuery)
 	assert.WithinDuration(t, time.Now(), item.CreatedAt, time.Minute)
 
@@ -75,7 +76,6 @@ func TestCrud(t *testing.T) {
 	assert.Equal(t, []string{}, item2.Tags)
 	assert.Nil(t, item2.ValidUntil)
 	assert.Nil(t, item2.MaxVisits)
-	assert.False(t, item2.Crawlable)
 	assert.True(t, item2.ForwardQuery, "параметры запроса по умолчанию дописываются")
 
 	// правка: незаданное не меняется, указатель на nil снимает ограничение
@@ -289,31 +289,196 @@ func TestListFilters(t *testing.T) {
 	assert.EqualValues(t, 1, total)
 }
 
-func TestTagListAndCrawlableCodes(t *testing.T) {
+// Запись ссылки справочник меток не трогает: это отдельные вызовы, которые делает фоновый сервис
+func TestTagDirectory(t *testing.T) {
 	ctx := context.Background()
 	repo := New(linktest.PgPool(t))
 
-	tags, err := repo.TagList(ctx)
-	require.NoError(t, err)
-	assert.Empty(t, tags)
-
-	mk := func(code string, crawlable bool, tags ...string) {
-		_, err := repo.Create(ctx, &model.Edit{ShortCode: &code, LongUrl: new("https://example.com/" + code), Tags: &tags, Crawlable: &crawlable})
+	tagList := func() []string {
+		tags, err := repo.TagList(ctx)
 		require.NoError(t, err)
+		return tags
 	}
-	mk("b", true, "sms", "promo")
-	mk("a", false, "sms")
-	mk("Z", true)
-	mk("9", true, "акция")
+	mk := func(code string, tags ...string) int64 {
+		id, err := repo.Create(ctx, &model.Edit{ShortCode: &code, LongUrl: new("https://example.com/" + code), Tags: &tags})
+		require.NoError(t, err)
+		return id
+	}
 
-	tags, err = repo.TagList(ctx)
-	require.NoError(t, err)
-	assert.ElementsMatch(t, []string{"promo", "sms", "акция"}, tags, "каждая метка один раз")
-	assert.IsIncreasing(t, tags[:2])
+	first := mk("a", "sms", "promo")
+	second := mk("b", "sms")
+	assert.Empty(t, tagList(), "создание ссылки в справочник не пишет")
 
-	crawlable, err := repo.CrawlableCodes(ctx)
+	// дописать метки: повторы и уже известные — без ошибок
+	require.NoError(t, repo.TagAdd(ctx, []string{"sms", "promo", "sms"}))
+	require.NoError(t, repo.TagAdd(ctx, []string{"promo", "акция", "ghost"}))
+	require.NoError(t, repo.TagAdd(ctx, nil))
+	assert.Equal(t, []string{"ghost", "promo", "sms", "акция"}, tagList(), "по алфавиту, каждая один раз")
+
+	// убрать неиспользуемые: уходят только те, которых нет ни у одной ссылки
+	dropped, err := repo.TagDropUnused(ctx, []string{"sms", "ghost", "акция", "нет-такой"})
 	require.NoError(t, err)
-	assert.Equal(t, []string{"9", "Z", "b"}, crawlable, "по коду, побайтно")
+	assert.Equal(t, []string{"ghost", "акция"}, dropped)
+	assert.Equal(t, []string{"promo", "sms"}, tagList())
+
+	// метку сняли с одной ссылки — у другой она осталась
+	require.NoError(t, repo.Update(ctx, first, &model.Edit{Tags: new([]string{"promo"})}))
+	dropped, err = repo.TagDropUnused(ctx, []string{"sms"})
+	require.NoError(t, err)
+	assert.Empty(t, dropped)
+
+	// последняя ссылка с меткой удалена — метка уходит
+	require.NoError(t, repo.Delete(ctx, second))
+	assert.Equal(t, []string{"promo", "sms"}, tagList(), "удаление ссылки справочник не трогает")
+	dropped, err = repo.TagDropUnused(ctx, []string{"sms"})
+	require.NoError(t, err)
+	assert.Equal(t, []string{"sms"}, dropped)
+	assert.Equal(t, []string{"promo"}, tagList())
+
+	dropped, err = repo.TagDropUnused(ctx, nil)
+	require.NoError(t, err)
+	assert.Empty(t, dropped)
 
 	require.NoError(t, repo.Ping(ctx))
+}
+
+func TestCounts(t *testing.T) {
+	ctx := context.Background()
+	repo := New(linktest.PgPool(t))
+
+	past, future := time.Now().Add(-time.Hour), time.Now().Add(time.Hour)
+	mk := func(code string, validUntil *time.Time) {
+		_, err := repo.Create(ctx, &model.Edit{ShortCode: &code, LongUrl: new("https://example.com/" + code), ValidUntil: &validUntil})
+		require.NoError(t, err)
+	}
+	mk("old1", &past)
+	mk("old2", &past)
+	mk("new", &future)
+	mk("forever", nil)
+
+	all, err := repo.CountAll(ctx)
+	require.NoError(t, err)
+	assert.EqualValues(t, 4, all)
+
+	expired, err := repo.CountExpired(ctx)
+	require.NoError(t, err)
+	assert.EqualValues(t, 2, expired)
+}
+
+// Пересчёт приводит справочник меток к тому, что есть у ссылок
+func TestTagRecount(t *testing.T) {
+	ctx := context.Background()
+	pool := linktest.PgPool(t)
+	repo := New(pool)
+
+	// 30 ссылок с метками t0, t1, t2 и одна с двумя метками — в справочнике о них ничего нет
+	_, err := pool.Exec(ctx, `insert into link (short_code, long_url, tags)
+		select 'p' || g, 'https://example.com/p' || g, array['t' || g % 3] from generate_series(1, 30) g`)
+	require.NoError(t, err)
+	_, err = repo.Create(ctx, &model.Edit{ShortCode: new("a"), LongUrl: new("https://example.com/a"), Tags: new([]string{"sms", "promo"})})
+	require.NoError(t, err)
+	// а в справочнике — одна верная метка и две, которых у ссылок нет
+	require.NoError(t, repo.TagAdd(ctx, []string{"sms", "ghost", "старая"}))
+
+	added, dropped, done, err := repo.TagRecount(ctx)
+	require.NoError(t, err)
+	require.True(t, done)
+	assert.Equal(t, []string{"promo", "t0", "t1", "t2"}, added)
+	assert.Equal(t, []string{"ghost", "старая"}, dropped)
+
+	tags, err := repo.TagList(ctx)
+	require.NoError(t, err)
+	assert.Equal(t, []string{"promo", "sms", "t0", "t1", "t2"}, tags)
+
+	// всё сходится — исправлять нечего
+	added, dropped, done, err = repo.TagRecount(ctx)
+	require.NoError(t, err)
+	require.True(t, done)
+	assert.Empty(t, added)
+	assert.Empty(t, dropped)
+
+	// пустая таблица ссылок — пустой справочник
+	_, err = pool.Exec(ctx, `truncate link`)
+	require.NoError(t, err)
+	_, dropped, _, err = repo.TagRecount(ctx)
+	require.NoError(t, err)
+	assert.Len(t, dropped, 5)
+	tags, err = repo.TagList(ctx)
+	require.NoError(t, err)
+	assert.Empty(t, tags)
+}
+
+// Пересчёт один на все копии сервиса: пока идёт один, второй не начинается
+func TestTagRecountOneAtATime(t *testing.T) {
+	ctx := context.Background()
+	pool := linktest.PgPool(t)
+	repo := New(pool)
+
+	conn, err := pool.Acquire(ctx)
+	require.NoError(t, err)
+	defer conn.Release()
+	_, err = conn.Exec(ctx, `select pg_advisory_lock($1)`, tagRecountLock)
+	require.NoError(t, err)
+
+	_, _, done, err := repo.TagRecount(ctx)
+	require.NoError(t, err)
+	assert.False(t, done, "замок занят — пересчёт пропускается")
+
+	_, err = conn.Exec(ctx, `select pg_advisory_unlock($1)`, tagRecountLock)
+	require.NoError(t, err)
+
+	_, _, done, err = repo.TagRecount(ctx)
+	require.NoError(t, err)
+	assert.True(t, done)
+}
+
+// Справочник пишут одновременно со всех сторон — одни и те же новые метки в разном порядке:
+// никто никого не блокирует и ничего не теряется
+func TestTagDirectoryConcurrent(t *testing.T) {
+	ctx := context.Background()
+	repo := New(linktest.PgPool(t))
+
+	const workers, perWorker = 8, 30
+
+	g, gctx := errgroup.WithContext(ctx)
+	for w := range workers {
+		g.Go(func() error {
+			for i := range perWorker {
+				code := fmt.Sprintf("w%d-%d", w, i)
+				tags := []string{fmt.Sprintf("t%d", i), "общая", fmt.Sprintf("a%d", i%7)}
+				if w%2 == 0 {
+					slices.Reverse(tags)
+				}
+				if _, err := repo.Create(gctx, &model.Edit{ShortCode: &code, LongUrl: new("https://example.com/" + code), Tags: &tags}); err != nil {
+					return err
+				}
+				if err := repo.TagAdd(gctx, tags); err != nil {
+					return err
+				}
+				if _, err := repo.TagDropUnused(gctx, []string{fmt.Sprintf("t%d", i), "нет-такой"}); err != nil {
+					return err
+				}
+			}
+			return nil
+		})
+	}
+	g.Go(func() error {
+		for range 5 {
+			if _, _, _, err := repo.TagRecount(gctx); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	require.NoError(t, g.Wait())
+
+	added, dropped, done, err := repo.TagRecount(ctx)
+	require.NoError(t, err)
+	require.True(t, done)
+	assert.Empty(t, added, "метки ссылок потерялись")
+	assert.Empty(t, dropped)
+
+	tags, err := repo.TagList(ctx)
+	require.NoError(t, err)
+	assert.Len(t, tags, perWorker+7+1)
 }

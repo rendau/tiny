@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"time"
 
+	"golang.org/x/sync/errgroup"
+
 	"github.com/rendau/tiny/internal/domain/link/model"
 	"github.com/rendau/tiny/internal/errs"
 )
@@ -18,32 +20,79 @@ const (
 	// generateAttempts — сколько раз подбирать свободный код. При длине 4 (14,7 млн кодов) и
 	// миллионах ссылок совпадения часты, но 20 неудач подряд практически невозможны.
 	generateAttempts = 20
-
-	// listCacheTTL — сколько помнить списки, ради которых читается вся таблица (метки, robots.txt)
-	listCacheTTL = time.Minute
 )
 
 type Service struct {
 	repoDb RepoDbI
-
-	tags      *cachedList
-	crawlable *cachedList
 }
 
 func New(repoDb RepoDbI) *Service {
-	return &Service{
-		repoDb:    repoDb,
-		tags:      newCachedList(listCacheTTL),
-		crawlable: newCachedList(listCacheTTL),
-	}
+	return &Service{repoDb: repoDb}
 }
 
+// List — ссылки и их общее число
 func (s *Service) List(ctx context.Context, pars *model.ListReq) ([]*model.Main, int64, error) {
+	if (pars.WithTotalCount || pars.OnlyCount) && isActiveOnly(pars) {
+		return s.listActive(ctx, pars)
+	}
+
 	items, tCount, err := s.repoDb.List(ctx, pars)
 	if err != nil {
 		return nil, 0, fmt.Errorf("repoDb.List: %w", err)
 	}
 	return items, tCount, nil
+}
+
+// isActiveOnly — фильтр «только действующие» и ничего больше
+func isActiveOnly(pars *model.ListReq) bool {
+	return pars.Expired != nil && !*pars.Expired &&
+		pars.Tag == nil && pars.ShortCode == nil && pars.Domain == nil &&
+		(pars.Search == nil || *pars.Search == "")
+}
+
+// listActive — список действующих ссылок с их числом. Число считается как «все минус истёкшие»:
+// у действующей ссылки срок либо не задан, либо ещё не вышел, и на такое условие («или») индекса
+// нет — подсчёт в лоб читает всю таблицу (секунды на миллионах ссылок). А «все» и «истёкшие»
+// считаются каждое по своему индексу, одновременно.
+func (s *Service) listActive(ctx context.Context, pars *model.ListReq) ([]*model.Main, int64, error) {
+	var (
+		items        = []*model.Main{}
+		all, expired int64
+	)
+
+	g, gctx := errgroup.WithContext(ctx)
+	g.Go(func() error {
+		var err error
+		if all, err = s.repoDb.CountAll(gctx); err != nil {
+			return fmt.Errorf("repoDb.CountAll: %w", err)
+		}
+		return nil
+	})
+	g.Go(func() error {
+		var err error
+		if expired, err = s.repoDb.CountExpired(gctx); err != nil {
+			return fmt.Errorf("repoDb.CountExpired: %w", err)
+		}
+		return nil
+	})
+	if !pars.OnlyCount {
+		g.Go(func() error {
+			listPars := *pars
+			listPars.WithTotalCount = false
+
+			var err error
+			if items, _, err = s.repoDb.List(gctx, &listPars); err != nil {
+				return fmt.Errorf("repoDb.List: %w", err)
+			}
+			return nil
+		})
+	}
+	if err := g.Wait(); err != nil {
+		return nil, 0, err
+	}
+
+	// два подсчёта сделаны не в один миг: между ними ссылка могла истечь
+	return items, max(all-expired, 0), nil
 }
 
 func (s *Service) Get(ctx context.Context, id int64, errNE bool) (*model.Main, bool, error) {
@@ -70,7 +119,6 @@ func (s *Service) Create(ctx context.Context, obj *model.Edit, codeLength int) (
 		if err != nil {
 			return 0, fmt.Errorf("repoDb.Create: %w", err)
 		}
-		s.invalidateListsOnCreate(obj)
 		return newId, nil
 	}
 
@@ -88,7 +136,6 @@ func (s *Service) Create(ctx context.Context, obj *model.Edit, codeLength int) (
 			}
 			return 0, fmt.Errorf("repoDb.Create: %w", err)
 		}
-		s.invalidateListsOnCreate(obj)
 		return newId, nil
 	}
 
@@ -98,8 +145,6 @@ func (s *Service) Create(ctx context.Context, obj *model.Edit, codeLength int) (
 func (s *Service) Update(ctx context.Context, id int64, obj *model.Edit) error {
 	obj.ModifiedAt = new(time.Now())
 
-	defer s.invalidateLists()
-
 	if err := s.repoDb.Update(ctx, id, obj); err != nil {
 		return fmt.Errorf("repoDb.Update: %w", err)
 	}
@@ -107,8 +152,6 @@ func (s *Service) Update(ctx context.Context, id int64, obj *model.Edit) error {
 }
 
 func (s *Service) Delete(ctx context.Context, id int64) error {
-	defer s.invalidateLists()
-
 	if err := s.repoDb.Delete(ctx, id); err != nil {
 		return fmt.Errorf("repoDb.Delete: %w", err)
 	}
@@ -148,22 +191,43 @@ func (s *Service) FindExisting(ctx context.Context, pars *model.FindExistingReq)
 	return result, found, nil
 }
 
-// TagList — все метки ссылок по алфавиту (до listCacheTTL из памяти)
+// TagList — все метки ссылок по алфавиту (из справочника меток, таблица ссылок не читается)
 func (s *Service) TagList(ctx context.Context) ([]string, error) {
-	result, err := s.tags.get(ctx, s.repoDb.TagList)
+	result, err := s.repoDb.TagList(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("repoDb.TagList: %w", err)
 	}
 	return result, nil
 }
 
-// CrawlableCodes — коды ссылок, открытых поисковикам (до listCacheTTL из памяти)
-func (s *Service) CrawlableCodes(ctx context.Context) ([]string, error) {
-	result, err := s.crawlable.get(ctx, s.repoDb.CrawlableCodes)
-	if err != nil {
-		return nil, fmt.Errorf("repoDb.CrawlableCodes: %w", err)
+// Справочник меток с записью ссылок не связан: Create, Update и Delete его не трогают.
+// Дописывает и чистит его фоновый сервис (internal/service/linktag) методами ниже.
+
+// TagAdd дописывает метки в справочник
+func (s *Service) TagAdd(ctx context.Context, names []string) error {
+	if err := s.repoDb.TagAdd(ctx, names); err != nil {
+		return fmt.Errorf("repoDb.TagAdd: %w", err)
 	}
-	return result, nil
+	return nil
+}
+
+// TagDropUnused убирает из справочника те из names, которых не осталось ни у одной ссылки
+func (s *Service) TagDropUnused(ctx context.Context, names []string) ([]string, error) {
+	dropped, err := s.repoDb.TagDropUnused(ctx, names)
+	if err != nil {
+		return nil, fmt.Errorf("repoDb.TagDropUnused: %w", err)
+	}
+	return dropped, nil
+}
+
+// TagRecount сверяет справочник меток с таблицей ссылок (читает её целиком): что дописано, что
+// убрано. done=false — пересчёт уже идёт в другой копии сервиса.
+func (s *Service) TagRecount(ctx context.Context) (added, dropped []string, done bool, err error) {
+	added, dropped, done, err = s.repoDb.TagRecount(ctx)
+	if err != nil {
+		return nil, nil, false, fmt.Errorf("repoDb.TagRecount: %w", err)
+	}
+	return added, dropped, done, nil
 }
 
 func (s *Service) Ping(ctx context.Context) error {
@@ -171,24 +235,6 @@ func (s *Service) Ping(ctx context.Context) error {
 		return fmt.Errorf("repoDb.Ping: %w", err)
 	}
 	return nil
-}
-
-// invalidateLists — ссылку изменили или удалили: оба списка могли измениться
-func (s *Service) invalidateLists() {
-	s.tags.invalidate()
-	s.crawlable.invalidate()
-}
-
-// invalidateListsOnCreate — ссылка добавлена. Списки сбрасываются, только если она их меняет:
-// принесла метку, которой ещё не было, или открыта поисковикам. Ссылки создаются постоянно, и
-// сброс на каждую заставлял бы читать всю таблицу при каждом запросе списка.
-func (s *Service) invalidateListsOnCreate(obj *model.Edit) {
-	if obj.Tags != nil {
-		s.tags.invalidateIfMissing(*obj.Tags)
-	}
-	if obj.Crawlable != nil && *obj.Crawlable {
-		s.crawlable.invalidate()
-	}
 }
 
 // GenerateCode — случайный код из codeAlphabet. Байты берутся из crypto/rand; байт, который дал бы

@@ -1,5 +1,4 @@
-# Служебные адреса: проба живости, robots.txt, значок, корень, чужие пути и методы.
-# Идёт первым: robots.txt здесь проверяется, пока в этом прогоне нет ссылок с crawlable=true.
+# Служебные адреса: проба живости, значок, корень, чужие пути и методы.
 #
 # У ответа «нет такого адреса API» поле detail выглядит как "Cannot POST http://l.demo.test/health!":
 # в нём схема и хост запроса, которые зависят от того, что стоит перед сервисом. Поэтому оно
@@ -26,23 +25,6 @@
       method: POST
       path: /rest/health
       mask: &cannot {detail: 'cannot =~ ^Cannot [A-Z]+ https?://[^ ]+!$'}
-
-- id: robots-default
-  about: robots.txt, когда ссылок с crawlable=true нет
-  steps:
-    - name: GET
-      path: /robots.txt
-      only_this_run_lines: '^Allow: /'
-    - name: HEAD
-      method: HEAD
-      path: /robots.txt
-    - name: на втором домене
-      path: /robots.txt
-      host: sl.demo.test
-      only_this_run_lines: '^Allow: /'
-    - name: POST — метод не поддерживается
-      method: POST
-      path: /robots.txt
 
 - id: favicon
   about: Значок сайта — сама картинка не сравнивается, только код ответа и тип

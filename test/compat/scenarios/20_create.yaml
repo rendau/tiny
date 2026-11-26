@@ -37,14 +37,10 @@
         customSlug: "all-${run}"
         domain: l.demo.test
         title: "Заголовок страницы <b>&</b> \"кавычки\""
-        crawlable: true
         forwardQuery: false
         shortCodeLength: 6
     - name: переход — параметры не дописываются (forwardQuery=false)
       path: /all-${run}?z=9
-    - name: robots.txt теперь разрешает эту ссылку (crawlable=true)
-      path: /robots.txt
-      only_this_run_lines: '^Allow: /'
     - name: чтение через API
       path: /rest/v3/short-urls/all-${run}
       key: good
@@ -142,12 +138,11 @@
       create: {longUrl: "https://shop.example.invalid/${run}/fie-loose", findIfExists: true, validUntil: "2099-12-05T10:01:00+05:00"}
     - name: только метки — та же
       create: {longUrl: "https://shop.example.invalid/${run}/fie-loose", findIfExists: true, tags: [compat-a, compat-b]}
-    - name: другие title, crawlable, forwardQuery, shortCodeLength — не сравниваются, та же
+    - name: другие title, forwardQuery, shortCodeLength — не сравниваются, та же
       create:
         longUrl: "https://shop.example.invalid/${run}/fie-loose"
         findIfExists: true
         title: "Другой заголовок"
-        crawlable: true
         forwardQuery: false
         shortCodeLength: 6
     - name: основной домен указан явно — та же
@@ -326,14 +321,13 @@
     - {name: длиннее 512 знаков — обрезается, create: {longUrl: "https://shop.example.invalid/${run}/title", title: "${pad:600}"}, save: *code5}
 
 - id: create-flags
-  about: Логические поля crawlable, forwardQuery, findIfExists в разных записях
+  about: Логические поля forwardQuery, findIfExists в разных записях
   steps:
     - {name: forwardQuery=false, create: {longUrl: "https://shop.example.invalid/${run}/flags", forwardQuery: false}, save: *code5}
     - {name: forwardQuery строкой "false", create: {longUrl: "https://shop.example.invalid/${run}/flags", forwardQuery: "false"}, save: *code5}
     - {name: forwardQuery числом 0, create: {longUrl: "https://shop.example.invalid/${run}/flags", forwardQuery: 0}, save: *code5}
     - {name: forwardQuery строкой "нет", create: {longUrl: "https://shop.example.invalid/${run}/flags", forwardQuery: "нет"}}
     - {name: forwardQuery=null — ошибка, create: {longUrl: "https://shop.example.invalid/${run}/flags", forwardQuery: null}}
-    - {name: crawlable=null — ошибка, create: {longUrl: "https://shop.example.invalid/${run}/flags", crawlable: null}}
     - {name: findIfExists=null — ошибка, create: {longUrl: "https://shop.example.invalid/${run}/flags", findIfExists: null}}
     - name: findIfExists строкой "true" — работает как true
       create: {longUrl: "https://shop.example.invalid/${run}/flags-fie", findIfExists: "true"}

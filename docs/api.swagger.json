@@ -767,9 +767,6 @@
           "type": "integer",
           "format": "int32"
         },
-        "crawlable": {
-          "type": "boolean"
-        },
         "forward_query": {
           "type": "boolean",
           "title": "не задано — true"
@@ -842,9 +839,6 @@
           "type": "integer",
           "format": "int32"
         },
-        "crawlable": {
-          "type": "boolean"
-        },
         "forward_query": {
           "type": "boolean",
           "title": "дописывать ли параметры запроса короткой ссылки к длинному адресу"
@@ -878,9 +872,6 @@
         "max_visits": {
           "type": "integer",
           "format": "int32"
-        },
-        "crawlable": {
-          "type": "boolean"
         },
         "forward_query": {
           "type": "boolean"

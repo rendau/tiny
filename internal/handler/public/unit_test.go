@@ -75,10 +75,10 @@ func TestEncodeShortUrl(t *testing.T) {
 	got = string(encodeShortUrl(&model.Main{
 		ShortUrl: "https://sl.demo.test/x", ShortCode: "x", LongUrl: "https://example.com/a", CreatedAt: created,
 		Tags: []string{"mail_sms", "b"}, ValidSince: &created, ValidUntil: &until, MaxVisits: new(int32(0)),
-		Domain: "sl.demo.test", Title: "T", Crawlable: true,
+		Domain: "sl.demo.test", Title: "T",
 	}, almaty))
 	assert.Contains(t, got, `"tags":["mail_sms","b"],"meta":{"validSince":"2026-11-25T10:01:05+05:00","validUntil":"2026-12-05T10:01:00+05:00","maxVisits":0}`)
-	assert.Contains(t, got, `"domain":"sl.demo.test","title":"T","crawlable":true,"forwardQuery":false,`)
+	assert.Contains(t, got, `"domain":"sl.demo.test","title":"T","crawlable":false,"forwardQuery":false,`)
 	assert.True(t, json.Valid([]byte(got)))
 }
 
@@ -128,7 +128,8 @@ func decodeIn(t *testing.T, body string, zone *time.Location) (*model.CreateReq,
 
 func TestDecodeCreateReq(t *testing.T) {
 	req, invalid := decode(t, `{"longUrl":"https://e.com","findIfExists":true,"tags":["a",5],"validUntil":"2026-12-05T10:01:00+05:00",
-		"shortCodeLength":6,"maxVisits":"3","customSlug":12345,"domain":"sl.demo.test","title":77,"crawlable":"1","forwardQuery":0}`)
+		"shortCodeLength":6,"maxVisits":"3","customSlug":12345,"domain":"sl.demo.test","title":77,"crawlable":true,"forwardQuery":0}`)
+	// crawlable («открыта поисковикам») сервис не знает: поле пропускается, как любое незнакомое
 	assert.Empty(t, invalid)
 	assert.Equal(t, "https://e.com", req.LongUrl)
 	assert.True(t, req.FindIfExists)
@@ -138,7 +139,6 @@ func TestDecodeCreateReq(t *testing.T) {
 	assert.Equal(t, "12345", *req.ShortCode, "строка числом")
 	assert.Equal(t, "sl.demo.test", *req.Domain)
 	assert.Equal(t, "77", *req.Title)
-	assert.True(t, *req.Crawlable)
 	assert.False(t, *req.ForwardQuery)
 
 	// нет поля и null — «не задано»
@@ -151,7 +151,6 @@ func TestDecodeCreateReq(t *testing.T) {
 	assert.Nil(t, req.ShortCode)
 	assert.Nil(t, req.Domain)
 	assert.Nil(t, req.ShortCodeLength)
-	assert.Nil(t, req.Crawlable)
 	assert.Nil(t, req.ForwardQuery)
 	assert.False(t, req.FindIfExists)
 	assert.Nil(t, req.Tags)
@@ -164,8 +163,6 @@ func TestDecodeCreateReq(t *testing.T) {
 		`{"tags":"x"}`:                fieldTags,
 		`{"tags":{"a":"x"}}`:          fieldTags,
 		`{"tags":[null]}`:             fieldTags,
-		`{"crawlable":null}`:          fieldCrawlable,
-		`{"crawlable":"yes"}`:         fieldCrawlable,
 		`{"forwardQuery":5}`:          fieldForwardQuery,
 		`{"findIfExists":""}`:         fieldFindIfExists,
 		`{"findIfExists":null}`:       fieldFindIfExists,

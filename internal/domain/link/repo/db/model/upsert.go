@@ -20,7 +20,6 @@ type Upsert struct {
 	ValidSince   **time.Time
 	ValidUntil   **time.Time
 	MaxVisits    **int32
-	Crawlable    *bool
 	ForwardQuery *bool
 }
 
@@ -62,9 +61,6 @@ func (m *Upsert) CreateColumnMap() map[string]any {
 	if m.MaxVisits != nil {
 		result["max_visits"] = *m.MaxVisits
 	}
-	if m.Crawlable != nil {
-		result["crawlable"] = *m.Crawlable
-	}
 	if m.ForwardQuery != nil {
 		result["forward_query"] = *m.ForwardQuery
 	}
@@ -98,7 +94,6 @@ func DecodeUpsert(v *domainModel.Edit) *Upsert {
 		ValidSince:   v.ValidSince,
 		ValidUntil:   v.ValidUntil,
 		MaxVisits:    v.MaxVisits,
-		Crawlable:    v.Crawlable,
 		ForwardQuery: v.ForwardQuery,
 	}
 }

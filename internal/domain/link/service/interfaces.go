@@ -16,7 +16,13 @@ type RepoDbI interface {
 	GetByCode(ctx context.Context, shortCode, domain string) (*model.Main, bool, error)
 	FindForRedirect(ctx context.Context, shortCode, domain string) (*model.Main, bool, error)
 	FindExisting(ctx context.Context, pars *model.FindExistingReq) (*model.Main, bool, error)
+	CountAll(ctx context.Context) (int64, error)
+	CountExpired(ctx context.Context) (int64, error)
+
+	// справочник меток
 	TagList(ctx context.Context) ([]string, error)
-	CrawlableCodes(ctx context.Context) ([]string, error)
+	TagAdd(ctx context.Context, names []string) error
+	TagDropUnused(ctx context.Context, names []string) ([]string, error)
+	TagRecount(ctx context.Context) (added, dropped []string, done bool, err error)
 	Ping(ctx context.Context) error
 }

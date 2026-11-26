@@ -56,15 +56,6 @@ func (u *Usecase) PublicGet(ctx context.Context, shortCode string, domain *strin
 	return u.withShortUrl(result), nil
 }
 
-// CrawlableCodes — коды ссылок, которые разрешено обходить поисковикам (robots.txt)
-func (u *Usecase) CrawlableCodes(ctx context.Context) ([]string, error) {
-	result, err := u.svc.CrawlableCodes(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("svc.CrawlableCodes: %w", err)
-	}
-	return result, nil
-}
-
 // Health — сервис может отвечать: база доступна
 func (u *Usecase) Health(ctx context.Context) error {
 	if err := u.svc.Ping(ctx); err != nil {

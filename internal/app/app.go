@@ -28,6 +28,7 @@ import (
 	handlerGrpcP "github.com/rendau/tiny/internal/handler/grpc"
 	handlerPublicP "github.com/rendau/tiny/internal/handler/public"
 	"github.com/rendau/tiny/internal/infra/metrics"
+	serviceLinktagServiceP "github.com/rendau/tiny/internal/service/linktag/service"
 	serviceLoginlimitServiceP "github.com/rendau/tiny/internal/service/loginlimit/service"
 	usecaseLinkP "github.com/rendau/tiny/internal/usecase/link"
 	usecaseUsrP "github.com/rendau/tiny/internal/usecase/usr"
@@ -44,6 +45,8 @@ type App struct {
 	publicHttpServer *http.Server
 	adminHttpServer  *http.Server
 	systemHttpServer *http.Server
+
+	linkTagService *serviceLinktagServiceP.Service
 
 	ctx       context.Context
 	ctxCancel context.CancelFunc
@@ -93,7 +96,8 @@ func (a *App) Init() {
 	// link
 	linkRepo := domainLinkRepoDbP.New(a.pgpool)
 	linkService := domainLinkServiceP.New(linkRepo)
-	linkUsecase := usecaseLinkP.New(linkService, sessionService, usecaseLinkP.Config{
+	a.linkTagService = serviceLinktagServiceP.New(linkService) // справочник меток: ведётся в фоне
+	linkUsecase := usecaseLinkP.New(linkService, sessionService, a.linkTagService, usecaseLinkP.Config{
 		DefaultDomain:     config.Conf.DefaultDomain,
 		HttpsEnabled:      config.Conf.IsHttpsEnabled,
 		DefaultCodeLength: config.Conf.DefaultShortCodesLength,
@@ -207,6 +211,9 @@ func (a *App) Start() {
 
 	// system http server
 	a.startHttpServer(a.systemHttpServer, "system-http-server")
+
+	// link tag
+	a.linkTagService.Start(a.ctx)
 }
 
 func (a *App) Listen() {
@@ -243,6 +250,9 @@ func (a *App) Stop() {
 
 func (a *App) WaitJobs() {
 	slog.Info("waiting jobs")
+
+	// link tag
+	a.linkTagService.Wait()
 }
 
 func (a *App) Exit() {

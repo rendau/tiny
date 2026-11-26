@@ -42,7 +42,6 @@ type LinkMain struct {
 	ValidSince *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=valid_since,json=validSince,proto3" json:"valid_since,omitempty"`
 	ValidUntil *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=valid_until,json=validUntil,proto3" json:"valid_until,omitempty"`
 	MaxVisits  *int32                 `protobuf:"varint,12,opt,name=max_visits,json=maxVisits,proto3,oneof" json:"max_visits,omitempty"`
-	Crawlable  bool                   `protobuf:"varint,13,opt,name=crawlable,proto3" json:"crawlable,omitempty"`
 	// дописывать ли параметры запроса короткой ссылки к длинному адресу
 	ForwardQuery  bool `protobuf:"varint,14,opt,name=forward_query,json=forwardQuery,proto3" json:"forward_query,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -161,13 +160,6 @@ func (x *LinkMain) GetMaxVisits() int32 {
 		return *x.MaxVisits
 	}
 	return 0
-}
-
-func (x *LinkMain) GetCrawlable() bool {
-	if x != nil {
-		return x.Crawlable
-	}
-	return false
 }
 
 func (x *LinkMain) GetForwardQuery() bool {
@@ -374,7 +366,6 @@ type LinkCreateReq struct {
 	ValidSince      *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=valid_since,json=validSince,proto3" json:"valid_since,omitempty"`
 	ValidUntil      *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=valid_until,json=validUntil,proto3" json:"valid_until,omitempty"`
 	MaxVisits       *int32                 `protobuf:"varint,9,opt,name=max_visits,json=maxVisits,proto3,oneof" json:"max_visits,omitempty"`
-	Crawlable       *bool                  `protobuf:"varint,10,opt,name=crawlable,proto3,oneof" json:"crawlable,omitempty"`
 	// не задано — true
 	ForwardQuery  *bool `protobuf:"varint,11,opt,name=forward_query,json=forwardQuery,proto3,oneof" json:"forward_query,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -474,13 +465,6 @@ func (x *LinkCreateReq) GetMaxVisits() int32 {
 	return 0
 }
 
-func (x *LinkCreateReq) GetCrawlable() bool {
-	if x != nil && x.Crawlable != nil {
-		return *x.Crawlable
-	}
-	return false
-}
-
 func (x *LinkCreateReq) GetForwardQuery() bool {
 	if x != nil && x.ForwardQuery != nil {
 		return *x.ForwardQuery
@@ -558,7 +542,6 @@ type LinkUpdateReq struct {
 	ValidSince    *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=valid_since,json=validSince,proto3" json:"valid_since,omitempty"`
 	ValidUntil    *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=valid_until,json=validUntil,proto3" json:"valid_until,omitempty"`
 	MaxVisits     *int32                 `protobuf:"varint,7,opt,name=max_visits,json=maxVisits,proto3,oneof" json:"max_visits,omitempty"`
-	Crawlable     bool                   `protobuf:"varint,8,opt,name=crawlable,proto3" json:"crawlable,omitempty"`
 	ForwardQuery  bool                   `protobuf:"varint,9,opt,name=forward_query,json=forwardQuery,proto3" json:"forward_query,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -641,13 +624,6 @@ func (x *LinkUpdateReq) GetMaxVisits() int32 {
 		return *x.MaxVisits
 	}
 	return 0
-}
-
-func (x *LinkUpdateReq) GetCrawlable() bool {
-	if x != nil {
-		return x.Crawlable
-	}
-	return false
 }
 
 func (x *LinkUpdateReq) GetForwardQuery() bool {
@@ -750,7 +726,7 @@ var File_tiny_v1_link_proto protoreflect.FileDescriptor
 
 const file_tiny_v1_link_proto_rawDesc = "" +
 	"\n" +
-	"\x12tiny_v1/link.proto\x12\atiny_v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x13common/common.proto\"\x9b\x04\n" +
+	"\x12tiny_v1/link.proto\x12\atiny_v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x13common/common.proto\"\x83\x04\n" +
 	"\bLinkMain\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x129\n" +
 	"\n" +
@@ -770,10 +746,9 @@ const file_tiny_v1_link_proto_rawDesc = "" +
 	"\vvalid_until\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"validUntil\x12\"\n" +
 	"\n" +
-	"max_visits\x18\f \x01(\x05H\x00R\tmaxVisits\x88\x01\x01\x12\x1c\n" +
-	"\tcrawlable\x18\r \x01(\bR\tcrawlable\x12#\n" +
+	"max_visits\x18\f \x01(\x05H\x00R\tmaxVisits\x88\x01\x01\x12#\n" +
 	"\rforward_query\x18\x0e \x01(\bR\fforwardQueryB\r\n" +
-	"\v_max_visits\"\x91\x02\n" +
+	"\v_max_visitsJ\x04\b\r\x10\x0e\"\x91\x02\n" +
 	"\vLinkListReq\x125\n" +
 	"\vlist_params\x18\x01 \x01(\v2\x14.common.ListParamsStR\n" +
 	"listParams\x12\x1b\n" +
@@ -794,7 +769,7 @@ const file_tiny_v1_link_proto_rawDesc = "" +
 	"\aresults\x18\x02 \x03(\v2\x11.tiny_v1.LinkMainR\aresults\"\x1c\n" +
 	"\n" +
 	"LinkGetReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\x9f\x04\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xf4\x03\n" +
 	"\rLinkCreateReq\x12\x19\n" +
 	"\blong_url\x18\x01 \x01(\tR\alongUrl\x12\"\n" +
 	"\n" +
@@ -808,23 +783,20 @@ const file_tiny_v1_link_proto_rawDesc = "" +
 	"\vvalid_until\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"validUntil\x12\"\n" +
 	"\n" +
-	"max_visits\x18\t \x01(\x05H\x04R\tmaxVisits\x88\x01\x01\x12!\n" +
-	"\tcrawlable\x18\n" +
-	" \x01(\bH\x05R\tcrawlable\x88\x01\x01\x12(\n" +
-	"\rforward_query\x18\v \x01(\bH\x06R\fforwardQuery\x88\x01\x01B\r\n" +
+	"max_visits\x18\t \x01(\x05H\x04R\tmaxVisits\x88\x01\x01\x12(\n" +
+	"\rforward_query\x18\v \x01(\bH\x05R\fforwardQuery\x88\x01\x01B\r\n" +
 	"\v_short_codeB\x14\n" +
 	"\x12_short_code_lengthB\t\n" +
 	"\a_domainB\b\n" +
 	"\x06_titleB\r\n" +
-	"\v_max_visitsB\f\n" +
-	"\n" +
-	"_crawlableB\x10\n" +
-	"\x0e_forward_query\"[\n" +
+	"\v_max_visitsB\x10\n" +
+	"\x0e_forward_queryJ\x04\b\n" +
+	"\x10\v\"[\n" +
 	"\rLinkCreateRep\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
 	"short_code\x18\x02 \x01(\tR\tshortCode\x12\x1b\n" +
-	"\tshort_url\x18\x03 \x01(\tR\bshortUrl\"\xd4\x02\n" +
+	"\tshort_url\x18\x03 \x01(\tR\bshortUrl\"\xbc\x02\n" +
 	"\rLinkUpdateReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
 	"\blong_url\x18\x02 \x01(\tR\alongUrl\x12\x14\n" +
@@ -835,10 +807,9 @@ const file_tiny_v1_link_proto_rawDesc = "" +
 	"\vvalid_until\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"validUntil\x12\"\n" +
 	"\n" +
-	"max_visits\x18\a \x01(\x05H\x00R\tmaxVisits\x88\x01\x01\x12\x1c\n" +
-	"\tcrawlable\x18\b \x01(\bR\tcrawlable\x12#\n" +
+	"max_visits\x18\a \x01(\x05H\x00R\tmaxVisits\x88\x01\x01\x12#\n" +
 	"\rforward_query\x18\t \x01(\bR\fforwardQueryB\r\n" +
-	"\v_max_visits\"4\n" +
+	"\v_max_visitsJ\x04\b\b\x10\t\"4\n" +
 	"\n" +
 	"TagListReq\x12\x1b\n" +
 	"\x06search\x18\x01 \x01(\tH\x00R\x06search\x88\x01\x01B\t\n" +

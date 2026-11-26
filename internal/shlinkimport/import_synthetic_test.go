@@ -82,7 +82,7 @@ func readDst(t testing.TB, conn *pgx.Conn) map[Key]dstRow {
 	t.Helper()
 	rows, err := conn.Query(context.Background(), `
 		select short_code, domain, long_url, title, tags, valid_since, valid_until, max_visits,
-		       crawlable, forward_query, created_at, modified_at
+		       forward_query, created_at, modified_at
 		from link`)
 	require.NoError(t, err)
 	defer rows.Close()
@@ -91,7 +91,7 @@ func readDst(t testing.TB, conn *pgx.Conn) map[Key]dstRow {
 	for rows.Next() {
 		var r dstRow
 		require.NoError(t, rows.Scan(&r.ShortCode, &r.Domain, &r.LongURL, &r.Title, &r.Tags, &r.ValidSince, &r.ValidUntil,
-			&r.MaxVisits, &r.Crawlable, &r.ForwardQuery, &r.CreatedAt, &r.ModifiedAt))
+			&r.MaxVisits, &r.ForwardQuery, &r.CreatedAt, &r.ModifiedAt))
 		res[r.Key()] = r
 	}
 	require.NoError(t, rows.Err())
@@ -120,7 +120,29 @@ func runImport(t testing.TB, opts ImportOptions) *ImportResult {
 	opts.Logf = newTestLog(t).Logf
 	res, err := Import(context.Background(), opts)
 	require.NoError(t, err)
+	if !opts.DryRun {
+		// метки перенесённых ссылок есть в справочнике меток tiny: по нему админка показывает
+		// список меток, и перенос пополняет его сам
+		require.Empty(t, tagsMissingInDirectory(t, opts.DstDSN), "метки ссылок не попали в справочник меток")
+	}
 	return res
+}
+
+// tagsMissingInDirectory — метки, которые есть у ссылок приёмника, но которых нет в справочнике меток
+func tagsMissingInDirectory(t testing.TB, dstDSN string) []string {
+	t.Helper()
+	ctx := context.Background()
+	conn := connectOrSkip(t, dstDSN)
+	defer func() { _ = conn.Close(ctx) }()
+
+	rows, err := conn.Query(ctx, `
+		select distinct t from (select unnest(tags) as t from link) x
+		where not exists (select 1 from tag where tag.name = x.t)
+		order by t`)
+	require.NoError(t, err)
+	missing, err := pgx.CollectRows(rows, pgx.RowTo[string])
+	require.NoError(t, err)
+	return missing
 }
 
 func TestImport_FieldMapping(t *testing.T) {
@@ -188,11 +210,11 @@ func TestImport_FieldMapping(t *testing.T) {
 		{ShortCode: "full4", Domain: "sl.demo.test"}: {
 			ShortCode: "full4", Domain: "sl.demo.test", LongURL: "https://example.com/4?a=1&b=привет мир",
 			Title: "Привет, «мир»", Tags: []string{"alpha", "mail_sms", "zeta", "бета"},
-			CreatedAt:  mustTime(t, "2024-02-29T12:00:00+06:00"),
-			ValidSince: new(mustTime(t, "2023-06-01T12:00:00+06:00")),
-			ValidUntil: new(mustTime(t, "2026-12-05T10:01:00+05:00")),
-			MaxVisits:  new(int32(7)),
-			Crawlable:  true, ForwardQuery: false,
+			CreatedAt:    mustTime(t, "2024-02-29T12:00:00+06:00"),
+			ValidSince:   new(mustTime(t, "2023-06-01T12:00:00+06:00")),
+			ValidUntil:   new(mustTime(t, "2026-12-05T10:01:00+05:00")),
+			MaxVisits:    new(int32(7)),
+			ForwardQuery: false,
 		},
 		{ShortCode: "empty"}: {
 			ShortCode: "empty", LongURL: "https://example.com/5", Tags: []string{}, ForwardQuery: true,

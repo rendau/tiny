@@ -8,6 +8,7 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 
 	"github.com/rendau/tiny/internal/domain/link/model"
 	repoModel "github.com/rendau/tiny/internal/domain/link/repo/db/model"
@@ -120,18 +121,15 @@ func (r *Repo) FindExisting(ctx context.Context, pars *model.FindExistingReq) (*
 	return r.queryOne(ctx, query, args...)
 }
 
-// TagList — все метки, которые встречаются у ссылок, по алфавиту. Проходит всю таблицу
-// (индекс по массиву не умеет отдавать список значений) — вызывающий кэширует результат.
-func (r *Repo) TagList(ctx context.Context) ([]string, error) {
-	return r.queryStrings(ctx,
-		`select t from (select distinct unnest(tags) as t from `+tableName+`) x order by t`,
-	)
+// CountAll — сколько всего ссылок; по индексу первичного ключа, таблица не читается
+func (r *Repo) CountAll(ctx context.Context) (int64, error) {
+	return r.queryCount(ctx, `select count(*) from `+tableName)
 }
 
-// CrawlableCodes — коды ссылок, которые разрешено обходить поисковикам (для robots.txt)
-func (r *Repo) CrawlableCodes(ctx context.Context) ([]string, error) {
-	return r.queryStrings(ctx,
-		`select short_code from `+tableName+` where crawlable order by short_code collate "C"`,
+// CountExpired — сколько ссылок истекло; по индексу link_valid_until_idx, таблица не читается
+func (r *Repo) CountExpired(ctx context.Context) (int64, error) {
+	return r.queryCount(ctx,
+		`select count(*) from `+tableName+` where valid_until is not null and valid_until < now()`,
 	)
 }
 
@@ -158,8 +156,26 @@ func (r *Repo) queryOne(ctx context.Context, query string, args ...any) (*model.
 	return repoModel.EncodeSelect(m, 0), true, nil
 }
 
+func (r *Repo) queryCount(ctx context.Context, query string, args ...any) (int64, error) {
+	var n int64
+	if err := r.Con.QueryRow(ctx, query, args...).Scan(&n); err != nil {
+		return 0, fmt.Errorf("query: %w", err)
+	}
+	return n, nil
+}
+
 func (r *Repo) queryStrings(ctx context.Context, query string, args ...any) ([]string, error) {
-	rows, err := r.Con.Query(ctx, query, args...)
+	return queryStrings(ctx, r.Con, query, args...)
+}
+
+// execI — пул, соединение или транзакция
+type execI interface {
+	Exec(ctx context.Context, sql string, args ...any) (pgconn.CommandTag, error)
+	Query(ctx context.Context, sql string, args ...any) (pgx.Rows, error)
+}
+
+func queryStrings(ctx context.Context, con execI, query string, args ...any) ([]string, error) {
+	rows, err := con.Query(ctx, query, args...)
 	if err != nil {
 		return nil, fmt.Errorf("query: %w", err)
 	}

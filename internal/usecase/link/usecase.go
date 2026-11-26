@@ -27,16 +27,17 @@ type Config struct {
 type Usecase struct {
 	svc        ServiceI
 	sessionSvc SessionServiceI
+	tagKeeper  TagKeeperI
 	cfg        Config
 }
 
-func New(svc ServiceI, sessionSvc SessionServiceI, cfg Config) *Usecase {
+func New(svc ServiceI, sessionSvc SessionServiceI, tagKeeper TagKeeperI, cfg Config) *Usecase {
 	cfg.DefaultDomain = strings.ToLower(strings.TrimSpace(cfg.DefaultDomain))
 	if cfg.DefaultCodeLength < MinShortCodeLength {
 		cfg.DefaultCodeLength = MinShortCodeLength
 	}
 
-	return &Usecase{svc: svc, sessionSvc: sessionSvc, cfg: cfg}
+	return &Usecase{svc: svc, sessionSvc: sessionSvc, tagKeeper: tagKeeper, cfg: cfg}
 }
 
 // Операции админки — только вошедшему человеку
@@ -99,8 +100,19 @@ func (u *Usecase) Update(ctx context.Context, id int64, obj *model.Edit) error {
 		return err
 	}
 
+	// прежние метки — только чтобы потом сообщить справочнику, какие пропали
+	var oldTags []string
+	if obj.Tags != nil {
+		oldTags = u.tagsOf(ctx, id)
+	}
+
 	if err := u.svc.Update(ctx, id, obj); err != nil {
 		return fmt.Errorf("svc.Update: %w", err)
+	}
+
+	if obj.Tags != nil {
+		removed, added := lo.Difference(oldTags, *obj.Tags)
+		u.tagKeeper.Changed(added, removed)
 	}
 	return nil
 }
@@ -113,10 +125,25 @@ func (u *Usecase) Delete(ctx context.Context, id int64) error {
 		return errs.IdRequired
 	}
 
+	// метки ссылки — только чтобы потом сообщить справочнику, что они могли пропасть
+	oldTags := u.tagsOf(ctx, id)
+
 	if err := u.svc.Delete(ctx, id); err != nil {
 		return fmt.Errorf("svc.Delete: %w", err)
 	}
+
+	u.tagKeeper.Changed(nil, oldTags)
 	return nil
+}
+
+// tagsOf — метки ссылки сейчас. Нужны только справочнику меток, поэтому сбой чтения ничего не
+// отменяет: меток «нет», справочник поправит пересчёт.
+func (u *Usecase) tagsOf(ctx context.Context, id int64) []string {
+	link, found, err := u.svc.Get(ctx, id, false)
+	if err != nil || !found {
+		return nil
+	}
+	return link.Tags
 }
 
 // TagList — метки, которые встречаются у ссылок; search — подстрока в названии метки
@@ -227,6 +254,10 @@ func (u *Usecase) create(ctx context.Context, req *model.CreateReq) (*model.Main
 		return nil, fmt.Errorf("svc.Create: %w", err)
 	}
 
+	// ссылка записана — её метки дописываются в справочник меток. Отдельно и в фоне: ответ этого
+	// не ждёт, сбой справочника на создание не влияет
+	u.tagKeeper.Changed(n.tags, nil)
+
 	// ссылка уже записана: читаем её для ответа, даже если клиент перестал ждать, — иначе
 	// состоявшееся создание выглядело бы сбоем
 	result, _, err := u.svc.Get(context.WithoutCancel(ctx), newId, true)
@@ -268,7 +299,6 @@ func (n *normalizedCreate) edit() *model.Edit {
 		ValidSince:   &n.validSince,
 		ValidUntil:   &n.validUntil,
 		MaxVisits:    &n.maxVisits,
-		Crawlable:    &n.crawlable,
 		ForwardQuery: &n.forwardQuery,
 	}
 	if n.shortCode != "" {

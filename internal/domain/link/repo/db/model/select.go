@@ -8,7 +8,7 @@ import (
 
 // SelectColumns — колонки чтения в порядке полей Select.ScanDest (для кастомных запросов)
 const SelectColumns = "id, created_at, modified_at, domain, short_code, long_url, title, tags, " +
-	"valid_since, valid_until, max_visits, crawlable, forward_query"
+	"valid_since, valid_until, max_visits, forward_query"
 
 type Select struct {
 	Id           int64
@@ -22,7 +22,6 @@ type Select struct {
 	ValidSince   *time.Time
 	ValidUntil   *time.Time
 	MaxVisits    *int32
-	Crawlable    bool
 	ForwardQuery bool
 }
 
@@ -39,7 +38,6 @@ func (m *Select) ListColumnMap() map[string]any {
 		"valid_since":   &m.ValidSince,
 		"valid_until":   &m.ValidUntil,
 		"max_visits":    &m.MaxVisits,
-		"crawlable":     &m.Crawlable,
 		"forward_query": &m.ForwardQuery,
 	}
 }
@@ -48,7 +46,7 @@ func (m *Select) ListColumnMap() map[string]any {
 func (m *Select) ScanDest() []any {
 	return []any{
 		&m.Id, &m.CreatedAt, &m.ModifiedAt, &m.Domain, &m.ShortCode, &m.LongUrl, &m.Title, &m.Tags,
-		&m.ValidSince, &m.ValidUntil, &m.MaxVisits, &m.Crawlable, &m.ForwardQuery,
+		&m.ValidSince, &m.ValidUntil, &m.MaxVisits, &m.ForwardQuery,
 	}
 }
 
@@ -81,7 +79,6 @@ func EncodeSelect(v *Select, _ int) *domainModel.Main {
 		ValidSince:   v.ValidSince,
 		ValidUntil:   v.ValidUntil,
 		MaxVisits:    v.MaxVisits,
-		Crawlable:    v.Crawlable,
 		ForwardQuery: v.ForwardQuery,
 	}
 }

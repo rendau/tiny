@@ -40,7 +40,6 @@ export interface LinkFormState {
   valid_since: string
   valid_until: string
   max_visits: number | null
-  crawlable: boolean
   forward_query: boolean
   // только при создании: код и домен потом не меняются
   code_mode: 'auto' | 'custom'
@@ -62,7 +61,6 @@ export function emptyLinkForm(): LinkFormState {
     valid_since: '',
     valid_until: '',
     max_visits: null,
-    crawlable: false,
     forward_query: true,
     code_mode: 'auto',
     short_code: '',
@@ -80,7 +78,6 @@ export function linkToForm(link: LinkMain): LinkFormState {
     valid_since: isoToLocalInput(link.valid_since),
     valid_until: isoToLocalInput(link.valid_until),
     max_visits: link.max_visits ?? null,
-    crawlable: !!link.crawlable,
     forward_query: !!link.forward_query,
     short_code: link.short_code,
     domain: link.domain ?? '',
@@ -130,7 +127,6 @@ export function formToCreate(s: LinkFormState): LinkCreate {
     valid_since: localInputToIso(s.valid_since),
     valid_until: localInputToIso(s.valid_until),
     max_visits: s.max_visits ?? undefined,
-    crawlable: s.crawlable,
     forward_query: s.forward_query,
   }
 }
@@ -144,7 +140,6 @@ export function formToUpdate(s: LinkFormState): LinkUpdate {
     valid_since: localInputToIso(s.valid_since),
     valid_until: localInputToIso(s.valid_until),
     max_visits: s.max_visits ?? undefined,
-    crawlable: s.crawlable,
     forward_query: s.forward_query,
   }
 }

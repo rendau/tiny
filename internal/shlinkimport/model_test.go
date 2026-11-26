@@ -45,10 +45,10 @@ func TestLinkDiff(t *testing.T) {
 		return Link{
 			CreatedAt: time.Date(2026, 11, 25, 5, 0, 0, 0, time.UTC),
 			Domain:    "sl.demo.test", ShortCode: "aBc", LongURL: "https://example.com", Title: "t",
-			Tags:       []string{"a", "b"},
-			ValidSince: new(time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)),
-			MaxVisits:  new(int32(3)),
-			Crawlable:  true, ForwardQuery: true,
+			Tags:         []string{"a", "b"},
+			ValidSince:   new(time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)),
+			MaxVisits:    new(int32(3)),
+			ForwardQuery: true,
 		}
 	}
 
@@ -69,11 +69,10 @@ func TestLinkDiff(t *testing.T) {
 	other.ValidSince = nil
 	other.ValidUntil = new(time.Now())
 	other.MaxVisits = new(int32(4))
-	other.Crawlable = false
 	other.ForwardQuery = false
 	assert.Equal(t, []string{
 		"short_code", "domain", "long_url", "title", "tags", "created_at",
-		"valid_since", "valid_until", "max_visits", "crawlable", "forward_query",
+		"valid_since", "valid_until", "max_visits", "forward_query",
 	}, src.diff(&other))
 }
 

@@ -470,7 +470,7 @@
    "headers": {
     "Content-Type": "application/json"
    },
-   "body": "{\"longUrl\": \"https://cmp.example/r86024/full?x=1&y=<2>'\\\"\", \"findIfExists\": true, \"tags\": [\"mail_sms\", \"Foo Bar\"], \"validUntil\": \"2026-12-05T10:01:00+05:00\", \"validSince\": \"2026-11-01T00:00:00Z\", \"maxVisits\": 10, \"shortCodeLength\": 6, \"title\": \"  Заголовок 😀 <b>  \", \"crawlable\": false, \"forwardQuery\": false}",
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/full?x=1&y=<2>'\\\"\", \"findIfExists\": true, \"tags\": [\"mail_sms\", \"Foo Bar\"], \"validUntil\": \"2026-12-05T10:01:00+05:00\", \"validSince\": \"2026-11-01T00:00:00Z\", \"maxVisits\": 10, \"shortCodeLength\": 6, \"title\": \"  Заголовок 😀 <b>  \", \"forwardQuery\": false}",
    "apiKey": "links-api-key",
    "generatedCode": true,
    "status": 200,
@@ -1172,16 +1172,16 @@
    "headers": {
     "Content-Type": "application/json"
    },
-   "body": "{\"longUrl\": \"\", \"shortCodeLength\": 2, \"maxVisits\": 1.5, \"tags\": \"x\", \"crawlable\": \"yes\", \"findIfExists\": \"zz\", \"domain\": \"b d\", \"forwardQuery\": 5}",
+   "body": "{\"longUrl\": \"\", \"shortCodeLength\": 2, \"maxVisits\": 1.5, \"tags\": \"x\", \"findIfExists\": \"zz\", \"domain\": \"b d\", \"forwardQuery\": 5}",
    "apiKey": "links-api-key",
    "generatedCode": false,
    "status": 400,
    "responseHeaders": {
-    "Content-Length": "243",
+    "Content-Length": "231",
     "Content-Type": "application/problem+json"
    },
    "requestId": true,
-   "responseBody": "{\"invalidElements\":[\"longUrl\",\"maxVisits\",\"findIfExists\",\"domain\",\"shortCodeLength\",\"tags\",\"crawlable\",\"forwardQuery\"],\"title\":\"Invalid data\",\"type\":\"https://shlink.io/api/error/invalid-data\",\"status\":400,\"detail\":\"Provided data is not valid\"}"
+   "responseBody": "{\"invalidElements\":[\"longUrl\",\"maxVisits\",\"findIfExists\",\"domain\",\"shortCodeLength\",\"tags\",\"forwardQuery\"],\"title\":\"Invalid data\",\"type\":\"https://shlink.io/api/error/invalid-data\",\"status\":400,\"detail\":\"Provided data is not valid\"}"
   },
   {
    "name": "nulls-ok",
@@ -1208,16 +1208,16 @@
    "headers": {
     "Content-Type": "application/json"
    },
-   "body": "{\"longUrl\":\"https://cmp.example/r86024/nulls2\",\"tags\":null,\"crawlable\":null,\"forwardQuery\":null,\"findIfExists\":null}",
+   "body": "{\"longUrl\":\"https://cmp.example/r86024/nulls2\",\"tags\":null,\"forwardQuery\":null,\"findIfExists\":null}",
    "apiKey": "links-api-key",
    "generatedCode": false,
    "status": 400,
    "responseHeaders": {
-    "Content-Length": "194",
+    "Content-Length": "182",
     "Content-Type": "application/problem+json"
    },
    "requestId": true,
-   "responseBody": "{\"invalidElements\":[\"findIfExists\",\"tags\",\"crawlable\",\"forwardQuery\"],\"title\":\"Invalid data\",\"type\":\"https://shlink.io/api/error/invalid-data\",\"status\":400,\"detail\":\"Provided data is not valid\"}"
+   "responseBody": "{\"invalidElements\":[\"findIfExists\",\"tags\",\"forwardQuery\"],\"title\":\"Invalid data\",\"type\":\"https://shlink.io/api/error/invalid-data\",\"status\":400,\"detail\":\"Provided data is not valid\"}"
   },
   {
    "name": "empties",
@@ -1244,16 +1244,16 @@
    "headers": {
     "Content-Type": "application/json"
    },
-   "body": "{\"longUrl\": \"https://cmp.example/r86024/bs\", \"crawlable\": \"true\", \"forwardQuery\": \"false\", \"findIfExists\": \"1\"}",
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/bs\", \"forwardQuery\": \"false\", \"findIfExists\": \"1\"}",
    "apiKey": "links-api-key",
    "generatedCode": true,
    "status": 200,
    "responseHeaders": {
-    "Content-Length": "355",
+    "Content-Length": "356",
     "Content-Type": "application/json"
    },
    "requestId": true,
-   "responseBody": "{\"shortUrl\":\"https://l.demo.test/Jlf7k\",\"shortCode\":\"Jlf7k\",\"longUrl\":\"https://cmp.example/r86024/bs\",\"dateCreated\":\"2026-11-25T10:53:46+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":true,\"forwardQuery\":false,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
+   "responseBody": "{\"shortUrl\":\"https://l.demo.test/Jlf7k\",\"shortCode\":\"Jlf7k\",\"longUrl\":\"https://cmp.example/r86024/bs\",\"dateCreated\":\"2026-11-25T10:53:46+05:00\",\"tags\":[],\"meta\":{\"validSince\":null,\"validUntil\":null,\"maxVisits\":null},\"domain\":null,\"title\":null,\"crawlable\":false,\"forwardQuery\":false,\"visitsSummary\":{\"total\":0,\"nonBots\":0,\"bots\":0},\"hasRedirectRules\":false}"
   },
   {
    "name": "bool-num",
@@ -1262,7 +1262,7 @@
    "headers": {
     "Content-Type": "application/json"
    },
-   "body": "{\"longUrl\": \"https://cmp.example/r86024/bn\", \"crawlable\": 0, \"forwardQuery\": 0}",
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/bn\", \"forwardQuery\": 0}",
    "apiKey": "links-api-key",
    "generatedCode": true,
    "status": 200,
@@ -3676,7 +3676,7 @@
    "headers": {
     "Content-Type": "application/json"
    },
-   "body": "{\"longUrl\": \"https://cmp.example/r86024/fie\", \"findIfExists\": true, \"title\": \"other\", \"forwardQuery\": true, \"crawlable\": true}",
+   "body": "{\"longUrl\": \"https://cmp.example/r86024/fie\", \"findIfExists\": true, \"title\": \"other\", \"forwardQuery\": true}",
    "apiKey": "links-api-key",
    "generatedCode": false,
    "status": 200,

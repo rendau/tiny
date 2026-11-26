@@ -32,7 +32,7 @@ function addTag(tag: string) {
 
 // «дополнительно» раскрыто сразу, если там уже что-то задано
 const advancedOpen = ref(
-  !!state.value.domain || state.value.max_visits !== null || state.value.crawlable || !state.value.forward_query,
+  !!state.value.domain || state.value.max_visits !== null || !state.value.forward_query,
 )
 
 const untilInPast = computed(() => {
@@ -157,9 +157,6 @@ const untilInPast = computed(() => {
             description="Значение сохраняется, но сейчас не действует: переходы по ссылкам не считаются."
           >
             <UInputNumber v-model="state.max_visits" :min="1" placeholder="без предела" class="w-40" />
-          </UFormField>
-          <UFormField label="Разрешить поисковикам" description="Поисковым роботам можно обходить эту ссылку">
-            <USwitch v-model="state.crawlable" />
           </UFormField>
           <UFormField
             label="Дописывать параметры запроса"

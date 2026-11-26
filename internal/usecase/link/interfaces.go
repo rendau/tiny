@@ -18,8 +18,14 @@ type ServiceI interface {
 	FindForRedirect(ctx context.Context, shortCode, domain string) (*model.Main, bool, error)
 	FindExisting(ctx context.Context, pars *model.FindExistingReq) (*model.Main, bool, error)
 	TagList(ctx context.Context) ([]string, error)
-	CrawlableCodes(ctx context.Context) ([]string, error)
 	Ping(ctx context.Context) error
+}
+
+// TagKeeperI — тот, кто ведёт справочник меток (internal/service/linktag). Ему только сообщают,
+// что у записанной ссылки изменились метки: вызов не ждёт и ошибок не возвращает, так что работа
+// со справочником на запись ссылки не влияет.
+type TagKeeperI interface {
+	Changed(added, removed []string)
 }
 
 type SessionServiceI interface {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -18,16 +19,18 @@ import (
 type fakeRepo struct {
 	RepoDbI
 
-	taken      map[string]bool // занятые коды
-	created    []string
-	createErr  error
-	tagCalls   int
-	tags       []string
-	crawlCalls int
+	taken     map[string]bool // занятые коды
+	created   []string
+	createErr error
 
-	// если заданы — TagList сообщает о начале выборки и ждёт разрешения закончить
-	tagStarted chan struct{}
-	tagRelease chan struct{}
+	// подсчёты и то, что отвечает List (подсчёты идут одновременно)
+	countAll     int64
+	countExpired int64
+	countErr     error
+	countCalls   atomic.Int32
+	listCount    int64
+	listCalls    int
+	listPars     model.ListReq
 }
 
 func (r *fakeRepo) Create(_ context.Context, obj *model.Edit) (int64, error) {
@@ -48,19 +51,28 @@ func (r *fakeRepo) Create(_ context.Context, obj *model.Edit) (int64, error) {
 
 func (r *fakeRepo) Update(context.Context, int64, *model.Edit) error { return nil }
 
-func (r *fakeRepo) TagList(context.Context) ([]string, error) {
-	r.tagCalls++
-	if r.tagStarted != nil {
-		close(r.tagStarted)
-		<-r.tagRelease
-		r.tagStarted = nil
+func (r *fakeRepo) List(_ context.Context, pars *model.ListReq) ([]*model.Main, int64, error) {
+	r.listCalls++
+	r.listPars = *pars
+
+	var count int64
+	if pars.WithTotalCount || pars.OnlyCount {
+		count = r.listCount
 	}
-	return r.tags, nil
+	if pars.OnlyCount {
+		return []*model.Main{}, count, nil
+	}
+	return []*model.Main{{Id: 1}}, count, nil
 }
 
-func (r *fakeRepo) CrawlableCodes(context.Context) ([]string, error) {
-	r.crawlCalls++
-	return []string{"a"}, nil
+func (r *fakeRepo) CountAll(context.Context) (int64, error) {
+	r.countCalls.Add(1)
+	return r.countAll, r.countErr
+}
+
+func (r *fakeRepo) CountExpired(context.Context) (int64, error) {
+	r.countCalls.Add(1)
+	return r.countExpired, r.countErr
 }
 
 func TestGenerateCode(t *testing.T) {
@@ -153,173 +165,74 @@ func TestCreateWithOwnCode(t *testing.T) {
 	assert.NotErrorIs(t, err, errs.ShortCodeExists)
 }
 
-func TestListsAreCached(t *testing.T) {
+// Число действующих ссылок считается как «все минус истёкшие» (подсчёт в лоб читает всю таблицу);
+// остальные фильтры считает сам запрос списка
+func TestListActiveCount(t *testing.T) {
 	ctx := context.Background()
-	repo := &fakeRepo{tags: []string{"a", "b"}}
-	svc := New(repo)
 
-	for range 3 {
-		tags, err := svc.TagList(ctx)
-		require.NoError(t, err)
-		assert.Equal(t, []string{"a", "b"}, tags)
-		tags[0] = "changed" // вызывающий получает копию
-	}
-	assert.Equal(t, 1, repo.tagCalls, "таблица читается один раз")
-
-	// изменение ссылок сбрасывает списки
-	require.NoError(t, svc.Update(ctx, 1, &model.Edit{}))
-	_, err := svc.TagList(ctx)
-	require.NoError(t, err)
-	assert.Equal(t, 2, repo.tagCalls)
-
-	_, err = svc.CrawlableCodes(ctx)
-	require.NoError(t, err)
-	_, err = svc.CrawlableCodes(ctx)
-	require.NoError(t, err)
-	assert.Equal(t, 1, repo.crawlCalls)
-}
-
-func TestCachedListExpires(t *testing.T) {
-	ctx := context.Background()
-	calls := 0
-	load := func(context.Context) ([]string, error) {
-		calls++
-		return []string{"x"}, nil
+	cases := map[string]struct {
+		pars      model.ListReq
+		wantCount int64
+		fast      bool // число получено как «все минус истёкшие»: запрос списка строки не считал
+	}{
+		"действующие — все минус истёкшие": {model.ListReq{Expired: new(false)}, 700, true},
+		"пустой поиск — не фильтр":         {model.ListReq{Expired: new(false), Search: new("")}, 700, true},
+		"без фильтра — запрос списка":      {model.ListReq{}, 7, false},
+		"истёкшие — запрос списка":         {model.ListReq{Expired: new(true)}, 7, false},
+		"метка — запрос списка":            {model.ListReq{Tag: new("sms")}, 7, false},
+		"действующие с меткой — запрос":    {model.ListReq{Expired: new(false), Tag: new("sms")}, 7, false},
+		"действующие с поиском — запрос":   {model.ListReq{Expired: new(false), Search: new("shop")}, 7, false},
+		"действующие с кодом — запрос":     {model.ListReq{Expired: new(false), ShortCode: new("abc")}, 7, false},
+		"действующие с доменом — запрос":   {model.ListReq{Expired: new(false), Domain: new("")}, 7, false},
 	}
 
-	c := newCachedList(20 * time.Millisecond)
-	_, _ = c.get(ctx, load)
-	_, _ = c.get(ctx, load)
-	assert.Equal(t, 1, calls)
+	for name, c := range cases {
+		t.Run(name, func(t *testing.T) {
+			repo := &fakeRepo{countAll: 1000, countExpired: 300, listCount: 7}
+			svc := New(repo)
 
-	time.Sleep(30 * time.Millisecond)
-	_, _ = c.get(ctx, load)
-	assert.Equal(t, 2, calls, "после срока список перечитывается")
+			pars := c.pars
+			pars.WithTotalCount = true
+			items, count, err := svc.List(ctx, &pars)
+			require.NoError(t, err)
+			assert.Len(t, items, 1, "сами ссылки читаются всегда")
+			assert.Equal(t, c.wantCount, count)
+			assert.Equal(t, !c.fast, repo.listPars.WithTotalCount, "считал ли строки запрос списка")
+			assert.True(t, pars.WithTotalCount, "параметры вызывающего не меняются")
 
-	// ошибка загрузки не запоминается
-	failing := newCachedList(time.Minute)
-	_, err := failing.get(ctx, func(context.Context) ([]string, error) { return nil, errors.New("boom") })
-	require.Error(t, err)
-	got, err := failing.get(ctx, load)
-	require.NoError(t, err)
-	assert.Equal(t, []string{"x"}, got)
-}
-
-// Создание ссылки не ждёт выборку списка: сброс берёт только замок состояния. Иначе создание
-// стоит в очереди за чтением всей таблицы (так три запроса провисели по 40–55 секунд).
-func TestCreateDoesNotWaitForListLoad(t *testing.T) {
-	ctx := context.Background()
-	repo := &fakeRepo{tags: []string{"a"}, tagStarted: make(chan struct{}), tagRelease: make(chan struct{})}
-	svc := New(repo)
-
-	loaded := make(chan []string)
-	go func() {
-		tags, _ := svc.TagList(ctx)
-		loaded <- tags
-	}()
-	<-repo.tagStarted // выборка меток идёт и держит свой замок
-
-	created := make(chan error)
-	go func() {
-		// новая метка и crawlable — сбрасываются оба списка
-		_, err := svc.Create(ctx, &model.Edit{
-			LongUrl: new("https://example.com"), Tags: new([]string{"b"}), Crawlable: new(true),
-		}, 5)
-		created <- err
-	}()
-
-	select {
-	case err := <-created:
-		require.NoError(t, err)
-	case <-time.After(2 * time.Second):
-		t.Fatal("создание ссылки ждёт выборку списка меток")
-	}
-
-	close(repo.tagRelease)
-	assert.Equal(t, []string{"a"}, <-loaded, "запрос получает то, что прочитал")
-
-	// выборка началась до сброса — её результат не запомнился
-	_, err := svc.TagList(ctx)
-	require.NoError(t, err)
-	assert.Equal(t, 2, repo.tagCalls)
-}
-
-// Создание сбрасывает списки, только если меняет их: ссылки создаются постоянно, и сброс на
-// каждую заставлял бы читать всю таблицу при каждом запросе списка
-func TestCreateInvalidatesListsOnlyWhenChanged(t *testing.T) {
-	ctx := context.Background()
-	repo := &fakeRepo{tags: []string{"a", "b"}}
-	svc := New(repo)
-
-	lists := func() {
-		_, err := svc.TagList(ctx)
-		require.NoError(t, err)
-		_, err = svc.CrawlableCodes(ctx)
-		require.NoError(t, err)
-	}
-	create := func(obj *model.Edit) {
-		obj.LongUrl = new("https://example.com")
-		_, err := svc.Create(ctx, obj, 5)
-		require.NoError(t, err)
-	}
-
-	lists()
-	require.Equal(t, 1, repo.tagCalls)
-	require.Equal(t, 1, repo.crawlCalls)
-
-	// известная метка, без метки, свой код — списки те же
-	create(&model.Edit{Tags: new([]string{"b"})})
-	create(&model.Edit{})
-	create(&model.Edit{ShortCode: new("mine"), Tags: new([]string{"a", "b"}), Crawlable: new(false)})
-	lists()
-	assert.Equal(t, 1, repo.tagCalls, "известные метки список не меняют")
-	assert.Equal(t, 1, repo.crawlCalls)
-
-	// новая метка — только список меток
-	create(&model.Edit{Tags: new([]string{"a", "new"})})
-	lists()
-	assert.Equal(t, 2, repo.tagCalls)
-	assert.Equal(t, 1, repo.crawlCalls)
-
-	// ссылка открыта поисковикам — только список для robots.txt
-	create(&model.Edit{ShortCode: new("open"), Crawlable: new(true)})
-	lists()
-	assert.Equal(t, 2, repo.tagCalls)
-	assert.Equal(t, 2, repo.crawlCalls)
-
-	// неудачное создание ничего не сбрасывает
-	repo.createErr = errors.New("db down")
-	_, err := svc.Create(ctx, &model.Edit{LongUrl: new("https://example.com"), Tags: new([]string{"zzz"})}, 5)
-	require.Error(t, err)
-	repo.createErr = nil
-	lists()
-	assert.Equal(t, 2, repo.tagCalls)
-}
-
-// Запрос, который ждёт чужую выборку, уходит, когда его отменили
-func TestCachedListWaitHonorsContext(t *testing.T) {
-	c := newCachedList(time.Minute)
-	started, release := make(chan struct{}), make(chan struct{})
-
-	done := make(chan struct{})
-	go func() {
-		defer close(done)
-		_, _ = c.get(context.Background(), func(context.Context) ([]string, error) {
-			close(started)
-			<-release
-			return []string{"x"}, nil
+			// только число, без ссылок
+			repo.listCalls = 0
+			pars.OnlyCount = true
+			items, count, err = svc.List(ctx, &pars)
+			require.NoError(t, err)
+			assert.Empty(t, items)
+			assert.Equal(t, c.wantCount, count)
+			assert.Equal(t, c.fast, repo.listCalls == 0, "при быстром подсчёте запрос списка не нужен")
 		})
-	}()
-	<-started
+	}
 
-	ctx, cancel := context.WithCancel(context.Background())
-	cancel()
-	_, err := c.get(ctx, func(context.Context) ([]string, error) {
-		t.Error("вторая выборка не должна запускаться")
-		return nil, nil
+	t.Run("без общего числа ничего не считается", func(t *testing.T) {
+		repo := &fakeRepo{countAll: 1000, listCount: 7}
+		_, count, err := New(repo).List(ctx, &model.ListReq{Expired: new(false)})
+		require.NoError(t, err)
+		assert.Zero(t, count)
+		assert.Zero(t, repo.countCalls.Load())
 	})
-	require.ErrorIs(t, err, context.Canceled)
 
-	close(release)
-	<-done
+	t.Run("ссылка истекла между двумя подсчётами — не меньше нуля", func(t *testing.T) {
+		repo := &fakeRepo{countAll: 5, countExpired: 9}
+		pars := model.ListReq{Expired: new(false)}
+		pars.WithTotalCount = true
+		_, count, err := New(repo).List(ctx, &pars)
+		require.NoError(t, err)
+		assert.Zero(t, count)
+	})
+
+	t.Run("сбой подсчёта — ошибка, а не неверное число", func(t *testing.T) {
+		repo := &fakeRepo{countAll: 1000, countErr: errors.New("db down")}
+		pars := model.ListReq{Expired: new(false)}
+		pars.WithTotalCount = true
+		_, _, err := New(repo).List(ctx, &pars)
+		require.Error(t, err)
+	})
 }

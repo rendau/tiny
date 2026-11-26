@@ -132,9 +132,9 @@ func encodeShortUrl(link *model.Main, zone *time.Location) []byte {
 	dst = append(dst, `,"title":`...)
 	dst = appendNullableString(dst, link.Title)
 
-	dst = append(dst, `,"crawlable":`...)
-	dst = strconv.AppendBool(dst, link.Crawlable)
-	dst = append(dst, `,"forwardQuery":`...)
+	// crawlable — «открыта поисковикам» у Shlink. Такого у сервиса нет; ключ остаётся в ответе
+	// постоянным, чтобы объект ссылки совпадал с объектом Shlink поле в поле
+	dst = append(dst, `,"crawlable":false,"forwardQuery":`...)
 	dst = strconv.AppendBool(dst, link.ForwardQuery)
 
 	// посещения не считаются, правил перенаправления нет — значения постоянные

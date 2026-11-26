@@ -71,7 +71,8 @@ message LinkMain {
   google.protobuf.Timestamp valid_since = 10;
   google.protobuf.Timestamp valid_until = 11;
   optional int32 max_visits = 12;
-  bool crawlable = 13;
+  // 13 — было crawlable (разрешить поисковикам): убрано
+  reserved 13;
   // дописывать ли параметры запроса короткой ссылки к длинному адресу
   bool forward_query = 14;
 }
@@ -116,7 +117,7 @@ message LinkCreateReq {
   google.protobuf.Timestamp valid_since = 7;
   google.protobuf.Timestamp valid_until = 8;
   optional int32 max_visits = 9;
-  optional bool crawlable = 10;
+  reserved 10;
   // не задано — true
   optional bool forward_query = 11;
 }
@@ -138,7 +139,7 @@ message LinkUpdateReq {
   google.protobuf.Timestamp valid_since = 5;
   google.protobuf.Timestamp valid_until = 6;
   optional int32 max_visits = 7;
-  bool crawlable = 8;
+  reserved 8;
   bool forward_query = 9;
 }
 

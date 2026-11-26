@@ -67,7 +67,7 @@ func (s *fakeSvc) Create(_ context.Context, obj *model.Edit, codeLength int) (in
 	s.links[s.nextId] = &model.Main{
 		Id: s.nextId, Domain: *obj.Domain, ShortCode: code, LongUrl: *obj.LongUrl, Title: *obj.Title, Tags: *obj.Tags,
 		ValidSince: *obj.ValidSince, ValidUntil: *obj.ValidUntil, MaxVisits: *obj.MaxVisits,
-		Crawlable: *obj.Crawlable, ForwardQuery: *obj.ForwardQuery,
+		ForwardQuery: *obj.ForwardQuery,
 	}
 	return s.nextId, nil
 }
@@ -113,8 +113,27 @@ var (
 	usrCtx  = context.WithValue(context.Background(), authKey{}, int64(7))
 )
 
+// fakeTagKeeper запоминает, о каких метках ему сообщили
+type fakeTagKeeper struct {
+	calls []tagChange
+}
+
+type tagChange struct {
+	added, removed []string
+}
+
+func (k *fakeTagKeeper) Changed(added, removed []string) {
+	k.calls = append(k.calls, tagChange{added: added, removed: removed})
+}
+
 func newUsecase(svc *fakeSvc) *Usecase {
-	return New(svc, fakeSession{}, Config{DefaultDomain: "L.Demo.test", HttpsEnabled: true, DefaultCodeLength: 5})
+	uc, _ := newUsecaseWithTags(svc)
+	return uc
+}
+
+func newUsecaseWithTags(svc *fakeSvc) (*Usecase, *fakeTagKeeper) {
+	keeper := &fakeTagKeeper{}
+	return New(svc, fakeSession{}, keeper, Config{DefaultDomain: "L.Demo.test", HttpsEnabled: true, DefaultCodeLength: 5}), keeper
 }
 
 func fieldsOf(t *testing.T, err error) map[string]string {
@@ -181,7 +200,6 @@ func TestCreateDefaultsAndNormalization(t *testing.T) {
 	assert.Nil(t, svc.lastEdit.ShortCode, "код не задан — генерируется")
 	assert.Equal(t, "https://l.demo.test/xxxxx", link.ShortUrl)
 	assert.True(t, link.ForwardQuery, "по умолчанию параметры запроса дописываются")
-	assert.False(t, link.Crawlable)
 	assert.Empty(t, link.Domain)
 	assert.Equal(t, []string{}, link.Tags)
 
@@ -195,7 +213,6 @@ func TestCreateDefaultsAndNormalization(t *testing.T) {
 		Tags:            []string{" Zeta ", "mail sms", "ZETA", "", "альфа"},
 		ValidUntil:      &until,
 		MaxVisits:       new(int32(3)),
-		Crawlable:       new(true),
 		ForwardQuery:    new(false),
 	})
 	require.NoError(t, err)
@@ -208,7 +225,6 @@ func TestCreateDefaultsAndNormalization(t *testing.T) {
 	assert.Equal(t, []string{"mail-sms", "zeta", "альфа"}, *svc.lastEdit.Tags, "в базе — по алфавиту")
 	assert.Equal(t, time.Date(2026, 12, 5, 10, 1, 0, 0, time.UTC), *link.ValidUntil, "доли секунды отброшены")
 	assert.False(t, link.ForwardQuery)
-	assert.True(t, link.Crawlable)
 
 	// основной домен, названный явно, — та же ссылка основного домена
 	link, err = u.PublicCreate(anonCtx, &model.CreateReq{LongUrl: "https://example.com/c", Domain: new("l.demo.test")})
@@ -393,6 +409,48 @@ func TestUpdateNormalizes(t *testing.T) {
 
 	err := u.Update(usrCtx, 5, &model.Edit{LongUrl: new("")})
 	assert.Contains(t, fieldsOf(t, err), FieldLongUrl)
+}
+
+// Справочнику меток только сообщают, что метки у ссылки изменились, — и только после того, как
+// сама ссылка записана
+func TestTagKeeperIsToldAboutTags(t *testing.T) {
+	svc := &fakeSvc{}
+	uc, keeper := newUsecaseWithTags(svc)
+
+	// создание: метки ссылки (уже приведённые к виду хранения)
+	link, err := uc.Create(usrCtx, &model.CreateReq{LongUrl: "https://example.com/a", Tags: []string{"SMS", "Promo Code"}})
+	require.NoError(t, err)
+	require.Equal(t, []tagChange{{added: []string{"sms", "promo-code"}}}, keeper.calls)
+
+	// правка: что появилось и что пропало
+	keeper.calls = nil
+	require.NoError(t, uc.Update(usrCtx, link.Id, &model.Edit{LongUrl: new("https://example.com/a"), Tags: new([]string{"sms", "news"})}))
+	require.Equal(t, []tagChange{{added: []string{"news"}, removed: []string{"promo-code"}}}, keeper.calls)
+
+	// правка без меток справочника не касается
+	keeper.calls = nil
+	require.NoError(t, uc.Update(usrCtx, link.Id, &model.Edit{LongUrl: new("https://example.com/b")}))
+	assert.Empty(t, keeper.calls)
+
+	// удаление: метки ссылки могли пропасть
+	require.NoError(t, uc.Delete(usrCtx, link.Id))
+	require.Len(t, keeper.calls, 1)
+	assert.Empty(t, keeper.calls[0].added)
+	assert.ElementsMatch(t, []string{"promo-code", "sms"}, keeper.calls[0].removed)
+
+	// ссылка не создана — сообщать не о чем
+	keeper.calls = nil
+	svc.createErr = errors.New("db down")
+	_, err = uc.Create(usrCtx, &model.CreateReq{LongUrl: "https://example.com/c", Tags: []string{"x"}})
+	require.Error(t, err)
+	assert.Empty(t, keeper.calls)
+
+	// найдена уже существующая (findIfExists) — тоже
+	svc.createErr = nil
+	svc.existing = &model.Main{Id: 9, ShortCode: "old", Tags: []string{"x"}}
+	_, err = uc.Create(usrCtx, &model.CreateReq{LongUrl: "https://example.com/c", Tags: []string{"x"}, FindIfExists: true})
+	require.NoError(t, err)
+	assert.Empty(t, keeper.calls)
 }
 
 func TestTagListSearch(t *testing.T) {

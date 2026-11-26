@@ -17,7 +17,7 @@ var batchTable = pgx.Identifier{"pg_temp", "shlink_import_batch"}
 
 var batchColumns = []string{
 	"src_id", "created_at", "domain", "short_code", "long_url", "title", "tags",
-	"valid_since", "valid_until", "max_visits", "crawlable", "forward_query",
+	"valid_since", "valid_until", "max_visits", "forward_query",
 }
 
 // openDest подключается к приёмнику. readOnly — пробный режим и проверка: соединение помечается
@@ -31,14 +31,14 @@ func openDest(ctx context.Context, dsn string, readOnly bool) (*dest, error) {
 	d := &dest{conn: conn, readOnly: readOnly}
 
 	var ok bool
-	err = conn.QueryRow(ctx, "select to_regclass('link') is not null").Scan(&ok)
+	err = conn.QueryRow(ctx, "select to_regclass('link') is not null and to_regclass('tag') is not null").Scan(&ok)
 	if err != nil {
 		closeConn(ctx, conn)
-		return nil, fmt.Errorf("%s: проверка таблицы link: %w", roleDst, err)
+		return nil, fmt.Errorf("%s: проверка таблиц link и tag: %w", roleDst, err)
 	}
 	if !ok {
 		closeConn(ctx, conn)
-		return nil, fmt.Errorf("%s: в базе нет таблицы link — сначала примените миграции tiny (их применяет сам сервис при запуске)", roleDst)
+		return nil, fmt.Errorf("%s: в базе нет таблицы link или tag — сначала примените миграции tiny (их применяет сам сервис при запуске)", roleDst)
 	}
 
 	if readOnly {
@@ -61,7 +61,6 @@ func openDest(ctx context.Context, dsn string, readOnly bool) (*dest, error) {
 		valid_since   timestamptz,
 		valid_until   timestamptz,
 		max_visits    integer,
-		crawlable     boolean     not null,
 		forward_query boolean     not null
 	) on commit delete rows`)
 	if err != nil {
@@ -95,6 +94,11 @@ type batchOutcome struct {
 // writeBatch пишет пачку одной транзакцией: COPY во временную таблицу и вставка оттуда.
 // Занятые пары «код + домен» не трогаются (on conflict do nothing), поэтому повторный запуск
 // ничего не дублирует и не затирает то, что в приёмнике успели поправить.
+//
+// Той же командой метки записанных ссылок дописываются в справочник меток tiny (таблица tag) —
+// по нему админка показывает список меток; сервис пополняет его сам только для ссылок, созданных
+// через него. Порядок меток — побайтный, как у сервиса: иначе перенос на работающем сервисе мог
+// бы взаимно заблокироваться с ним на одной и той же новой метке.
 func (d *dest) writeBatch(ctx context.Context, rows []srcRow) (*batchOutcome, error) {
 	tx, err := d.conn.Begin(ctx)
 	if err != nil {
@@ -106,26 +110,35 @@ func (d *dest) writeBatch(ctx context.Context, rows []srcRow) (*batchOutcome, er
 		l := &rows[i].Link
 		return []any{
 			l.SrcID, l.CreatedAt, l.Domain, l.ShortCode, l.LongURL, l.Title, l.Tags,
-			l.ValidSince, l.ValidUntil, l.MaxVisits, l.Crawlable, l.ForwardQuery,
+			l.ValidSince, l.ValidUntil, l.MaxVisits, l.ForwardQuery,
 		}, nil
 	}))
 	if err != nil {
 		return nil, fmt.Errorf("приёмник: copy: %w", err)
 	}
 
-	tag, err := tx.Exec(ctx, `
-		insert into link (created_at, modified_at, domain, short_code, long_url, title, tags,
-		                  valid_since, valid_until, max_visits, crawlable, forward_query)
-		select created_at, created_at, domain, short_code, long_url, title, tags,
-		       valid_since, valid_until, max_visits, crawlable, forward_query
-		from pg_temp.shlink_import_batch
-		order by src_id
-		on conflict (short_code, domain) do nothing`)
+	out := &batchOutcome{}
+	err = tx.QueryRow(ctx, `
+		with inserted as (
+			insert into link (created_at, modified_at, domain, short_code, long_url, title, tags,
+			                  valid_since, valid_until, max_visits, forward_query)
+			select created_at, created_at, domain, short_code, long_url, title, tags,
+			       valid_since, valid_until, max_visits, forward_query
+			from pg_temp.shlink_import_batch
+			order by src_id
+			on conflict (short_code, domain) do nothing
+			returning tags
+		), tagged as (
+			insert into tag (name)
+			select t
+			from (select distinct unnest(tags) as t from inserted) x
+			order by t collate "C"
+			on conflict do nothing
+		)
+		select count(*) from inserted`).Scan(&out.Inserted)
 	if err != nil {
 		return nil, fmt.Errorf("приёмник: insert: %w", err)
 	}
-
-	out := &batchOutcome{Inserted: tag.RowsAffected()}
 
 	conflictRows, err := tx.Query(ctx, `
 		select b.short_code, b.domain
@@ -200,7 +213,7 @@ func (d *dest) lookup(ctx context.Context, keys []Key) (map[Key]*Link, error) {
 
 	rows, err := d.conn.Query(ctx, `
 		select l.short_code, l.domain, l.long_url, l.title, l.tags, l.valid_since, l.valid_until,
-		       l.max_visits, l.crawlable, l.forward_query, l.created_at
+		       l.max_visits, l.forward_query, l.created_at
 		from (select distinct * from unnest($1::text[], $2::text[]) as u(short_code, domain)) k
 		join link l on l.short_code = k.short_code and l.domain = k.domain`, codes, domains)
 	if err != nil {
@@ -212,7 +225,7 @@ func (d *dest) lookup(ctx context.Context, keys []Key) (map[Key]*Link, error) {
 	for rows.Next() {
 		l := &Link{}
 		err = rows.Scan(&l.ShortCode, &l.Domain, &l.LongURL, &l.Title, &l.Tags, &l.ValidSince, &l.ValidUntil,
-			&l.MaxVisits, &l.Crawlable, &l.ForwardQuery, &l.CreatedAt)
+			&l.MaxVisits, &l.ForwardQuery, &l.CreatedAt)
 		if err != nil {
 			return nil, fmt.Errorf("приёмник: поиск ссылок: scan: %w", err)
 		}

@@ -11,7 +11,6 @@
         "key": "good",
         "content_type": "application/json",
         "body_json": {
-          "crawlable": true,
           "customSlug": "all-${run}",
           "domain": "l.demo.test",
           "findIfExists": false,
@@ -30,7 +29,7 @@
       },
       "status": 200,
       "headers": {
-        "Content-Length": "634",
+        "Content-Length": "635",
         "Content-Type": "application/json",
         "X-Request-Id": "<uuid>"
       },
@@ -51,7 +50,7 @@
         },
         "domain": null,
         "title": "Заголовок страницы <b>&</b> \"кавычки\"",
-        "crawlable": true,
+        "crawlable": false,
         "forwardQuery": false,
         "visitsSummary": {
           "total": 0,
@@ -77,22 +76,6 @@
       "body_kind": "empty"
     },
     {
-      "name": "robots.txt теперь разрешает эту ссылку (crawlable=true)",
-      "request": {
-        "method": "GET",
-        "path": "/robots.txt",
-        "host": "l.demo.test"
-      },
-      "status": 200,
-      "headers": {
-        "Content-Type": "text/plain",
-        "Transfer-Encoding": "chunked",
-        "X-Request-Id": "<uuid>"
-      },
-      "body_kind": "text",
-      "body_text": "# For more information about the robots.txt standard, see:\n# https://www.robotstxt.org/orig.html\n\nUser-agent: *\nAllow: /all-${run}\nDisallow: /"
-    },
-    {
       "name": "чтение через API",
       "request": {
         "method": "GET",
@@ -102,7 +85,7 @@
       },
       "status": 200,
       "headers": {
-        "Content-Length": "634",
+        "Content-Length": "635",
         "Content-Type": "application/json",
         "X-Request-Id": "<uuid>"
       },
@@ -123,7 +106,7 @@
         },
         "domain": null,
         "title": "Заголовок страницы <b>&</b> \"кавычки\"",
-        "crawlable": true,
+        "crawlable": false,
         "forwardQuery": false,
         "visitsSummary": {
           "total": 0,
