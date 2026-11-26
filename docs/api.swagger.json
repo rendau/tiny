@@ -785,6 +785,10 @@
             "type": "object",
             "$ref": "#/definitions/tiny_v1LinkMain"
           }
+        },
+        "total_count_capped": {
+          "type": "boolean",
+          "title": "true — ссылок больше, чем pagination_info.total_count: с фильтром (метка, поиск, код, домен)\nнайденное считается не дальше 10 000, точное число на миллионах ссылок стоит слишком дорого"
         }
       }
     },

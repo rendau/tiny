@@ -29,13 +29,14 @@ type fakeSvc struct {
 	lastEdit    *model.Edit
 	lastLength  int
 	lastListReq *model.ListReq
+	listCapped  bool
 	redirect    map[string]*model.Main // "домен/код"
 	tags        []string
 }
 
-func (s *fakeSvc) List(_ context.Context, pars *model.ListReq) ([]*model.Main, int64, error) {
+func (s *fakeSvc) List(_ context.Context, pars *model.ListReq) ([]*model.Main, int64, bool, error) {
 	s.lastListReq = pars
-	return []*model.Main{{Id: 1, ShortCode: "abc"}, {Id: 2, ShortCode: "def", Domain: "sl.demo.test"}}, 2, nil
+	return []*model.Main{{Id: 1, ShortCode: "abc"}, {Id: 2, ShortCode: "def", Domain: "sl.demo.test"}}, 2, s.listCapped, nil
 }
 
 func (s *fakeSvc) Get(ctx context.Context, id int64, _ bool) (*model.Main, bool, error) {
@@ -149,7 +150,7 @@ func TestAdminRequiresLogin(t *testing.T) {
 	svc := &fakeSvc{tags: []string{"a"}}
 	u := newUsecase(svc)
 
-	_, _, err := u.List(anonCtx, &model.ListReq{ListParams: commonModel.ListParams{PageSize: 10}})
+	_, _, _, err := u.List(anonCtx, &model.ListReq{ListParams: commonModel.ListParams{PageSize: 10}})
 	assert.ErrorIs(t, err, errs.NotAuthorized)
 	_, err = u.Get(anonCtx, 1)
 	assert.ErrorIs(t, err, errs.NotAuthorized)
@@ -171,20 +172,26 @@ func TestListAndIds(t *testing.T) {
 	svc := &fakeSvc{}
 	u := newUsecase(svc)
 
-	_, _, err := u.List(usrCtx, &model.ListReq{})
+	_, _, _, err := u.List(usrCtx, &model.ListReq{})
 	assert.ErrorIs(t, err, errs.IncorrectPageSize)
 
-	items, total, err := u.List(usrCtx, &model.ListReq{ListParams: commonModel.ListParams{PageSize: 10}, Domain: new("L.DEMO.TeST")})
+	items, total, capped, err := u.List(usrCtx, &model.ListReq{ListParams: commonModel.ListParams{PageSize: 10}, Domain: new("L.DEMO.TeST")})
 	require.NoError(t, err)
 	assert.EqualValues(t, 2, total)
+	assert.False(t, capped)
 	assert.Equal(t, "https://l.demo.test/abc", items[0].ShortUrl)
 	assert.Equal(t, "https://sl.demo.test/def", items[1].ShortUrl, "у ссылки своего домена — свой адрес")
 	assert.Equal(t, "", *svc.lastListReq.Domain, "основной домен в фильтре — пустая строка")
 
-	items, total, err = u.List(usrCtx, &model.ListReq{ListParams: commonModel.ListParams{PageSize: 10}, Domain: new("не домен!")})
+	items, total, _, err = u.List(usrCtx, &model.ListReq{ListParams: commonModel.ListParams{PageSize: 10}, Domain: new("не домен!")})
 	require.NoError(t, err)
 	assert.Empty(t, items)
 	assert.Zero(t, total)
+
+	svc.listCapped = true
+	_, _, capped, err = u.List(usrCtx, &model.ListReq{ListParams: commonModel.ListParams{PageSize: 10}, Tag: new("sms")})
+	require.NoError(t, err)
+	assert.True(t, capped, "признак «найдено больше» доходит до ответа")
 
 	assert.ErrorIs(t, u.Update(usrCtx, 0, &model.Edit{}), errs.IdRequired)
 	assert.ErrorIs(t, u.Delete(usrCtx, 0), errs.IdRequired)

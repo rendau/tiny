@@ -22,7 +22,7 @@ func NewLink(uc *usecase.Usecase) *Link {
 }
 
 func (h *Link) List(ctx context.Context, req *proto.LinkListReq) (*proto.LinkListRep, error) {
-	items, tCount, err := h.usecase.List(ctx, dto.DecodeLinkListReq(req))
+	items, tCount, capped, err := h.usecase.List(ctx, dto.DecodeLinkListReq(req))
 	if err != nil {
 		return nil, err
 	}
@@ -32,7 +32,8 @@ func (h *Link) List(ctx context.Context, req *proto.LinkListReq) (*proto.LinkLis
 			PageSize:   req.GetListParams().GetPageSize(),
 			TotalCount: tCount,
 		},
-		Results: lo.Map(items, dto.EncodeLinkMain),
+		Results:          lo.Map(items, dto.EncodeLinkMain),
+		TotalCountCapped: capped,
 	}, nil
 }
 

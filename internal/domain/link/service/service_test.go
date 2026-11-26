@@ -31,6 +31,12 @@ type fakeRepo struct {
 	listCount    int64
 	listCalls    int
 	listPars     model.ListReq
+
+	// подсчёт с потолком: сколько ссылок подходит под фильтр на самом деле
+	matched     int64
+	upToCalls   atomic.Int32
+	upToLimit   atomic.Int64
+	upToCountOf model.ListReq
 }
 
 func (r *fakeRepo) Create(_ context.Context, obj *model.Edit) (int64, error) {
@@ -63,6 +69,13 @@ func (r *fakeRepo) List(_ context.Context, pars *model.ListReq) ([]*model.Main, 
 		return []*model.Main{}, count, nil
 	}
 	return []*model.Main{{Id: 1}}, count, nil
+}
+
+func (r *fakeRepo) CountUpTo(_ context.Context, pars *model.ListReq, limit int64) (int64, error) {
+	r.upToCalls.Add(1)
+	r.upToLimit.Store(limit)
+	r.upToCountOf = *pars
+	return min(r.matched, limit), r.countErr
 }
 
 func (r *fakeRepo) CountAll(context.Context) (int64, error) {
@@ -165,55 +178,110 @@ func TestCreateWithOwnCode(t *testing.T) {
 	assert.NotErrorIs(t, err, errs.ShortCodeExists)
 }
 
-// Число действующих ссылок считается как «все минус истёкшие» (подсчёт в лоб читает всю таблицу);
-// остальные фильтры считает сам запрос списка
-func TestListActiveCount(t *testing.T) {
+// Откуда берётся «Найдено: N»: действующие — «все минус истёкшие» (подсчёт в лоб читает всю
+// таблицу); без фильтра и «только истёкшие» — точное число из запроса списка (один индекс);
+// с любым другим фильтром — подсчёт с потолком
+func TestListCountSource(t *testing.T) {
 	ctx := context.Background()
+
+	const (
+		byList   = "запрос списка"
+		bySub    = "все минус истёкшие"
+		byCapped = "с потолком"
+	)
 
 	cases := map[string]struct {
 		pars      model.ListReq
 		wantCount int64
-		fast      bool // число получено как «все минус истёкшие»: запрос списка строки не считал
+		source    string
 	}{
-		"действующие — все минус истёкшие": {model.ListReq{Expired: new(false)}, 700, true},
-		"пустой поиск — не фильтр":         {model.ListReq{Expired: new(false), Search: new("")}, 700, true},
-		"без фильтра — запрос списка":      {model.ListReq{}, 7, false},
-		"истёкшие — запрос списка":         {model.ListReq{Expired: new(true)}, 7, false},
-		"метка — запрос списка":            {model.ListReq{Tag: new("sms")}, 7, false},
-		"действующие с меткой — запрос":    {model.ListReq{Expired: new(false), Tag: new("sms")}, 7, false},
-		"действующие с поиском — запрос":   {model.ListReq{Expired: new(false), Search: new("shop")}, 7, false},
-		"действующие с кодом — запрос":     {model.ListReq{Expired: new(false), ShortCode: new("abc")}, 7, false},
-		"действующие с доменом — запрос":   {model.ListReq{Expired: new(false), Domain: new("")}, 7, false},
+		"действующие":              {model.ListReq{Expired: new(false)}, 700, bySub},
+		"пустой поиск — не фильтр": {model.ListReq{Expired: new(false), Search: new("")}, 700, bySub},
+		"без фильтра":              {model.ListReq{}, 7, byList},
+		"истёкшие":                 {model.ListReq{Expired: new(true)}, 7, byList},
+		"метка":                    {model.ListReq{Tag: new("sms")}, 42, byCapped},
+		"поиск":                    {model.ListReq{Search: new("shop")}, 42, byCapped},
+		"код":                      {model.ListReq{ShortCode: new("abc")}, 42, byCapped},
+		"домен":                    {model.ListReq{Domain: new("")}, 42, byCapped},
+		"истёкшие с меткой":        {model.ListReq{Expired: new(true), Tag: new("sms")}, 42, byCapped},
+		"действующие с меткой":     {model.ListReq{Expired: new(false), Tag: new("sms")}, 42, byCapped},
+		"действующие с поиском":    {model.ListReq{Expired: new(false), Search: new("shop")}, 42, byCapped},
 	}
 
 	for name, c := range cases {
 		t.Run(name, func(t *testing.T) {
-			repo := &fakeRepo{countAll: 1000, countExpired: 300, listCount: 7}
+			repo := &fakeRepo{countAll: 1000, countExpired: 300, listCount: 7, matched: 42}
 			svc := New(repo)
 
 			pars := c.pars
 			pars.WithTotalCount = true
-			items, count, err := svc.List(ctx, &pars)
+			items, count, capped, err := svc.List(ctx, &pars)
 			require.NoError(t, err)
 			assert.Len(t, items, 1, "сами ссылки читаются всегда")
 			assert.Equal(t, c.wantCount, count)
-			assert.Equal(t, !c.fast, repo.listPars.WithTotalCount, "считал ли строки запрос списка")
+			assert.False(t, capped)
+			assert.Equal(t, c.source == byList, repo.listPars.WithTotalCount, "считал ли строки запрос списка")
+			assert.Equal(t, c.source == byCapped, repo.upToCalls.Load() == 1, "был ли подсчёт с потолком")
+			assert.Equal(t, c.source == bySub, repo.countCalls.Load() == 2, "были ли подсчёты «все» и «истёкшие»")
 			assert.True(t, pars.WithTotalCount, "параметры вызывающего не меняются")
+			if c.source == byCapped {
+				assert.Equal(t, c.pars.Tag, repo.upToCountOf.Tag, "считается тот же фильтр, что и в списке")
+			}
 
 			// только число, без ссылок
 			repo.listCalls = 0
 			pars.OnlyCount = true
-			items, count, err = svc.List(ctx, &pars)
+			items, count, capped, err = svc.List(ctx, &pars)
 			require.NoError(t, err)
 			assert.Empty(t, items)
 			assert.Equal(t, c.wantCount, count)
-			assert.Equal(t, c.fast, repo.listCalls == 0, "при быстром подсчёте запрос списка не нужен")
+			assert.False(t, capped)
+			assert.Equal(t, c.source != byList, repo.listCalls == 0, "число не из запроса списка — он не нужен")
 		})
 	}
 
+	t.Run("найдено больше потолка — потолок и признак", func(t *testing.T) {
+		for matched, want := range map[int64]struct {
+			count  int64
+			capped bool
+		}{
+			0:                 {0, false},
+			totalCountCap - 1: {totalCountCap - 1, false},
+			totalCountCap:     {totalCountCap, false},
+			totalCountCap + 1: {totalCountCap, true},
+			450_000:           {totalCountCap, true},
+		} {
+			repo := &fakeRepo{matched: matched}
+			pars := model.ListReq{Tag: new("delivery")}
+			pars.WithTotalCount = true
+			_, count, capped, err := New(repo).List(ctx, &pars)
+			require.NoError(t, err)
+			assert.Equal(t, want.count, count, "подходит %d", matched)
+			assert.Equal(t, want.capped, capped, "подходит %d", matched)
+			assert.Equal(t, int64(totalCountCap+1), repo.upToLimit.Load(), "на одну больше потолка — иначе «ровно» не отличить от «больше»")
+		}
+	})
+
+	t.Run("с меткой без общего числа ничего не считается", func(t *testing.T) {
+		repo := &fakeRepo{matched: 42}
+		_, count, capped, err := New(repo).List(ctx, &model.ListReq{Tag: new("sms")})
+		require.NoError(t, err)
+		assert.Zero(t, count)
+		assert.False(t, capped)
+		assert.Zero(t, repo.upToCalls.Load())
+	})
+
+	t.Run("сбой подсчёта с потолком — ошибка, а не неверное число", func(t *testing.T) {
+		repo := &fakeRepo{matched: 42, countErr: errors.New("db down")}
+		pars := model.ListReq{Tag: new("sms")}
+		pars.WithTotalCount = true
+		_, _, _, err := New(repo).List(ctx, &pars)
+		require.Error(t, err)
+	})
+
 	t.Run("без общего числа ничего не считается", func(t *testing.T) {
 		repo := &fakeRepo{countAll: 1000, listCount: 7}
-		_, count, err := New(repo).List(ctx, &model.ListReq{Expired: new(false)})
+		_, count, _, err := New(repo).List(ctx, &model.ListReq{Expired: new(false)})
 		require.NoError(t, err)
 		assert.Zero(t, count)
 		assert.Zero(t, repo.countCalls.Load())
@@ -223,7 +291,7 @@ func TestListActiveCount(t *testing.T) {
 		repo := &fakeRepo{countAll: 5, countExpired: 9}
 		pars := model.ListReq{Expired: new(false)}
 		pars.WithTotalCount = true
-		_, count, err := New(repo).List(ctx, &pars)
+		_, count, _, err := New(repo).List(ctx, &pars)
 		require.NoError(t, err)
 		assert.Zero(t, count)
 	})
@@ -232,7 +300,7 @@ func TestListActiveCount(t *testing.T) {
 		repo := &fakeRepo{countAll: 1000, countErr: errors.New("db down")}
 		pars := model.ListReq{Expired: new(false)}
 		pars.WithTotalCount = true
-		_, _, err := New(repo).List(ctx, &pars)
+		_, _, _, err := New(repo).List(ctx, &pars)
 		require.Error(t, err)
 	})
 }

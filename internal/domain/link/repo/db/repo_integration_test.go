@@ -287,6 +287,22 @@ func TestListFilters(t *testing.T) {
 	got, total = list(model.ListReq{Tag: new("sms"), Expired: new(false), Search: new("shop")})
 	assert.Equal(t, []string{"c1"}, got, "фильтры складываются")
 	assert.EqualValues(t, 1, total)
+
+	// подсчёт с потолком: тот же фильтр, что у списка, но не дальше limit
+	upTo := func(pars model.ListReq, limit int64) int64 {
+		n, err := repo.CountUpTo(ctx, &pars, limit)
+		require.NoError(t, err)
+		return n
+	}
+	assert.EqualValues(t, 4, upTo(model.ListReq{}, 100), "без фильтра")
+	assert.EqualValues(t, 3, upTo(model.ListReq{}, 3), "не больше limit")
+	assert.EqualValues(t, 2, upTo(model.ListReq{Tag: new("sms")}, 100))
+	assert.EqualValues(t, 1, upTo(model.ListReq{Tag: new("sms")}, 1))
+	assert.EqualValues(t, 0, upTo(model.ListReq{Tag: new("нет-такой")}, 100))
+	assert.EqualValues(t, 2, upTo(model.ListReq{Search: new("SHOP.example")}, 100), "два параметра в одном условии")
+	assert.EqualValues(t, 3, upTo(model.ListReq{Domain: new("")}, 100))
+	assert.EqualValues(t, 1, upTo(model.ListReq{Tag: new("sms"), Expired: new(false), Search: new("shop"), Domain: new("")}, 100),
+		"фильтры складываются")
 }
 
 // Запись ссылки справочник меток не трогает: это отдельные вызовы, которые делает фоновый сервис

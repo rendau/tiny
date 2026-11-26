@@ -261,8 +261,11 @@ type LinkListRep struct {
 	state          protoimpl.MessageState   `protogen:"open.v1"`
 	PaginationInfo *common.PaginationInfoSt `protobuf:"bytes,1,opt,name=pagination_info,json=paginationInfo,proto3" json:"pagination_info,omitempty"`
 	Results        []*LinkMain              `protobuf:"bytes,2,rep,name=results,proto3" json:"results,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// true — ссылок больше, чем pagination_info.total_count: с фильтром (метка, поиск, код, домен)
+	// найденное считается не дальше 10 000, точное число на миллионах ссылок стоит слишком дорого
+	TotalCountCapped bool `protobuf:"varint,3,opt,name=total_count_capped,json=totalCountCapped,proto3" json:"total_count_capped,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *LinkListRep) Reset() {
@@ -307,6 +310,13 @@ func (x *LinkListRep) GetResults() []*LinkMain {
 		return x.Results
 	}
 	return nil
+}
+
+func (x *LinkListRep) GetTotalCountCapped() bool {
+	if x != nil {
+		return x.TotalCountCapped
+	}
+	return false
 }
 
 type LinkGetReq struct {
@@ -763,10 +773,11 @@ const file_tiny_v1_link_proto_rawDesc = "" +
 	"\x04_tagB\n" +
 	"\n" +
 	"\b_expiredB\t\n" +
-	"\a_domain\"}\n" +
+	"\a_domain\"\xab\x01\n" +
 	"\vLinkListRep\x12A\n" +
 	"\x0fpagination_info\x18\x01 \x01(\v2\x18.common.PaginationInfoStR\x0epaginationInfo\x12+\n" +
-	"\aresults\x18\x02 \x03(\v2\x11.tiny_v1.LinkMainR\aresults\"\x1c\n" +
+	"\aresults\x18\x02 \x03(\v2\x11.tiny_v1.LinkMainR\aresults\x12,\n" +
+	"\x12total_count_capped\x18\x03 \x01(\bR\x10totalCountCapped\"\x1c\n" +
 	"\n" +
 	"LinkGetReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\xf4\x03\n" +

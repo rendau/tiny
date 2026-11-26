@@ -20,6 +20,9 @@ const (
 	// generateAttempts — сколько раз подбирать свободный код. При длине 4 (14,7 млн кодов) и
 	// миллионах ссылок совпадения часты, но 20 неудач подряд практически невозможны.
 	generateAttempts = 20
+
+	// totalCountCap — дальше этого числа найденные по фильтру ссылки не считаются
+	totalCountCap = 10_000
 )
 
 type Service struct {
@@ -30,24 +33,81 @@ func New(repoDb RepoDbI) *Service {
 	return &Service{repoDb: repoDb}
 }
 
-// List — ссылки и их общее число
-func (s *Service) List(ctx context.Context, pars *model.ListReq) ([]*model.Main, int64, error) {
-	if (pars.WithTotalCount || pars.OnlyCount) && isActiveOnly(pars) {
-		return s.listActive(ctx, pars)
+// List — ссылки и их общее число. capped — подсчёт остановлен на потолке totalCountCap:
+// ссылок не меньше, чем возвращённое число (в админке — «больше 10 000»).
+func (s *Service) List(ctx context.Context, pars *model.ListReq) (items []*model.Main, tCount int64, capped bool, err error) {
+	if pars.WithTotalCount || pars.OnlyCount {
+		switch {
+		case isActiveOnly(pars):
+			items, tCount, err = s.listActive(ctx, pars)
+			return items, tCount, false, err
+		case !isExactCountCheap(pars):
+			return s.listCapped(ctx, pars)
+		}
 	}
 
-	items, tCount, err := s.repoDb.List(ctx, pars)
+	items, tCount, err = s.repoDb.List(ctx, pars)
 	if err != nil {
-		return nil, 0, fmt.Errorf("repoDb.List: %w", err)
+		return nil, 0, false, fmt.Errorf("repoDb.List: %w", err)
 	}
-	return items, tCount, nil
+	return items, tCount, false, nil
 }
 
 // isActiveOnly — фильтр «только действующие» и ничего больше
 func isActiveOnly(pars *model.ListReq) bool {
-	return pars.Expired != nil && !*pars.Expired &&
-		pars.Tag == nil && pars.ShortCode == nil && pars.Domain == nil &&
+	return pars.Expired != nil && !*pars.Expired && noRowFilters(pars)
+}
+
+// isExactCountCheap — точное число считается по одному индексу, таблица не читается:
+// фильтра нет вовсе (первичный ключ) или он «только истёкшие» (link_valid_until_idx)
+func isExactCountCheap(pars *model.ListReq) bool {
+	return (pars.Expired == nil || *pars.Expired) && noRowFilters(pars)
+}
+
+// noRowFilters — нет фильтров, кроме срока действия
+func noRowFilters(pars *model.ListReq) bool {
+	return pars.Tag == nil && pars.ShortCode == nil && pars.Domain == nil &&
 		(pars.Search == nil || *pars.Search == "")
+}
+
+// listCapped — список с фильтром и число найденного, но не дальше totalCountCap. Точное число
+// стоит слишком дорого: чтобы посчитать ссылки с меткой, база читает с диска каждую страницу
+// таблицы, где такая ссылка есть, а у массовой метки это вся таблица (индекс даёт только адреса
+// строк). С потолком чтение обрывается, как только набралось totalCountCap+1 строк.
+func (s *Service) listCapped(ctx context.Context, pars *model.ListReq) ([]*model.Main, int64, bool, error) {
+	var (
+		items = []*model.Main{}
+		count int64
+	)
+
+	g, gctx := errgroup.WithContext(ctx)
+	g.Go(func() error {
+		var err error
+		if count, err = s.repoDb.CountUpTo(gctx, pars, totalCountCap+1); err != nil {
+			return fmt.Errorf("repoDb.CountUpTo: %w", err)
+		}
+		return nil
+	})
+	if !pars.OnlyCount {
+		g.Go(func() error {
+			listPars := *pars
+			listPars.WithTotalCount = false
+
+			var err error
+			if items, _, err = s.repoDb.List(gctx, &listPars); err != nil {
+				return fmt.Errorf("repoDb.List: %w", err)
+			}
+			return nil
+		})
+	}
+	if err := g.Wait(); err != nil {
+		return nil, 0, false, err
+	}
+
+	if count > totalCountCap {
+		return items, totalCountCap, true, nil
+	}
+	return items, count, false, nil
 }
 
 // listActive — список действующих ссылок с их числом. Число считается как «все минус истёкшие»:

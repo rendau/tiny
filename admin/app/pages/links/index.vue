@@ -56,6 +56,8 @@ const apiFilter = computed<LinkListFilter>(() => ({
 
 const items = ref<LinkMain[]>([])
 const total = ref(0)
+// ссылок больше, чем total: с фильтром сервер считает найденное не дальше 10 000
+const totalCapped = ref(false)
 const loading = ref(false)
 const loaded = ref(false)
 const error = ref('')
@@ -74,6 +76,7 @@ async function load() {
     const rep = await linkApi.list(apiFilter.value, pageIndex, PAGE_SIZE, own.signal)
     items.value = rep.results ?? []
     total.value = Number(rep.pagination_info?.total_count ?? 0)
+    totalCapped.value = rep.total_count_capped === true
     now.value = Date.now()
     loaded.value = true
     // страница за концом списка (после удаления или по старой ссылке) — на последнюю
@@ -123,7 +126,7 @@ const page = computed({
   },
 })
 
-const totalLabel = computed(() => `${total.value.toLocaleString('ru-RU')} ${plural(total.value, ['ссылка', 'ссылки', 'ссылок'])}`)
+const totalLabel = computed(() => `${totalCapped.value ? 'больше ' : ''}${total.value.toLocaleString('ru-RU')} ${totalCapped.value ? 'ссылок' : plural(total.value, ['ссылка', 'ссылки', 'ссылок'])}`)
 
 const confirm = ref<LinkMain | null>(null)
 async function remove() {

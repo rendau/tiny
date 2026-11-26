@@ -8,7 +8,8 @@ import (
 )
 
 type ServiceI interface {
-	List(ctx context.Context, pars *model.ListReq) ([]*model.Main, int64, error)
+	// List — ссылки, их число и признак «число обрезано потолком» (ссылок на самом деле больше)
+	List(ctx context.Context, pars *model.ListReq) (items []*model.Main, tCount int64, capped bool, err error)
 	Get(ctx context.Context, id int64, errNE bool) (*model.Main, bool, error)
 	Create(ctx context.Context, obj *model.Edit, codeLength int) (int64, error)
 	Update(ctx context.Context, id int64, obj *model.Edit) error

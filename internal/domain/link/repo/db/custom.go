@@ -133,6 +133,26 @@ func (r *Repo) CountExpired(ctx context.Context) (int64, error) {
 	)
 }
 
+// CountUpTo — сколько ссылок подходит под фильтр, но не больше limit: чтение обрывается, как
+// только набралось limit строк. Точный count(*) по фильтру читает все подходящие строки таблицы.
+func (r *Repo) CountUpTo(ctx context.Context, pars *model.ListReq, limit int64) (int64, error) {
+	conditions, conditionExps := r.getConditions(pars)
+
+	// limit — числом в тексте запроса: значение своё (не от клиента), а параметр внутри
+	// подзапроса сбил бы нумерацию $n внешнего
+	inner := sq.Select("1").From(tableName).Where(sq.Eq(conditions)).Suffix(fmt.Sprintf("limit %d", limit))
+	for expr, args := range conditionExps {
+		inner = inner.Where(sq.Expr(expr, args...))
+	}
+
+	query, args, err := r.QB.Select("count(*)").FromSelect(inner, "t").ToSql()
+	if err != nil {
+		return 0, fmt.Errorf("CountUpTo build query: %w", err)
+	}
+
+	return r.queryCount(ctx, query, args...)
+}
+
 // Ping — база отвечает
 func (r *Repo) Ping(ctx context.Context) error {
 	var one int

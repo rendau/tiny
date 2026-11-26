@@ -18,6 +18,8 @@ type RepoDbI interface {
 	FindExisting(ctx context.Context, pars *model.FindExistingReq) (*model.Main, bool, error)
 	CountAll(ctx context.Context) (int64, error)
 	CountExpired(ctx context.Context) (int64, error)
+	// CountUpTo — сколько ссылок подходит под фильтр, но не больше limit
+	CountUpTo(ctx context.Context, pars *model.ListReq, limit int64) (int64, error)
 
 	// справочник меток
 	TagList(ctx context.Context) ([]string, error)

@@ -4,7 +4,8 @@ import type { LinkCreate, LinkCreateRep, LinkListFilter, LinkMain, LinkUpdate } 
 export const linkApi = {
   // порядок строк — как отдаёт сервер (новые первыми); page — с 0
   list: (filter: LinkListFilter, page: number, pageSize: number, signal?: AbortSignal) =>
-    apiFetch<{ pagination_info?: PaginationInfo, results?: LinkMain[] }>('/link', {
+    // total_count_capped — ссылок больше, чем total_count: с фильтром сервер считает не дальше 10 000
+    apiFetch<{ pagination_info?: PaginationInfo, results?: LinkMain[], total_count_capped?: boolean }>('/link', {
       query: {
         search: filter.search || undefined,
         short_code: filter.short_code || undefined,

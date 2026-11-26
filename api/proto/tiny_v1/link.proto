@@ -95,6 +95,9 @@ message LinkListReq {
 message LinkListRep {
   common.PaginationInfoSt pagination_info = 1;
   repeated LinkMain results = 2;
+  // true — ссылок больше, чем pagination_info.total_count: с фильтром (метка, поиск, код, домен)
+  // найденное считается не дальше 10 000, точное число на миллионах ссылок стоит слишком дорого
+  bool total_count_capped = 3;
 }
 
 // Get (и Delete)

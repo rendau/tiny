@@ -42,29 +42,29 @@ func New(svc ServiceI, sessionSvc SessionServiceI, tagKeeper TagKeeperI, cfg Con
 
 // Операции админки — только вошедшему человеку
 
-func (u *Usecase) List(ctx context.Context, pars *model.ListReq) ([]*model.Main, int64, error) {
-	if err := u.requireAuthorized(ctx); err != nil {
-		return nil, 0, err
+func (u *Usecase) List(ctx context.Context, pars *model.ListReq) (items []*model.Main, tCount int64, capped bool, err error) {
+	if err = u.requireAuthorized(ctx); err != nil {
+		return nil, 0, false, err
 	}
-	if err := util.RequirePageSize(pars.ListParams, 0); err != nil {
-		return nil, 0, err
+	if err = util.RequirePageSize(pars.ListParams, 0); err != nil {
+		return nil, 0, false, err
 	}
 
 	if pars.Domain != nil {
 		// основной домен хранится пустой строкой; неверное имя — заведомо ничего не найдётся
 		domain, ok := u.normalizeDomain(*pars.Domain)
 		if !ok && strings.TrimSpace(*pars.Domain) != "" {
-			return []*model.Main{}, 0, nil
+			return []*model.Main{}, 0, false, nil
 		}
 		pars.Domain = &domain
 	}
 
-	items, tCount, err := u.svc.List(ctx, pars)
+	items, tCount, capped, err = u.svc.List(ctx, pars)
 	if err != nil {
-		return nil, 0, fmt.Errorf("svc.List: %w", err)
+		return nil, 0, false, fmt.Errorf("svc.List: %w", err)
 	}
 
-	return lo.Map(items, func(item *model.Main, _ int) *model.Main { return u.withShortUrl(item) }), tCount, nil
+	return lo.Map(items, func(item *model.Main, _ int) *model.Main { return u.withShortUrl(item) }), tCount, capped, nil
 }
 
 func (u *Usecase) Get(ctx context.Context, id int64) (*model.Main, error) {
